@@ -30,10 +30,6 @@ Please note that this is an early version of the plugin, the focus is on creatin
 
 For version 0.1, MP3 files are supported. ID3 tags of the files are read into post details and taxonomy terms.
 
-= What about foo bar? =
-
-Answer to foo bar dilemma.
-
 == Screenshots ==
 
 Screenshots not yet available.
