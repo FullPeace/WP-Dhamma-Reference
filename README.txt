@@ -1,6 +1,3 @@
-WP Dhamma Reference
-===================
-
 === WP Dhamma Reference ===
 Contributors: iohannis
 Donate link: http://fullpeace.org/
