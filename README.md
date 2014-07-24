@@ -1,9 +1,9 @@
 # FullPeace Media To Posts
 
-* Contributors: for [FullPeace.org](http://fullpeace.org/) [GitHub](https://github.com/FullPeace)
+* Contributors: for [FullPeace.org](http://fullpeace.org/) (see [GitHub](https://github.com/FullPeace))
 * Tags: custom-post-types, media-upload
 * Requires at least: 3.9.0
-* Tested up to: 3.9.0
+* Tested up to: 3.9.1
 * Stable tag: 0.1.0
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html

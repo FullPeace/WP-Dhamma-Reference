@@ -4,7 +4,7 @@ Tags: media, custom-post-types, upload
 Donate link: http://fullpeace.org/donations/
 Requires at least: 3.9.0
 Tested up to: 3.9.1
-License: GPL2
+License: GPLv2
 
 This plugin creates Custom Post Types for media files - particularly MP3 files to Talk posts.
 
