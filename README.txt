@@ -1,38 +1,26 @@
-=== WP Dhamma Reference ===
+=== WP Media to Posts ===
 Contributors: iohannis
-Donate link: http://fullpeace.org/
-Tags: dhamma, media, upload
+Tags: media, custom-post-types, upload
+Donate link: http://fullpeace.org/donations/
 Requires at least: 3.9.0
 Tested up to: 3.9.1
-Stable tag: 0.1
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License: GPL2
 
-Plugin for uploading Dhamma talks, chanting and meditation files, converted to custom post types and taxonomies.
+This plugin creates Custom Post Types for media files - particularly MP3 files to Talk posts.
 
 == Description ==
+This plugin hooks into the upload feature in the Media Library in Wordpress (admin), parses the uploaded files and creates Custom Post Types and relevant related Custom Taxonomy terms.
 
-For easy upload of media files through the Wordpress media library, this plugin parses audio files and creates entries using Custom Post Types, classifying them with Custom Taxonomies relevant to Dhamma teachings.
-
-Please note that this is an early version of the plugin, the focus is on creating functionality for initial parsing of media files.
+For MP3 files, the following information is parsed:
+- ID3Tag 'artist' > Speaker (custom taxonomy) term added.
+- ID3Tag 'album' > Series (custom taxonomy) term added.
+- WP attachment post content is copied to the post content of the Talk post that is created.
 
 == Installation ==
-
-1. Upload `wp-dhamma-reference` folder to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
+- Install and activate via the admin interface.
 
 == Frequently Asked Questions ==
-
-= Which file formats are supported? =
-
-For version 0.1, MP3 files are supported. ID3 tags of the files are read into post details and taxonomy terms.
-
-== Screenshots ==
-
-Screenshots not yet available.
+Please use the forums for questions, this page will be filled out with any questions that are relevant to many.
 
 == Changelog ==
-
-= 0.1 =
-* First version.
-
+0.1.0 Initial release
