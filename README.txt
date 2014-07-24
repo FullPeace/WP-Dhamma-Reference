@@ -1,4 +1,4 @@
-=== WP Media to Posts ===
+=== FullPeace Media To Post ===
 Contributors: iohannis
 Tags: media, custom-post-types, upload
 Donate link: http://fullpeace.org/donations/

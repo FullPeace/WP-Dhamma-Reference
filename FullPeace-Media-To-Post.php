@@ -11,9 +11,9 @@
  * @package FPMTP
  *
  * @wordpress-plugin
- * Plugin Name:       FullPeace Media To Posts
+ * Plugin Name:       FullPeace Media To Post
  * Plugin URI:        http://github.com/tommcfarlin/post-meta-manager
- * Description:       FullPeace Media To Posts creates Custom Post Types for media files on upload via the Media Library.
+ * Description:       FullPeace Media To Post creates Custom Post Types for media files on upload via the Media Library.
  * Version:           0.1.0
  * Author:            FullPeace.org
  * Author URI:        http://fullpeace.org
