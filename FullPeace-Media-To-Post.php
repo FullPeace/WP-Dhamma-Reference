@@ -30,7 +30,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Include the core class responsible for loading all necessary components of the plugin.
  */
-require_once plugin_dir_path( __FILE__ ) . 'includes/FullPeace_Media_To_Post.php';
+require_once plugin_dir_path(  __FILE__  ) . 'includes/FullPeace_Media_To_Post.php';
 
 /**
  * Instantiates the FullPeace Media To Posts class and

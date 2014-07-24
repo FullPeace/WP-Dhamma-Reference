@@ -51,6 +51,7 @@ class FullPeace_Media_To_Post {
         $this->plugin_slug = 'fullpeace-media-to-post';
         $this->version = '0.1.0';
 
+        $this->define_installation_hooks();
         $this->load_dependencies();
         $this->define_admin_hooks();
         $this->define_public_hooks();
@@ -88,10 +89,10 @@ class FullPeace_Media_To_Post {
      */
     private function load_dependencies()
     {
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/FullPeace_Media_To_Post_Admin.php';
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/FullPeace_Media_To_Post_Public.php';
+        require_once plugin_dir_path( __FILE__  ) . 'admin/FullPeace_Media_To_Post_Admin.php';
+        require_once plugin_dir_path( __FILE__  ) . 'public/FullPeace_Media_To_Post_Public.php';
 
-        require_once plugin_dir_path( __FILE__ ) . 'FullPeace_Media_To_Post_Loader.php';
+        require_once plugin_dir_path( __FILE__  ) . 'FullPeace_Media_To_Post_Loader.php';
         $this->loader = new FullPeace_Media_To_Post_Loader();
     }
 
@@ -115,7 +116,7 @@ class FullPeace_Media_To_Post {
      */
     private function define_installation_hooks()
     {
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'FullPeace_Media_To_Post_Setup.php';
+        require_once plugin_dir_path( __FILE__  ) . 'FullPeace_Media_To_Post_Setup.php';
 
         register_activation_hook(   __FILE__, array( 'FullPeace_Media_To_Post_Setup', 'on_activation' ) );
         register_deactivation_hook( __FILE__, array( 'FullPeace_Media_To_Post_Setup', 'on_deactivation' ) );

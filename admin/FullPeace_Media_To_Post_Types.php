@@ -35,7 +35,9 @@ class FullPeace_Media_To_Post_Types {
      */
     public function register_custom_post_types()
     {
-
+        require_once 'cpt/Talks_CPT.php';
+        $cpt = new Talks_CPT($this->version);
+        $cpt->init();
     }
 
     /**
@@ -43,6 +45,9 @@ class FullPeace_Media_To_Post_Types {
      */
     public function register_custom_taxonomies()
     {
+        require_once 'cpt/Talks_Taxonomy.php';
+        $cpt = new Talks_Taxonomy($this->version);
+        $cpt->init();
 
     }
 } 

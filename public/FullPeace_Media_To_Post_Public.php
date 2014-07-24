@@ -31,4 +31,32 @@ class FullPeace_Media_To_Post_Public {
     public function __construct( $version ) {
         $this->version = $version;
     }
-} 
+
+
+    /**
+     * Shortcode handler for [talks] shortcode
+     * @param $atts
+     */
+    public function wmtp_custom_talks_shortcode( $atts ) {
+
+        // Attributes
+        extract( shortcode_atts(
+                array(
+                    'speaker' => '',
+                    'series' => '',
+                    'category' => '',
+                ), $atts )
+        );
+
+        // Code
+        // return WP_Query( array( 'post_type' => 'talk' ) );
+    }
+
+    /**
+     * Register shortcodes
+     */
+    public function register_shortcodes()
+    {
+        add_shortcode( 'talks', array($this, 'wmtp_custom_talks_shortcode') );
+    }
+}

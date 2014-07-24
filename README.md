@@ -1,7 +1,7 @@
 # FullPeace Media To Posts
 
-* Contributors: [iohannis](http://iohannis.com/)
-* Tags: posts
+* Contributors: for [FullPeace.org](http://fullpeace.org/) [GitHub](https://github.com/FullPeace)
+* Tags: custom-post-types, media-upload
 * Requires at least: 3.9.0
 * Tested up to: 3.9.0
 * Stable tag: 0.1.0
