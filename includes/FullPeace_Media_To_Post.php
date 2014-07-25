@@ -13,127 +13,142 @@
  */
 class FullPeace_Media_To_Post {
 
+    /**
+     * @var bool
+     */
+    private static $initiated = false;
 
     /**
-     * A reference to the loader class that coordinates the hooks and callbacks
-     * throughout the plugin.
      *
-     * @access protected
-     * @var    FullPeace_Media_To_Post_Loader   $loader    Manages hooks between the WordPress hooks and the callback functions.
      */
-    protected $loader;
-
-    /**
-     * Represents the slug of hte plugin that can be used throughout the plugin
-     * for internationalization and other purposes.
-     *
-     * @access protected
-     * @var    string   $plugin_slug    The single, hyphenated string used to identify this plugin.
-     */
-    protected $plugin_slug;
-
-    /**
-     * Maintains the current version of the plugin so that we can use it throughout
-     * the plugin.
-     *
-     * @access protected
-     * @var    string   $version    The current version of the plugin.
-     */
-    protected $version;
-
-    /**
-     * Initializes this class and stores the current version of this plugin.
-     *
-     * @param    string    $version    The current version of this plugin.
-     */
-    public function __construct( $version ) {
-
-        $this->plugin_slug = 'fullpeace-media-to-post';
-        $this->version = '0.1.0';
-
-        $this->define_installation_hooks();
-        $this->load_dependencies();
-        $this->define_admin_hooks();
-        $this->define_public_hooks();
+    public static function init()
+    {
+        if ( ! self::$initiated )
+        {
+            self::init_hooks();
+        }
     }
 
     /**
-     * Executes the plugin by calling the run method of the loader class which will
-     * register all of the hooks and callback functions used throughout the plugin
-     * with WordPress.
+     * Initializes WordPress hooks
      */
-    public function run() {
-        $this->loader->run();
+    private static function init_hooks()
+    {
+        self::$initiated = true;
+        add_action( 'add_attachment', array( 'FullPeace_Media_To_Post', 'post_from_attachment' ) );
+    }
+
+
+    /**
+     * Parses each attachment uploaded through the media library
+     * and creates a custom post with related taxonomy terms.
+     *
+     * @param $attachment_ID
+     */
+    public static function post_from_attachment($attachment_ID)
+    {
+        $type = get_post_mime_type($attachment_ID);
+        if(strpos($type, 'audio') === 0)
+        {
+            self::create_talks_post_from_audio($attachment_ID);
+        }
+    }
+
+
+    /**
+     * Parses audio files for ID3 tags and creates a post with taxonomy terms.
+     *
+     * @param $attachment_ID The attachment id of an attachment with mime type 'audio'
+     * @todo Create a setting in wp-admin for creating a template for the post content.
+     */
+    public static function create_talks_post_from_audio($attachment_ID)
+    {
+        global $current_user;
+        get_currentuserinfo();
+
+        $attachment_post = get_post( $attachment_ID );
+        $filepath = get_attached_file( $attachment_ID );
+        $attachment_meta = wp_get_attachment_metadata( $attachment_ID );
+        $attached_audio = get_attached_media ( 'audio', $attachment_ID );
+        $metadata = wp_read_audio_metadata( $filepath );
+
+        $new_post_content = '[audio src="'.$attachment_post->guid.'"]'.
+            "\n\n".$metadata['comment'] .
+            "\n\n".$attachment_post->post_content .
+            "\n\nLength of recording: ".$metadata['length_formatted'] .
+            "\nYear: ".$metadata['year'];
+
+        // Create new custom post object only for images
+        $my_post = array(
+            'post_title'    => $attachment_post->post_title,
+            'post_content'  => $new_post_content ,
+            'post_type'     => 'fpmtp_talks',
+            'post_author'   => $current_user->ID
+        );
+
+        // Insert the custom post into the database
+        $post_id = wp_insert_post( $my_post );
+        wp_update_post( array(
+                'ID' => $attachment_ID ,
+                'post_parent' => $post_id
+            )
+        );
+
+        wp_set_object_terms( $post_id, array( $metadata['artist'] ), 'fpmtp_speakers', true );
+        wp_set_object_terms( $post_id, array( $metadata['album'] ), 'fpmtp_series', true );
     }
 
     /**
      * Returns the current version of the plugin to the caller.
      *
-     * @return    string    $this->version    The current version of the plugin.
+     * @return    string    FPMTP__VERSION    The current version of the plugin.
      */
-    public function get_version() {
-        return $this->version;
+    public static function get_version()
+    {
+        return FPMTP__VERSION;
     }
 
     /**
-     * Imports the FullPeace Media To Post administration classes, and the FullPeace Media To Post Loader.
+     * Plugin installation and activation.
      *
-     * The FullPeace Media To Post administration class defines all unique functionality for
-     * introducing custom functionality into the WordPress dashboard.
-     *
-     * The FullPeace Media To Post Loader is the class that will coordinate the hooks and callbacks
-     * from WordPress and the plugin. This function instantiates and sets the reference to the
-     * $loader class property.
-     *
-     * @access    private
+     * Registers custom post types and taxonomies used by the plugin.
+     * @since    0.1.0
      */
-    private function load_dependencies()
+    public static function plugin_activation()
     {
-        require_once plugin_dir_path( __FILE__  ) . 'admin/FullPeace_Media_To_Post_Admin.php';
-        require_once plugin_dir_path( __FILE__  ) . 'public/FullPeace_Media_To_Post_Public.php';
+        require_once FPMTP__PLUGIN_DIR . 'includes/FullPeace_Media_To_Post_Setup.php';
+        FullPeace_Media_To_Post_Setup::on_activation();
 
-        require_once plugin_dir_path( __FILE__  ) . 'FullPeace_Media_To_Post_Loader.php';
-        $this->loader = new FullPeace_Media_To_Post_Loader();
+        //Ensure the $wp_rewrite global is loaded
+        global $wp_rewrite;
+        //Call flush_rules() as a method of the $wp_rewrite object
+        $wp_rewrite->flush_rules( false );
     }
 
     /**
-     * Defines the hooks and callback functions that are used for setting up the plugin stylesheets
-     * and the plugin's meta box.
+     * Plugin deactivation.
      *
-     * This function relies on the FullPeace Media To Posts Admin class and the FullPeace Media To Posts
-     * Loader class property.
-     *
-     * @access    private
+     * Does nothing this version.
+     * @since    0.1.0
      */
-    private function define_admin_hooks()
+    public static function plugin_deactivation()
     {
+        require_once FPMTP__PLUGIN_DIR . 'includes/FullPeace_Media_To_Post_Setup.php';
+
+        FullPeace_Media_To_Post_Setup::on_deactivation();
     }
 
     /**
-     * Defines the hooks and callback functions for installing and uninstalling the plugin.
+     * Plugin uninstall.
      *
-     * @access    private
+     * Does nothing this version.
+     * @since    0.1.0
      */
-    private function define_installation_hooks()
+    public static function plugin_uninstall()
     {
-        require_once plugin_dir_path( __FILE__  ) . 'FullPeace_Media_To_Post_Setup.php';
+        require_once FPMTP__PLUGIN_DIR . 'includes/FullPeace_Media_To_Post_Setup.php';
 
-        register_activation_hook(   __FILE__, array( 'FullPeace_Media_To_Post_Setup', 'on_activation' ) );
-        register_deactivation_hook( __FILE__, array( 'FullPeace_Media_To_Post_Setup', 'on_deactivation' ) );
-        register_uninstall_hook(    __FILE__, array( 'FullPeace_Media_To_Post_Setup', 'on_uninstall' ) );
-    }
-
-    /**
-     * Defines the hooks and callback functions that are used for rendering information on the front
-     * end of the site.
-     *
-     * This function relies on the FullPeace Media To Posts Public class and the FullPeace Media To Posts
-     * Loader class property.
-     *
-     * @access    private
-     */
-    private function define_public_hooks()
-    {
+        FullPeace_Media_To_Post_Setup::on_uninstall();
     }
 
 }

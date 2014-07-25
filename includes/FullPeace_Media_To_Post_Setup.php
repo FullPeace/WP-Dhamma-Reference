@@ -11,18 +11,44 @@ defined( 'ABSPATH' ) OR exit;
 class FullPeace_Media_To_Post_Setup
 {
     /**
-     * Method called on plugin activation
+     * Plugin activation. Creates Custom Post Types and Taxonomies used by this plugin
      */
     public static function on_activation()
     {
         if ( ! current_user_can( 'activate_plugins' ) )
             return;
+
         $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
         check_admin_referer( "activate-plugin_{$plugin}" );
+
+
+        require_once FPMTP__PLUGIN_DIR . 'admin/FullPeace_Media_To_Post_Types.php';
+        FullPeace_Media_To_Post_Types::register_custom_post_types();
+        FullPeace_Media_To_Post_Types::register_custom_taxonomies();
+
+
+
+        $version_setting_name = 'FPMTP_version';
+
+        $installed_version_num = get_option($version_setting_name);
+
+        // In case we need to compare versions for updates later
+
+        // Update the version value
+
+        if (is_multisite()) {
+            update_site_option($version_setting_name, FPMTP__VERSION);
+        } else {
+            update_option($version_setting_name, FPMTP__VERSION);
+        }
+
     }
 
     /**
-     * Method called on plugin deactivation
+     * Plugin deactivation.
+     *
+     * Does nothing this version.
+     * @since    0.1.0
      */
     public static function on_deactivation()
     {
@@ -33,7 +59,10 @@ class FullPeace_Media_To_Post_Setup
     }
 
     /**
-     * Method called on uninstall
+     * Plugin uninstall.
+     *
+     * Does nothing this version.
+     * @since    0.1.0
      */
     public static function on_uninstall()
     {

@@ -23,25 +23,26 @@
  * Domain Path:       /languages
  */
 
-if ( ! defined( 'WPINC' ) ) {
-    die;
+if ( !function_exists( 'add_action' ) ) { // Don't expose the plugin
+    exit;
 }
 
 /**
- * Include the core class responsible for loading all necessary components of the plugin.
+ * Definitions
  */
-require_once plugin_dir_path(  __FILE__  ) . 'includes/FullPeace_Media_To_Post.php';
+define( 'FPMTP__VERSION', '0.1.0' );
+define( 'FPMTP__I18N_NAMESPACE', 'fullpeace_org' );
+define( 'FPMTP__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'FPMTP__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 /**
- * Instantiates the FullPeace Media To Posts class and
- * starts the plugin.
+ * Include the core class
  */
-function run_fpmtp_manager() {
+require_once FPMTP__PLUGIN_DIR . 'includes/FullPeace_Media_To_Post.php';
 
-    $fpmtp = new FullPeace_Media_To_Post('0.1.0');
-    $fpmtp->run();
 
-}
+register_activation_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_activation' ) );
+register_deactivation_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_deactivation' ) );
+register_uninstall_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_uninstall' ) );
 
-// Call the above function to begin execution of the plugin.
-run_fpmtp_manager();
+add_action( 'init', array( 'FullPeace_Media_To_Post', 'init' ) );

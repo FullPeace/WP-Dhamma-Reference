@@ -16,24 +16,6 @@
 class FullPeace_Media_To_Post_Public {
 
     /**
-     * A reference to the version of the plugin that is passed to this class from the caller.
-     *
-     * @access private
-     * @var    string    $version    The current version of the plugin.
-     */
-    private $version;
-
-    /**
-     * Initializes this class and stores the current version of this plugin.
-     *
-     * @param    string    $version    The current version of this plugin.
-     */
-    public function __construct( $version ) {
-        $this->version = $version;
-    }
-
-
-    /**
      * Shortcode handler for [talks] shortcode
      * @param $atts
      */
