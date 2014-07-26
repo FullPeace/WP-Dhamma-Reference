@@ -66,8 +66,9 @@ class FullPeace_Media_To_Post_Types {
      */
     public static function register_custom_post_types()
     {
+        FullPeace_Media_To_Post_Admin::add_notice('Register CPT');
         require_once FPMTP__PLUGIN_DIR . 'admin/cpt/talks-cpt.php';
-        FullPeace_Media_To_Post_Talks_CPT::init();
+        FullPeace_Media_To_Post_Talks_CPT::register_cpt();
     }
 
     /**
@@ -76,7 +77,8 @@ class FullPeace_Media_To_Post_Types {
     public static function register_custom_taxonomies()
     {
         require_once FPMTP__PLUGIN_DIR . 'admin/cpt/talks-taxonomies.php';
-        FullPeace_Media_To_Post_Talks_Taxonomy::init();
+        FullPeace_Media_To_Post_Talks_Taxonomy::the_speaker();
+        FullPeace_Media_To_Post_Talks_Taxonomy::the_series();
     }
 
     /**

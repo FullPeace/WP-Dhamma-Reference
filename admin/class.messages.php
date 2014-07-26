@@ -8,4 +8,7 @@
 
 class FullPeace_Media_To_Post_Messages {
 
+    public static function add_message($message){
+
+    }
 } 

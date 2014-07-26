@@ -35,7 +35,15 @@ class FullPeace_Media_To_Post {
     private static function init_hooks()
     {
         self::$initiated = true;
+        add_action( 'admin_notices', array( 'FullPeace_Media_To_Post_Admin', 'display_notice' ) );
         add_action( 'add_attachment', array( 'FullPeace_Media_To_Post', 'post_from_attachment' ) );
+        require_once FPMTP__PLUGIN_DIR . 'admin/class.types.php';
+        FullPeace_Media_To_Post_Types::register_custom_post_types();
+        FullPeace_Media_To_Post_Types::register_custom_taxonomies();
+    }
+
+    public static function testmessage(  )
+    {
     }
 
 
@@ -116,9 +124,10 @@ class FullPeace_Media_To_Post {
      */
     public static function plugin_activation()
     {
+
+        FullPeace_Media_To_Post_Admin::add_notice('Plugin activated. Thank you.');
         require_once FPMTP__PLUGIN_DIR . 'includes/class.setup.php';
         FullPeace_Media_To_Post_Setup::on_activation();
-
         //Ensure the $wp_rewrite global is loaded
         global $wp_rewrite;
         //Call flush_rules() as a method of the $wp_rewrite object
@@ -136,6 +145,8 @@ class FullPeace_Media_To_Post {
         require_once FPMTP__PLUGIN_DIR . 'includes/class.setup.php';
 
         FullPeace_Media_To_Post_Setup::on_deactivation();
+        delete_option('fpmtp_deferred_admin_notices');
+        FullPeace_Media_To_Post_Admin::add_notice('FullPeace Plugin deactivated. ');
     }
 
     /**
@@ -151,4 +162,17 @@ class FullPeace_Media_To_Post {
         FullPeace_Media_To_Post_Setup::on_uninstall();
     }
 
+    public static function view( $name, array $args = array() ) {
+        $args = apply_filters( 'akismet_view_arguments', $args, $name );
+
+        foreach ( $args AS $key => $val ) {
+            $$key = $val;
+        }
+
+        load_plugin_textdomain( 'akismet' );
+
+        $file = AKISMET__PLUGIN_DIR . 'views/'. $name . '.php';
+
+        include( $file );
+    }
 }

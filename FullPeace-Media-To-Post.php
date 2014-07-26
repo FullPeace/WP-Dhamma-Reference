@@ -46,3 +46,8 @@ register_deactivation_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_
 register_uninstall_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_uninstall' ) );
 
 add_action( 'init', array( 'FullPeace_Media_To_Post', 'init' ) );
+
+if ( is_admin() ) {
+    require_once( FPMTP__PLUGIN_DIR . 'admin/class.admin.php' );
+    add_action( 'init', array( 'FullPeace_Media_To_Post_Admin', 'init' ) );
+}
