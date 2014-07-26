@@ -22,7 +22,7 @@ class FullPeace_Media_To_Post_Setup
         check_admin_referer( "activate-plugin_{$plugin}" );
 
 
-        require_once FPMTP__PLUGIN_DIR . 'admin/FullPeace_Media_To_Post_Types.php';
+        require_once FPMTP__PLUGIN_DIR . 'admin/class.types.php';
         FullPeace_Media_To_Post_Types::register_custom_post_types();
         FullPeace_Media_To_Post_Types::register_custom_taxonomies();
 

@@ -116,7 +116,7 @@ class FullPeace_Media_To_Post {
      */
     public static function plugin_activation()
     {
-        require_once FPMTP__PLUGIN_DIR . 'includes/FullPeace_Media_To_Post_Setup.php';
+        require_once FPMTP__PLUGIN_DIR . 'includes/class.setup.php';
         FullPeace_Media_To_Post_Setup::on_activation();
 
         //Ensure the $wp_rewrite global is loaded
@@ -133,7 +133,7 @@ class FullPeace_Media_To_Post {
      */
     public static function plugin_deactivation()
     {
-        require_once FPMTP__PLUGIN_DIR . 'includes/FullPeace_Media_To_Post_Setup.php';
+        require_once FPMTP__PLUGIN_DIR . 'includes/class.setup.php';
 
         FullPeace_Media_To_Post_Setup::on_deactivation();
     }
@@ -146,7 +146,7 @@ class FullPeace_Media_To_Post {
      */
     public static function plugin_uninstall()
     {
-        require_once FPMTP__PLUGIN_DIR . 'includes/FullPeace_Media_To_Post_Setup.php';
+        require_once FPMTP__PLUGIN_DIR . 'includes/class.setup.php';
 
         FullPeace_Media_To_Post_Setup::on_uninstall();
     }

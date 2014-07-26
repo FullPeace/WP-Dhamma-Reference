@@ -38,7 +38,7 @@ define( 'FPMTP__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 /**
  * Include the core class
  */
-require_once FPMTP__PLUGIN_DIR . 'includes/FullPeace_Media_To_Post.php';
+require_once FPMTP__PLUGIN_DIR . 'includes/class.main.php';
 
 
 register_activation_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_activation' ) );

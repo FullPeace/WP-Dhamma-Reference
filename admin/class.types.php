@@ -66,7 +66,7 @@ class FullPeace_Media_To_Post_Types {
      */
     public static function register_custom_post_types()
     {
-        require_once FPMTP__PLUGIN_DIR . 'admin/cpt/FullPeace_Media_To_Post_Talks_CPT.php';
+        require_once FPMTP__PLUGIN_DIR . 'admin/cpt/talks-cpt.php';
         FullPeace_Media_To_Post_Talks_CPT::init();
     }
 
@@ -75,7 +75,7 @@ class FullPeace_Media_To_Post_Types {
      */
     public static function register_custom_taxonomies()
     {
-        require_once FPMTP__PLUGIN_DIR . 'admin/cpt/FullPeace_Media_To_Post_Talks_Taxonomy.php';
+        require_once FPMTP__PLUGIN_DIR . 'admin/cpt/talks-taxonomies.php';
         FullPeace_Media_To_Post_Talks_Taxonomy::init();
     }
 
