@@ -26,13 +26,6 @@ class FullPeace_Media_To_Post_Admin {
 
     public static function init_hooks()
     {
-        // The standalone stats page was removed in 3.0 for an all-in-one config and stats page.
-        // Redirect any links that might have been bookmarked or in browser history.
-        if (isset($_GET['page']) && 'akismet-stats-display' == $_GET['page']) {
-            wp_safe_redirect(esc_url_raw(self::get_page_url('stats')), 301);
-            die;
-        }
-
         self::$initiated = true;
 
         add_action('admin_init', array('FullPeace_Media_To_Post_Admin', 'admin_init'));
@@ -42,7 +35,15 @@ class FullPeace_Media_To_Post_Admin {
 
     public static function admin_init() {
         load_plugin_textdomain( FPMTP__I18N_NAMESPACE );
-        add_meta_box( 'fpmtp-status', __('Current status', FPMTP__I18N_NAMESPACE), array( 'FullPeace_Media_To_Post_Admin', 'comment_status_meta_box' ), 'comment', 'normal' );
+
+        add_option( 'fpmtp_set_cpt_audio', 'Talks');
+        add_option( 'fpmtp_set_cpt_video', 'Video');
+        add_option( 'fpmtp_enable_cpt_audio', 'enable');
+        add_option( 'fpmtp_enable_cpt_video', '');
+        register_setting( 'default', 'fpmtp_set_cpt_audio' );
+        register_setting( 'default', 'fpmtp_set_cpt_video' );
+        register_setting( 'default', 'fpmtp_enable_cpt_audio' );
+        register_setting( 'default', 'fpmtp_enable_cpt_video' );
     }
 
     public static function admin_menu() {
@@ -64,7 +65,7 @@ class FullPeace_Media_To_Post_Admin {
         $hook = add_options_page( __('Media To Post', FPMTP__I18N_NAMESPACE), __('FullPeace Media To Post Settings', FPMTP__I18N_NAMESPACE), 'manage_options', 'fpmtp-settings', array( 'FullPeace_Media_To_Post_Admin', 'display_page' ) );
 
         if ( version_compare( $GLOBALS['wp_version'], '3.3', '>=' ) ) {
-            add_action( "load-$hook", array( 'Akismet_Admin', 'admin_help' ) );
+            add_action( "load-$hook", array( 'FullPeace_Media_To_Post_Admin', 'admin_help' ) );
         }
     }
 
@@ -141,6 +142,46 @@ class FullPeace_Media_To_Post_Admin {
         $url = add_query_arg( $args, admin_url( 'options-general.php' ) );
 
         return $url;
+    }
+
+    public static function display_page() {
+        ?>
+        <div class="wrap">
+            <h2>Configuration</h2>
+            <form method="post" action="options.php">
+                <?php settings_fields( 'default' ); ?>
+                <h3>Settings for the Media To Post plugin</h3>
+                <p>Enable parsing files uploaded via the media library.</p>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row"><label for="fpmtp_enable_cpt_audio">Enable parsing audio files:</label></th>
+                        <td><input type="checkbox" id="fpmtp_enable_cpt_audio" name="fpmtp_enable_cpt_audio" <?php echo get_option('fpmtp_enable_cpt_audio') == 'enable' ? "checked" : "" ; ?> value="enable" />
+                            <a href="<?php echo admin_url('edit.php?post_type=fpmtp_talks'); ?>">Talks</a></td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row"><label for="fpmtp_enable_cpt_video">Enable parsing video files:</label> (NOT YET IMPLEMENTED)</th>
+                        <td><input type="checkbox" id="fpmtp_enable_cpt_video" name="fpmtp_enable_cpt_video" <?php echo get_option('fpmtp_enable_cpt_video') == 'enable' ? "checked" : "" ; ?> value="enable" /> <a href="<?php echo admin_url('edit.php?post_type=fpmtp_video'); ?>">Video</a></td>
+                    </tr>
+                </table>
+                <p><strong>RECOMMENDED:</strong> <em>Please do not these settings unless you are absolutely sure of what you are doing.
+                        Changing these values require significant operations for existing posts.</em></p>
+                <p>If there are no posts generated from media on this site, or you don't care about the existing posts
+                (they risk being 'orphaned'), then you can change these settings to the names you want.</p>
+                <p><strong>AS OF VERSION 0.1.0, THIS FEATURE IS DISABLED.</strong></p>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row"><label for="fpmtp_set_cpt_audio">Custom Post Type for audio files:</label></th>
+                        <td><input type="text" id="fpmtp_set_cpt_audio" name="fpmtp_set_cpt_audio" value="<?php echo get_option('fpmtp_set_cpt_audio'); ?>" /></td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row"><label for="fpmtp_set_cpt_video">Custom Post Type for audio files:</label></th>
+                        <td><input type="text" id="fpmtp_set_cpt_video" name="fpmtp_set_cpt_video" value="<?php echo get_option('fpmtp_set_cpt_video'); ?>" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+        </div>
+    <?php
     }
 
 } 

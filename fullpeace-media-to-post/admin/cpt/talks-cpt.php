@@ -55,7 +55,6 @@ class FullPeace_Media_To_Post_Talks_CPT {
                                     ),
         );
         register_post_type( 'fpmtp_talks', $args );
-        FullPeace_Media_To_Post_Admin::add_notice('registered cpt');
 
     }
 

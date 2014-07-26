@@ -21,14 +21,7 @@ class FullPeace_Media_To_Post_Setup
         $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
         check_admin_referer( "activate-plugin_{$plugin}" );
 
-        FullPeace_Media_To_Post_Admin::add_notice('setup::on_activation');
-
-
-        require_once FPMTP__PLUGIN_DIR . 'admin/class.types.php';
-        FullPeace_Media_To_Post_Types::register_custom_post_types();
-        FullPeace_Media_To_Post_Types::register_custom_taxonomies();
-
-
+        FullPeace_Media_To_Post_Admin::add_notice('Thank you for installing the FullPeace.org Media To Post plugin. If there is anything we can do to help you with it, please let us know by emailing developer@fullpeace.org');
 
         $version_setting_name = 'FPMTP_version';
 

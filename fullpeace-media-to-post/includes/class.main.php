@@ -65,7 +65,13 @@ class FullPeace_Media_To_Post {
 
 
     /**
-     * Parses audio files for ID3 tags and creates a post with taxonomy terms.
+     * The attachment parser. Reads the uploaded file (for each file
+     * uploaded via the Media Library) and creates a corresponding
+     * Custom Post Type with related Custom Taxonomy terms.
+     *
+     * Currently supporting:
+     *
+     *  - MP3 format to Talks type
      *
      * @param $attachment_ID The attachment id of an attachment with mime type 'audio'
      * @todo Create a setting in wp-admin for creating a template for the post content.
@@ -96,15 +102,24 @@ class FullPeace_Media_To_Post {
         );
 
         // Insert the custom post into the database
-        $post_id = wp_insert_post( $my_post );
+        $talk_post_id = wp_insert_post( $talk_custom_post );
         wp_update_post( array(
                 'ID' => $attachment_ID ,
-                'post_parent' => $post_id
+                'post_parent' => $talk_post_id
             )
         );
+        FullPeace_Media_To_Post_Admin::add_notice('New Talk added ' . get_edit_post_link( $talk_post_id ));
 
-        wp_set_object_terms( $post_id, array( $metadata['artist'] ), 'fpmtp_speakers', true );
-        wp_set_object_terms( $post_id, array( $metadata['album'] ), 'fpmtp_series', true );
+        wp_set_object_terms( $talk_post_id, array( $metadata['artist'] ), 'fpmtp_speakers', true );
+        wp_set_object_terms( $talk_post_id, array( $metadata['album'] ), 'fpmtp_series', true );
+
+        // I wonder if the file has an image attached?
+        $post_thumbnail_id = get_post_thumbnail_id( $attachment_ID );
+        FullPeace_Media_To_Post_Admin::add_notice('post thumb ' . $post_thumbnail_id);
+        if(is_numeric($post_thumbnail_id) && (int)$post_thumbnail_id>0)
+        {
+            set_post_thumbnail($talk_post_id, $post_thumbnail_id);
+        }
     }
 
     /**
@@ -125,8 +140,6 @@ class FullPeace_Media_To_Post {
      */
     public static function plugin_activation()
     {
-
-        FullPeace_Media_To_Post_Admin::add_notice('Plugin activated. Thank you.');
         require_once FPMTP__PLUGIN_DIR . 'includes/class.setup.php';
         FullPeace_Media_To_Post_Setup::on_activation();
         //Ensure the $wp_rewrite global is loaded
@@ -147,7 +160,6 @@ class FullPeace_Media_To_Post {
 
         FullPeace_Media_To_Post_Setup::on_deactivation();
         delete_option('fpmtp_deferred_admin_notices');
-        FullPeace_Media_To_Post_Admin::add_notice('FullPeace Plugin deactivated. ');
     }
 
     /**
