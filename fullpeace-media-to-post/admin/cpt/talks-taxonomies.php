@@ -85,7 +85,7 @@ class FullPeace_Media_To_Post_Talks_Taxonomy {
                                                 'with_front' => false,
                                                 ),
         );
-        register_taxonomy( 'fpmtp_series', array( 'fpmtp_talks' ), $args );
+        register_taxonomy( 'fpmtp_series', array( 'fpmtp_talks', 'fpmtp_talks_series' ), $args );
     }
 
     /**

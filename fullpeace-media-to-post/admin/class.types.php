@@ -20,6 +20,7 @@ class FullPeace_Media_To_Post_Types {
     {
         require_once FPMTP__PLUGIN_DIR . 'admin/cpt/talks-cpt.php';
         FullPeace_Media_To_Post_Talks_CPT::register_cpt();
+        FullPeace_Media_To_Post_Talks_CPT::register_talks_series_cpt();
     }
 
     /**

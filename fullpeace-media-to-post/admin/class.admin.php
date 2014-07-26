@@ -31,6 +31,10 @@ class FullPeace_Media_To_Post_Admin {
         add_action('admin_init', array('FullPeace_Media_To_Post_Admin', 'admin_init'));
         add_action('admin_menu', array('FullPeace_Media_To_Post_Admin', 'admin_menu'), 5);
         add_action('admin_notices', array('FullPeace_Media_To_Post_Admin', 'display_notice'));
+        add_filter('get_sample_permalink_html', array('FullPeace_Media_To_Post_Admin', 'disable_editing_url_for_talks_series'), '',4);
+
+        add_action( 'create_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_create_term' ), 1, 3 );
+        add_action( 'created_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_created_term' ), 1, 3 );
     }
 
     public static function admin_init() {
@@ -62,6 +66,9 @@ class FullPeace_Media_To_Post_Admin {
     }
 
     public static function load_menu() {
+
+        add_submenu_page('edit.php?post_type=fpmtp_talks', 'talks-series', 'Talks Series', 'edit_posts', 'edit.php?post_type=fpmtp_talks_series');
+
         $hook = add_options_page( __('Media To Post', FPMTP__I18N_NAMESPACE), __('FullPeace Media To Post Settings', FPMTP__I18N_NAMESPACE), 'manage_options', 'fpmtp-settings', array( 'FullPeace_Media_To_Post_Admin', 'display_page' ) );
 
         if ( version_compare( $GLOBALS['wp_version'], '3.3', '>=' ) ) {
@@ -69,6 +76,17 @@ class FullPeace_Media_To_Post_Admin {
         }
     }
 
+
+
+    function disable_editing_url_for_talks_series($return, $id, $new_title, $new_slug){
+        global $post;
+        if($post->post_type == 'fpmtp_talks_series')
+        {
+            $ret2 = preg_replace('/<span id="edit-slug-buttons">.*<\/span>|<span id=\'view-post-btn\'>.*<\/span>/i', '', $return);
+        }
+
+        return $ret2;
+    }
 
     /**
      * Add help to the settings page
@@ -182,6 +200,61 @@ class FullPeace_Media_To_Post_Admin {
             </form>
         </div>
     <?php
+    }
+
+
+    // Pre create term
+    function act_on_create_term( $term_id, $tt_id, $taxonomy)
+    {
+    }
+
+    // Pre create $taxonomy
+    function act_on_create_taxonomy( $term_id, $tt_id )
+    {
+    }
+
+    // Post create term
+    function act_on_created_term( $term_id, $tt_id, $taxonomy)
+    {
+        FullPeace_Media_To_Post_Admin::add_notice('hooked ' . __FUNCTION__ . ' term ' . $term_id .'.'.$tt_id .'.'.$taxonomy .'.');
+
+        if(taxonomy_exists('fpmtp_series') && post_type_exists('fpmtp_talks_series') && $taxonomy == 'fpmtp_series'){
+            /**
+             * Lookup the term name
+             */
+            $inserted_term = get_term_by('id', (int)$term_id, $taxonomy);
+FullPeace_Media_To_Post_Admin::add_notice('hooked ' . __FUNCTION__ . ' term ' . $inserted_term->name);
+            if($inserted_term)
+            {
+//                $args=array(
+//                    'name' => $inserted_term->name,
+//                    'post_type' => 'fpmtp_talks_series',
+//                    'posts_per_page' => 1
+//                );
+//                $talks_series_posts = get_posts( $args );
+                $talks_series_posts = get_page_by_title( $inserted_term->name, 'OBJECT', 'fpmtp_talks_series' );
+FullPeace_Media_To_Post_Admin::add_notice('hooked ' . __FUNCTION__ . ' $talks_series_posts ' . $talks_series_posts->ID);
+
+                if(empty($talks_series_posts))
+                {
+                    // No such post - insert
+                    // Create post object
+                    $new_ts_post = array(
+                        'post_title'    => $inserted_term->name,
+                        'post_content'  => '',
+                        'post_status'   => 'publish',
+                        'post_type'     => 'fpmtp_talks_series',
+                    );
+
+                    // Insert the post into the database
+                    wp_insert_post( $new_ts_post );
+                }
+            }
+        }
+    }
+
+    // Post create_$taxonomy
+    function act_on_created_taxonomy( $term_id, $tt_id ) {
     }
 
 } 
