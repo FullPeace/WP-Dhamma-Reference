@@ -37,6 +37,7 @@ class FullPeace_Media_To_Post {
         self::$initiated = true;
         add_action( 'admin_notices', array( 'FullPeace_Media_To_Post_Admin', 'display_notice' ) );
         add_action( 'add_attachment', array( 'FullPeace_Media_To_Post', 'post_from_attachment' ) );
+
         require_once FPMTP__PLUGIN_DIR . 'admin/class.types.php';
         FullPeace_Media_To_Post_Types::register_custom_post_types();
         FullPeace_Media_To_Post_Types::register_custom_taxonomies();
