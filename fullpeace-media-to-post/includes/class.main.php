@@ -18,8 +18,10 @@ class FullPeace_Media_To_Post {
      */
     private static $initiated = false;
 
+    public static $slug = 'fpmtp';
+
     /**
-     *
+     * Initiates the plugin
      */
     public static function init()
     {
@@ -31,6 +33,8 @@ class FullPeace_Media_To_Post {
 
     /**
      * Initializes WordPress hooks
+     * @todo Add check for enabled CPTs and load them based on that.
+     * @todo Special case for eBooks
      */
     private static function init_hooks()
     {
@@ -41,12 +45,20 @@ class FullPeace_Media_To_Post {
         require_once FPMTP__PLUGIN_DIR . 'admin/class.types.php';
         FullPeace_Media_To_Post_Types::register_custom_post_types();
         FullPeace_Media_To_Post_Types::register_custom_taxonomies();
+
+        require_once FPMTP__PLUGIN_DIR . 'public/class.public.php';
+        add_action( 'plugins_loaded', array( 'FullPeace_Media_To_Post_Public', 'init' ) );
     }
 
-    public static function testmessage(  )
+    public static function get_slug($type)
     {
+        return self::$slug . '_' . $type;
     }
 
+    public static function the_slug($type)
+    {
+        echo self::get_slug($type);
+    }
 
     /**
      * Parses each attachment uploaded through the media library
@@ -97,7 +109,7 @@ class FullPeace_Media_To_Post {
         $my_post = array(
             'post_title'    => $attachment_post->post_title,
             'post_content'  => $new_post_content ,
-            'post_type'     => 'fpmtp_talks',
+            'post_type'     => FullPeace_Media_To_Post::$slug . '_talks',
             'post_author'   => $current_user->ID
         );
 
@@ -110,8 +122,8 @@ class FullPeace_Media_To_Post {
         );
         FullPeace_Media_To_Post_Admin::add_notice('New Talk added ' . get_edit_post_link( $talk_post_id ));
 
-        wp_set_object_terms( $talk_post_id, array( $metadata['artist'] ), 'fpmtp_speakers', true );
-        wp_set_object_terms( $talk_post_id, array( $metadata['album'] ), 'fpmtp_series', true );
+        wp_set_object_terms( $talk_post_id, array( $metadata['artist'] ), FullPeace_Media_To_Post::$slug . '_speakers', true );
+        wp_set_object_terms( $talk_post_id, array( $metadata['album'] ), FullPeace_Media_To_Post::$slug . '_series', true );
 
         // I wonder if the file has an image attached?
         $post_thumbnail_id = get_post_thumbnail_id( $attachment_ID );
@@ -159,7 +171,7 @@ class FullPeace_Media_To_Post {
         require_once FPMTP__PLUGIN_DIR . 'includes/class.setup.php';
 
         FullPeace_Media_To_Post_Setup::on_deactivation();
-        delete_option('fpmtp_deferred_admin_notices');
+        delete_option(self::$slug . '_deferred_admin_notices');
     }
 
     /**
@@ -176,15 +188,15 @@ class FullPeace_Media_To_Post {
     }
 
     public static function view( $name, array $args = array() ) {
-        $args = apply_filters( 'akismet_view_arguments', $args, $name );
+        $args = apply_filters( self::$slug . '_view_arguments', $args, $name );
 
         foreach ( $args AS $key => $val ) {
             $$key = $val;
         }
 
-        load_plugin_textdomain( 'akismet' );
+        load_plugin_textdomain( FPMTP__I18N_NAMESPACE );
 
-        $file = AKISMET__PLUGIN_DIR . 'views/'. $name . '.php';
+        $file = FPMTP__PLUGIN_DIR . 'views/'. $name . '.php';
 
         include( $file );
     }

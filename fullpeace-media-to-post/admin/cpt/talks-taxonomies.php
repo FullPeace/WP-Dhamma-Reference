@@ -14,7 +14,7 @@ class FullPeace_Media_To_Post_Talks_Taxonomy {
     /**
      * Registers the Speakers Custom Taxonomy for the Talks Custom Post Type.
      */
-    public function the_speaker() {
+    public static function the_speaker() {
 
         $labels = array(
             'name'                       => _x( 'Speakers', 'Taxonomy General Name', FPMTP__I18N_NAMESPACE ),
@@ -46,14 +46,14 @@ class FullPeace_Media_To_Post_Talks_Taxonomy {
                                                 'with_front' => false,
                                             ),
         );
-        register_taxonomy( 'fpmtp_speakers', array( 'fpmtp_talks' ), $args );
+        register_taxonomy( FullPeace_Media_To_Post::$slug . '_speakers', array( FullPeace_Media_To_Post::$slug . '_talks' ), $args );
 
     }
 
     /**
      * Registers the Series Custom Taxonomy for the Talks Custom Post Type.
      */
-    public function the_series(){
+    public static function the_series(){
 
         $labels = array(
             'name'                       => _x( 'Series', 'Taxonomy General Name', FPMTP__I18N_NAMESPACE ),
@@ -85,7 +85,7 @@ class FullPeace_Media_To_Post_Talks_Taxonomy {
                                                 'with_front' => false,
                                                 ),
         );
-        register_taxonomy( 'fpmtp_series', array( 'fpmtp_talks', 'fpmtp_talks_series' ), $args );
+        register_taxonomy( FullPeace_Media_To_Post::$slug . '_series', array( FullPeace_Media_To_Post::$slug . '_talks', FullPeace_Media_To_Post::$slug . '_talks_series' ), $args );
     }
 
     /**
