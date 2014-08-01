@@ -28,6 +28,7 @@ class FullPeace_Media_To_Post_Admin {
     {
         self::$initiated = true;
 
+
         add_action('admin_init', array('FullPeace_Media_To_Post_Admin', 'admin_init'));
         add_action('admin_menu', array('FullPeace_Media_To_Post_Admin', 'admin_menu'), 5);
         add_action('admin_notices', array('FullPeace_Media_To_Post_Admin', 'display_notice'));
@@ -40,20 +41,141 @@ class FullPeace_Media_To_Post_Admin {
     public static function admin_init() {
         load_plugin_textdomain( FPMTP__I18N_NAMESPACE );
 
-        //add_option( FullPeace_Media_To_Post::get_slug('set_cpt_audio'), 'Talks');
-        //add_option( FullPeace_Media_To_Post::get_slug('set_cpt_video'), 'Video');
-        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_audio'), 'enable');
-        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_video'), '');
-        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_ebook'), '');
-        //register_setting( 'default', FullPeace_Media_To_Post::get_slug('set_cpt_audio') );
-        //register_setting( 'default', FullPeace_Media_To_Post::get_slug('set_cpt_video') );
-        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_audio') );
-        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_video') );
-        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_ebook') );
+//        self::setting('enable_cpt_audio', 'enable');
+//        self::setting('enable_cpt_video', '');
+//        self::setting('enable_cpt_ebook', '');
+
+        // New approach ^_^
+        //self::register_settings();
+//        //add_option( FullPeace_Media_To_Post::get_slug('set_cpt_audio'), 'Talks');
+//        //add_option( FullPeace_Media_To_Post::get_slug('set_cpt_video'), 'Video');
+//        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_audio'), 'enable');
+//        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_video'), '');
+//        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_ebook'), '');
+//        //register_setting( 'default', FullPeace_Media_To_Post::get_slug('set_cpt_audio') );
+//        //register_setting( 'default', FullPeace_Media_To_Post::get_slug('set_cpt_video') );
+//        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_audio') );
+//        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_video') );
+//        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_ebook') );
     }
 
+    public static function setting($setting, $option_value = FALSE)
+    {
+        return FullPeace_Media_To_Post::setting($setting, $option_value);
+    }
+
+    private static function register_settings() {
+
+        register_setting( FullPeace_Media_To_Post::get_slug( 'option_group' ), FullPeace_Media_To_Post::get_slug('setting_enable_audio') );
+        register_setting( FullPeace_Media_To_Post::get_slug( 'option_group' ), FullPeace_Media_To_Post::get_slug('setting_enable_video') );
+        register_setting( FullPeace_Media_To_Post::get_slug( 'option_group' ), FullPeace_Media_To_Post::get_slug('setting_enable_audio') );
+        add_option( FullPeace_Media_To_Post::get_slug('setting_enable_audio'), 1);
+        add_option( FullPeace_Media_To_Post::get_slug('setting_enable_video'), 0);
+        add_option( FullPeace_Media_To_Post::get_slug('setting_enable_audio'), 1);
+
+        add_settings_section( 'main_settings' , 'Main Settings', array( __CLASS__, 'display_settings_section' ), FullPeace_Media_To_Post::get_slug( 'settings' ));
+        add_settings_field('plugin_text_string', 'Plugin Text Input', array( __CLASS__, 'display_settings_section' ), FullPeace_Media_To_Post::get_slug( 'settings' ), FullPeace_Media_To_Post::get_slug( 'main_settings' ));
+
+        add_settings_section(
+        // ID used to identify this section and with which to register options
+            'settings_section',
+            // Title to be displayed on the administration page
+            'Configuration of Media To Post',
+            // Callback used to render the description of the section
+            array( __CLASS__, 'display_settings_section' ),
+            // Page on which to add this section of options
+            FullPeace_Media_To_Post::get_slug('settings')
+        );
+
+        add_settings_field(
+            FullPeace_Media_To_Post::get_slug('setting_field_audio'),
+            'Enable Talks',
+            array( __CLASS__, 'render_option_input_html_audio' ),
+            FullPeace_Media_To_Post::get_slug('settings'),
+            'settings_section'
+        );
+
+        add_settings_field(
+            FullPeace_Media_To_Post::get_slug('setting_field_video'),
+            'Enable Video',
+            array( __CLASS__, 'render_option_input_html_video' ),
+            FullPeace_Media_To_Post::get_slug('settings'),
+            'settings_section'
+        );
+
+        add_settings_field(
+            FullPeace_Media_To_Post::get_slug('setting_field_ebook'),
+            'Enable eBooks',
+            array( __CLASS__, 'render_option_input_html_ebook' ),
+            FullPeace_Media_To_Post::get_slug('settings'),
+            'settings_section'
+        );
+
+    }// end of register_settings()
+
+    /**
+     * Generate the HTML input element
+     *
+     * @since 0.1.0
+     */
+    public static function render_option_input_html_audio() {
+        // First, we read the option from db
+        $options = get_option( FullPeace_Media_To_Post::get_slug('setting_enable_audio') );
+var_dump($options);
+        $html = '<input type="checkbox" id="checkbox_audio" name="render_option_input_html_audio[checkbox_audio]" value="1"' . checked( 1, $options['checkbox_audio'], false ) . '/>';
+        $html .= '<label for="checkbox_audio">This is an example of a checkbox</label>';
+
+        echo $html;
+
+    } // end render_option_input_html_audio
+
+    /**
+     * Generate the HTML input element
+     *
+     * @since 0.1.0
+     */
+    public static function render_option_input_html_video() {
+        // First, we read the option from db
+        $options = get_option( FullPeace_Media_To_Post::get_slug('setting_enable_video') );
+        var_dump($options);
+
+        $html = '<input type="checkbox" id="'.FullPeace_Media_To_Post::get_slug('setting_enable_video').'" name="'.FullPeace_Media_To_Post::get_slug('setting_enable_video').'" value="1"' . checked( 1, $options[FullPeace_Media_To_Post::get_slug('setting_enable_video')], false ) . '/>';
+        $html .= '<label for="'.FullPeace_Media_To_Post::get_slug('setting_enable_video').'">This is an example of a checkbox</label>';
+
+        echo $html;
+
+    } // end render_option_input_html_video
+
+    /**
+     * Generate the HTML input element
+     *
+     * @since 0.1.0
+     */
+    public static function render_option_input_html_ebook() {
+        // First, we read the option from db
+        $options = get_option( FullPeace_Media_To_Post::get_slug('setting_enable_ebook') );
+        var_dump($options);
+
+        $html = '<input type="checkbox" id="'.FullPeace_Media_To_Post::get_slug('setting_enable_ebook').'" name="'.FullPeace_Media_To_Post::get_slug('setting_enable_ebook').'" value="1"' . checked( 1, $options[FullPeace_Media_To_Post::get_slug('setting_enable_ebook')], false ) . '/>';
+        $html .= '<label for="'.FullPeace_Media_To_Post::get_slug('setting_enable_ebook').'"> Custom Post Type for attaching eBook files</label>';
+
+        echo $html;
+
+    } // end render_option_input_html_ebook
+
+    /**
+     * This function provides a simple description for the Sunny Demo Options page.
+     * This function is being passed as a parameter in the add_settings_section function.
+     *
+     * @since 0.1.0
+     */
+    public static function display_settings_section() {
+        echo '<p>Media To Post plugin creates posts when you upload files to Wordpress.</p>';
+    } // end of display_settings_section
+
     public static function admin_menu() {
-        self::load_menu();
+        // Replaced by admin page framework
+        //self::load_menu();
     }
 
     public static function admin_head() {
@@ -69,13 +191,26 @@ class FullPeace_Media_To_Post_Admin {
 
     public static function load_menu() {
 
-        add_submenu_page('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks', 'talks-series', 'Talks Series', 'edit_posts', 'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks_series');
+        add_submenu_page(
+            'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks',
+            'talks-series',
+            'Talks Series',
+            'edit_posts',
+            'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks_series');
 
-        $hook = add_options_page( __('Media To Post', FPMTP__I18N_NAMESPACE), __('FullPeace Media To Post Settings', FPMTP__I18N_NAMESPACE), 'manage_options', 'fpmtp-settings', array( 'FullPeace_Media_To_Post_Admin', 'display_page' ) );
+        self::register_settings();
+
+        $hook = add_options_page(
+            __('Media To Post', FPMTP__I18N_NAMESPACE),
+            __('FullPeace Media To Post Settings', FPMTP__I18N_NAMESPACE),
+            'manage_options',
+            FullPeace_Media_To_Post::get_slug('settings'),
+            array( 'FullPeace_Media_To_Post_Admin', 'display_page' ) );
 
         if ( version_compare( $GLOBALS['wp_version'], '3.3', '>=' ) ) {
             add_action( "load-$hook", array( 'FullPeace_Media_To_Post_Admin', 'admin_help' ) );
         }
+
     }
 
 
@@ -164,8 +299,10 @@ class FullPeace_Media_To_Post_Admin {
         return $url;
     }
 
+
     public static function display_page() {
-        ?>
+        FullPeace_Media_To_Post::view('settings');
+        /*?>
         <div class="wrap">
             <h2>Configuration</h2>
             <form method="post" action="options.php">
@@ -175,16 +312,16 @@ class FullPeace_Media_To_Post_Admin {
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><label for="<?php FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>"">Enable parsing audio files:</label></th>
-                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" <?php echo get_option(FullPeace_Media_To_Post::get_slug('enable_cpt_audio')) == 'enable' ? "checked" : "" ; ?> value="enable" />
+                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" <?php echo self::setting('enable_cpt_ebook') == 'enable' ? "checked" : "" ; ?> value="enable" />
                             <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks'); ?>">Talks</a></td>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><label for="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); ?>">Enable parsing video files:</label> (NOT YET IMPLEMENTED)</th>
-                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); ?>" <?php echo get_option(FullPeace_Media_To_Post::get_slug('enable_cpt_video')) == 'enable' ? "checked" : "" ; ?> value="enable" /> <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_video'); ?>">Video</a></td>
+                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); ?>" <?php echo self::setting('enable_cpt_video') == 'enable' ? "checked" : "" ; ?> value="enable" /> <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_video'); ?>">Video</a></td>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><label for="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_ebook'); ?>">Enable eBooks (PDF, EPUB, MOBI files):</label> (NOT YET IMPLEMENTED)</th>
-                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_ebook'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_ebook'); ?>" <?php echo get_option(FullPeace_Media_To_Post::get_slug('enable_cpt_ebook')) == 'enable' ? "checked" : "" ; ?> value="enable" /> <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_ebook'); ?>">eBook</a></td>
+                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_ebook'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_ebook'); ?>" <?php echo self::setting('enable_cpt_ebook') == 'enable' ? "checked" : "" ; ?> value="enable" /> <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_ebook'); ?>">eBook</a></td>
                     </tr>
                 </table>
                 <!--
@@ -207,7 +344,7 @@ class FullPeace_Media_To_Post_Admin {
                 <?php submit_button(); ?>
             </form>
         </div>
-    <?php
+    <?php*/
     }
 
 

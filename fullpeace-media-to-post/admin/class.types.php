@@ -18,11 +18,44 @@ class FullPeace_Media_To_Post_Types {
      */
     public static function register_custom_post_types()
     {
-        require_once FPMTP__PLUGIN_DIR . 'admin/cpt/talks-cpt.php';
-        FullPeace_Media_To_Post_Talks_CPT::register_cpt();
-        FullPeace_Media_To_Post_Talks_CPT::register_talks_series_cpt();
+        /**
+         * @todo Handle these values centrally so they're only retrieved once
+         */
+        $enable = array(
+                'talks' => TRUE,//FullPeace_Media_To_Post::setting('enable_cpt_audio'),
+                'video' => FALSE,//FullPeace_Media_To_Post::setting('enable_cpt_video'), // Not yet implemented
+                'ebooks' => TRUE,//FullPeace_Media_To_Post::setting('enable_cpt_ebook'),
+                );
+
+
+        if(!empty($enable)) {
+            require_once FPMTP__PLUGIN_DIR . 'admin/cpt/talks-cpt.php';
+            if($enable['talks'])
+                FullPeace_Media_To_Post_Talks_CPT::register_cpt();
+            if($enable['talks'])
+                FullPeace_Media_To_Post_Talks_CPT::register_talks_series_cpt();
+            if($enable['ebooks'])
+                FullPeace_Media_To_Post_Talks_CPT::register_ebook_cpt();
+        }
     }
 
+    /**
+     * Sanitize each setting field as needed
+     *
+     * @param array $input Contains all settings fields as array keys
+     */
+    public function sanitize( $input )
+    {
+        $new_input = array();
+        if( isset( $input[FullPeace_Media_To_Post::the_slug('enable_cpt_audio')] ) )
+            $new_input[FullPeace_Media_To_Post::the_slug('enable_cpt_audio')] = absint( $input[FullPeace_Media_To_Post::the_slug('enable_cpt_audio')] );
+        if( isset( $input[FullPeace_Media_To_Post::the_slug('enable_cpt_video')] ) )
+            $new_input[FullPeace_Media_To_Post::the_slug('enable_cpt_video')] = absint( $input[FullPeace_Media_To_Post::the_slug('enable_cpt_video')] );
+        if( isset( $input[FullPeace_Media_To_Post::the_slug('enable_cpt_ebook')] ) )
+            $new_input[FullPeace_Media_To_Post::the_slug('enable_cpt_ebook')] = absint( $input[FullPeace_Media_To_Post::the_slug('enable_cpt_ebook')] );
+
+        return $new_input;
+    }
     /**
      * Registers custom taxonomies used by this plugin.
      */

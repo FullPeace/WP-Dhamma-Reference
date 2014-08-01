@@ -50,14 +50,30 @@ class FullPeace_Media_To_Post {
         add_action( 'plugins_loaded', array( 'FullPeace_Media_To_Post_Public', 'init' ) );
     }
 
-    public static function get_slug($type)
+    public static function get_slug($type = FALSE)
     {
-        return self::$slug . '_' . $type;
+        if($type)
+            return self::$slug . '_' . $type;
+        else
+            return plugin_basename( __FILE__ );
     }
 
     public static function the_slug($type)
     {
         echo self::get_slug($type);
+    }
+
+    public static function setting($setting, $option_value = FALSE)
+    {
+        if($option_value)
+        {
+            //FullPeace_Media_To_Post_Admin::add_notice('Setting setting ' . $setting . ' to ' . $option_value);
+            $added = add_option( FullPeace_Media_To_Post::get_slug($setting), $option_value);
+            register_setting( 'default', FullPeace_Media_To_Post::get_slug($setting) );
+        }else{
+            //FullPeace_Media_To_Post_Admin::add_notice('Got setting ' . $setting . ' :: ' . get_option(FullPeace_Media_To_Post::get_slug($setting)));
+            return get_option(FullPeace_Media_To_Post::get_slug($setting));
+        }
     }
 
     /**
@@ -196,8 +212,8 @@ class FullPeace_Media_To_Post {
 
         load_plugin_textdomain( FPMTP__I18N_NAMESPACE );
 
-        $file = FPMTP__PLUGIN_DIR . 'views/'. $name . '.php';
+        $file = FPMTP__PLUGIN_DIR . 'admin/views/'. $name . '.php';
 
-        include( $file );
+        include_once( $file );
     }
 }

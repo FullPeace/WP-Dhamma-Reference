@@ -48,6 +48,7 @@ register_uninstall_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_uni
 add_action( 'init', array( 'FullPeace_Media_To_Post', 'init' ) );
 
 if ( is_admin() ) {
+    require_once( FPMTP__PLUGIN_DIR . 'admin/class.optionspage.php' );
     require_once( FPMTP__PLUGIN_DIR . 'admin/class.admin.php' );
     add_action( 'init', array( 'FullPeace_Media_To_Post_Admin', 'init' ) );
 }
