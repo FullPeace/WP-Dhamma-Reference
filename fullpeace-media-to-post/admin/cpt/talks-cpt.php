@@ -9,172 +9,181 @@
  *
  * @since    0.1.0
  */
-class FullPeace_Media_To_Post_Talks_CPT {
+}
+class FullPeace_Talks_PostType  extends AdminPageFramework_PostType {
+/**
+ * This method is called at the end of the constructor.
+ *
+ * Alternatively, use the start_{extended class name} method, which also is called at the end of the constructor.
+ */
+public function start() {
 
-    /**
-     * Register Custom Post Type
-     */
-    public static function register_cpt() {
+    $this->setAutoSave( true );
+    $this->setAuthorTableFilter( true );
 
-        $labels = array(
-            'name'                => _x( 'Talks', 'Post Type General Name', FPMTP__I18N_NAMESPACE ),
-            'singular_name'       => _x( 'Talk', 'Post Type Singular Name', FPMTP__I18N_NAMESPACE ),
-            'menu_name'           => __( 'Talks', FPMTP__I18N_NAMESPACE ),
-            'parent_item_colon'   => __( 'Parent Item:', FPMTP__I18N_NAMESPACE ),
-            'all_items'           => __( 'All Talks', FPMTP__I18N_NAMESPACE ),
-            'view_item'           => __( 'View Talk', FPMTP__I18N_NAMESPACE ),
-            'add_new_item'        => __( 'Add New Talk', FPMTP__I18N_NAMESPACE ),
-            'add_new'             => __( 'Add New', FPMTP__I18N_NAMESPACE ),
-            'edit_item'           => __( 'Edit Talk', FPMTP__I18N_NAMESPACE ),
-            'update_item'         => __( 'Update Talk', FPMTP__I18N_NAMESPACE ),
-            'search_items'        => __( 'Search Talks', FPMTP__I18N_NAMESPACE ),
-            'not_found'           => __( 'Not found', FPMTP__I18N_NAMESPACE ),
-            'not_found_in_trash'  => __( 'Not found in Trash', FPMTP__I18N_NAMESPACE ),
-        );
-        $args = array(
-            'label'               => __( 'talk', FPMTP__I18N_NAMESPACE ),
-            'description'         => __( 'Talks (audio files)', FPMTP__I18N_NAMESPACE ),
-            'labels'              => $labels,
-            'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', ),
-            'taxonomies'          => array( 'speaker', 'compilation', 'duration', 'location', 'category' ),
-            'hierarchical'        => false,
-            'public'              => true,
-            'show_ui'             => true,
-            'show_in_menu'        => true,
-            'show_in_nav_menus'   => true,
-            'show_in_admin_bar'   => true,
-            'menu_position'       => 5,
-            'can_export'          => true,
-            'has_archive'         => true,
-            'exclude_from_search' => false,
-            'publicly_queryable'  => true,
-            'capability_type'     => 'post',
-            'rewrite'             => array(
-                                        'slug' => 'talks',
-                                        'with_front' => false,
-                                    ),
-        );
-        register_post_type( FullPeace_Media_To_Post::$slug . '_talks', $args );
-
-    }
-    /**
-     * Register relational Custom Post Type between talks and series, to be able to edit the series page.
-     *
-     * @todo Update the title of the CPT on taxonomy term name change
-     **/
-    public static function register_talks_series_cpt() {
-
-        $labels = array(
-            'name'                => _x( 'Talks Series', 'Post Type General Name', FPMTP__I18N_NAMESPACE ),
-            'singular_name'       => _x( 'Talk Series', 'Post Type Singular Name', FPMTP__I18N_NAMESPACE ),
-            'menu_name'           => __( 'Talks Series', FPMTP__I18N_NAMESPACE ),
-            'parent_item_colon'   => __( 'Parent Item:', FPMTP__I18N_NAMESPACE ),
-            'all_items'           => __( 'All Items', FPMTP__I18N_NAMESPACE ),
-            'view_item'           => __( 'View Item', FPMTP__I18N_NAMESPACE ),
-            'add_new_item'        => __( 'Add New Item', FPMTP__I18N_NAMESPACE ),
-            'add_new'             => __( 'Add New', FPMTP__I18N_NAMESPACE ),
-            'edit_item'           => __( 'Edit Item', FPMTP__I18N_NAMESPACE ),
-            'update_item'         => __( 'Update Item', FPMTP__I18N_NAMESPACE ),
-            'search_items'        => __( 'Search Item', FPMTP__I18N_NAMESPACE ),
-            'not_found'           => __( 'Not found', FPMTP__I18N_NAMESPACE ),
-            'not_found_in_trash'  => __( 'Not found in Trash', FPMTP__I18N_NAMESPACE ),
-        );
-        $rewrite = array(
-            'slug'                => 'talks-series',
-            'with_front'          => false,
-            'pages'               => true,
-            'feeds'               => true,
-        );
-        $capabilities = array(
-            'edit_post'           => 'edit_post',
-            'read_post'           => 'read_post',
-            'delete_post'         => 'delete_post',
-            'edit_posts'          => 'edit_posts',
-            'edit_others_posts'   => 'edit_others_posts',
-            'publish_posts'       => 'publish_posts', //false, // New posts should not be added manually, only on term creation
-            'read_private_posts'  => 'read_private_posts',
-        );
-        $args = array(
-            'label'               => __( FullPeace_Media_To_Post::$slug . '_talks_series', FPMTP__I18N_NAMESPACE ),
-            'description'         => __( 'Series of talks', FPMTP__I18N_NAMESPACE ),
-            'labels'              => $labels,
-            'supports'            => array( 'title', 'editor', 'author', 'revisions', ),
-            'taxonomies'          => array( FullPeace_Media_To_Post::$slug . '_series' ),
-            'hierarchical'        => false,
-            'public'              => true,
-            'show_ui'             => true,
-            'show_in_menu'        => false,
-            'show_in_nav_menus'   => false,
-            'show_in_admin_bar'   => false,
-            'menu_position'       => 5,
-            'can_export'          => true,
-            'has_archive'         => false,
-            'exclude_from_search' => false,
-            'publicly_queryable'  => true,
-            '_builtin'            => false,
-            'rewrite'             => $rewrite,
-            //'capabilities'        => $capabilities,
-        );
-        register_post_type( FullPeace_Media_To_Post::$slug . '_talks_series', $args );
-
-    }
-
-
-    /**
-     * Register eBook Custom Post Type
-     */
-    public static function register_ebook_cpt() {
-
-        $labels = array(
-            'name'                => _x( 'eBooks', 'Post Type General Name', FPMTP__I18N_NAMESPACE ),
-            'singular_name'       => _x( 'eBook', 'Post Type Singular Name', FPMTP__I18N_NAMESPACE ),
-            'menu_name'           => __( 'eBooks', FPMTP__I18N_NAMESPACE ),
-            'parent_item_colon'   => __( 'Parent Item:', FPMTP__I18N_NAMESPACE ),
-            'all_items'           => __( 'All eBooks', FPMTP__I18N_NAMESPACE ),
-            'view_item'           => __( 'View eBook', FPMTP__I18N_NAMESPACE ),
-            'add_new_item'        => __( 'Add New eBook', FPMTP__I18N_NAMESPACE ),
-            'add_new'             => __( 'Add New', FPMTP__I18N_NAMESPACE ),
-            'edit_item'           => __( 'Edit eBook', FPMTP__I18N_NAMESPACE ),
-            'update_item'         => __( 'Update eBook', FPMTP__I18N_NAMESPACE ),
-            'search_items'        => __( 'Search eBooks', FPMTP__I18N_NAMESPACE ),
-            'not_found'           => __( 'Not found', FPMTP__I18N_NAMESPACE ),
-            'not_found_in_trash'  => __( 'Not found in Trash', FPMTP__I18N_NAMESPACE ),
-        );
-        $args = array(
-            'label'               => __( 'eBook', FPMTP__I18N_NAMESPACE ),
-            'description'         => __( 'eBooks (PDF, MOBI, EPUB)', FPMTP__I18N_NAMESPACE ),
-            'labels'              => $labels,
-            'supports'            => array( 'title', 'editor', 'thumbnail', 'revisions', ),
-            'taxonomies'          => array( 'author', 'category' ),
-            'hierarchical'        => false,
-            'public'              => true,
-            'show_ui'             => true,
-            'show_in_menu'        => true,
-            'show_in_nav_menus'   => true,
-            'show_in_admin_bar'   => true,
-            'menu_position'       => 5,
-            'can_export'          => true,
-            'has_archive'         => true,
-            'exclude_from_search' => false,
-            'publicly_queryable'  => true,
-            'capability_type'     => 'post',
-            'rewrite'             => array(
-                'slug' => 'eBooks',
-                'with_front' => false,
+    $this->setPostTypeArgs(
+        array(			// argument - for the array structure, refer to http://codex.wordpress.org/Function_Reference/register_post_type#Arguments
+            'labels' => array(
+                'name'                => _x( 'Talks', 'Post Type General Name', FPMTP__I18N_NAMESPACE ),
+                'singular_name'       => _x( 'Talk', 'Post Type Singular Name', FPMTP__I18N_NAMESPACE ),
+                'menu_name'           => __( 'Talks', FPMTP__I18N_NAMESPACE ),
+                'parent_item_colon'   => __( 'Parent Item:', FPMTP__I18N_NAMESPACE ),
+                'all_items'           => __( 'All Talks', FPMTP__I18N_NAMESPACE ),
+                'view_item'           => __( 'View Talk', FPMTP__I18N_NAMESPACE ),
+                'add_new_item'        => __( 'Add New Talk', FPMTP__I18N_NAMESPACE ),
+                'add_new'             => __( 'Add New', FPMTP__I18N_NAMESPACE ),
+                'edit_item'           => __( 'Edit Talk', FPMTP__I18N_NAMESPACE ),
+                'update_item'         => __( 'Update Talk', FPMTP__I18N_NAMESPACE ),
+                'search_items'        => __( 'Search Talks', FPMTP__I18N_NAMESPACE ),
+                'not_found'           => __( 'Not found', FPMTP__I18N_NAMESPACE ),
+                'not_found_in_trash'  => __( 'Not found in Trash', FPMTP__I18N_NAMESPACE ),
+                'plugin_listing_table_title_cell_link'	=>	__( 'eBooks', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
             ),
+            'public'			=>	true,
+            'menu_position' 	=>	5,
+            'supports'			=>	array( 'title', 'editor', 'thumbnail' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
+            'taxonomies'		=>	array( 'speakers' ),
+            'has_archive'		=>	true,
+            'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
+            'menu_icon'			=>	plugins_url( 'asset/image/wp-logo_16x16.png', APFDEMO_FILE ),
+            // ( framework specific key ) this sets the screen icon for the post type for WordPress v3.7.1 or below.
+            'screen_icon'		=>	dirname( APFDEMO_FILE  ) . '/asset/image/wp-logo_32x32.png', // a file path can be passed instead of a url, plugins_url( 'asset/image/wp-logo_32x32.png', APFDEMO_FILE )
+        )
+    );
+
+    // the setUp() method is too late to add taxonomies. So we use start_{class name} action hook.
+    $this->addTaxonomy(
+        'fpmtp_speakers', // taxonomy slug
+        array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+            'labels' => array(
+                'name' => 'Speakers',
+                'add_new_item' => 'Add New Speaker',
+                'new_item_name' => "New Speaker"
+            ),
+            'show_ui' => true,
+            'show_tagcloud' => true,
+            'hierarchical' => false,
+            'show_admin_column' => true,
+            'show_in_nav_menus' => true,
+            'show_table_filter' => true,	// framework specific key
+            'show_in_sidebar_menus' => true,	// framework specific key
+        )
+    );
+    $this->addTaxonomy(
+        'fpmtp_series',
+        array(
+            'labels' => array(
+                'name' => 'Series',
+                'add_new_item' => 'Add New Series',
+                'new_item_name' => "New Series"
+            ),
+            'show_ui' => true,
+            'show_tagcloud' => true,
+            'hierarchical' => false,
+            'show_admin_column' => true,
+            'show_in_nav_menus' => true,
+            'show_table_filter' => true,	// framework specific key
+            'show_in_sidebar_menus' => true,	// framework specific key
+        )
+    );
+
+    $this->setFooterInfoLeft( '<br />Custom Text on the left hand side.' );
+    $this->setFooterInfoRight( '<br />Custom text on the right hand side' );
+
+    add_filter( 'the_content', array( $this, 'replyToPrintOptionValues' ) );
+
+    add_filter( 'request', array( $this, 'replyToSortCustomColumn' ) );
+
+}
+
+/*
+ * Built-in callback methods
+ */
+public function columns_fpmtp_talks( $aHeaderColumns ) {	// columns_{post type slug}
+
+    return array_merge(
+        $aHeaderColumns,
+        array(
+            'cb'			=> '<input type="checkbox" />',	// Checkbox for bulk actions. 
+            'title'			=> __( 'Title', FPMTP__I18N_NAMESPACE ),		// Post title. Includes "edit", "quick edit", "trash" and "view" links. If $mode (set from $_REQUEST['mode']) is 'excerpt', a post excerpt is included between the title and links.
+            'speakers'  => __( 'Speakers', FPMTP__I18N_NAMESPACE ),		// eBook author, not the post author.
+            // 'categories'	=> __( 'Categories', FPMTP__I18N_NAMESPACE ),	// Categories the post belongs to. 
+            // 'tags'		=> __( 'Tags', FPMTP__I18N_NAMESPACE ),	// Tags for the post. 
+            'comments' 		=> '<div class="comment-grey-bubble"></div>', // Number of pending comments. 
+            'date'			=> __( 'Date', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post. 
+            'series'			=> __( 'Series' ),
+        )
+    );
+
+}
+public function sortable_columns_fpmtp_talks( $aSortableHeaderColumns ) {	// sortable_columns_{post type slug}
+    return $aSortableHeaderColumns + array(
+        'speakers' => 'speakers',
+        'series' => 'series',
+    );
+}
+public function cell_fpmtp_talks_series( $sCell, $iPostID ) {	// cell_{post type}_{column key}
+
+    return sprintf( __( 'Post ID: %1$s', FPMTP__I18N_NAMESPACE ), $iPostID ) . "<br />"
+    . __( 'Text', FPMTP__I18N_NAMESPACE ) . ': ' . get_post_meta( $iPostID, 'metabox_text_field', true );
+
+}
+
+/**
+ * Custom callback methods
+ */
+
+/**
+ * Modifies the way how the talk series column is sorted. This makes it sorted by post ID.
+ *
+ * @see			http://codex.wordpress.org/Class_Reference/WP_Query#Order_.26_Orderby_Parameters
+ */
+public function replyToSortCustomColumn( $aVars ){
+
+    if ( isset( $aVars['orderby'] ) && 'series' == $aVars['orderby'] ){
+        $aVars = array_merge(
+            $aVars,
+            array(
+                'meta_key'	=>	'metabox_text_field',
+                'orderby'	=>	'meta_value',
+            )
         );
-        register_post_type( FullPeace_Media_To_Post::get_slug( 'eBooks'), $args );
-
+    }elseif ( isset( $aVars['orderby'] ) && 'speakers' == $aVars['orderby'] ){
+        $aVars = array_merge(
+            $aVars,
+            array(
+                'meta_key'	=>	'metabox_text_field',
+                'orderby'	=>	'meta_value',
+            )
+        );
     }
+    return $aVars;
+}
 
-    /**
-     * Adds the action to WP using the 'init' hook.
-     */
-    public static function init()
-    {
-        FullPeace_Media_To_Post_Admin::add_notice('init CPT');
-        // Hook into the 'init' action
-        add_action( 'init', array('FullPeace_Media_To_Post_Talks_CPT', 'register_cpt'), 0 );
-    }
+/**
+ * Modifies the output of the post content.
+ */
+public function replyToPrintOptionValues( $sContent ) {
+
+    if ( ! isset( $GLOBALS['post']->ID ) || get_post_type() != 'fpmtp_talks' ) return $sContent;
+
+    // 1. To retrieve the meta box data	- get_post_meta( $post->ID ) will return an array of all the meta field values.
+    // or if you know the field id of the value you want, you can do $value = get_post_meta( $post->ID, $field_id, true );
+    $iPostID = $GLOBALS['post']->ID;
+    $aPostData = array();
+    foreach( ( array ) get_post_custom_keys( $iPostID ) as $sKey ) 	// This way, array will be unserialized; easier to view.
+        $aPostData[ $sKey ] = get_post_meta( $iPostID, $sKey, true );
+
+    // 2. To retrieve the saved options in the setting pages created by the framework - use the get_option() function.
+    // The key name is the class name by default. The key can be changed by passing an arbitrary string 
+    // to the first parameter of the constructor of the AdminPageFramework class.		
+    $aSavedOptions = get_option( 'FullPeace_Media_To_Post' );
+
+    return "<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>"
+    . $this->oDebug->getArray( $aPostData )
+    . "<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>"
+    . $this->oDebug->getArray( $aSavedOptions );
+
+}
 
 }

@@ -9,7 +9,7 @@ class FullPeace_eBooks_PostType  extends AdminPageFramework_PostType {
      */
     public function start() {
 
-        $this->setAutoSave( false );
+        $this->setAutoSave( true );
         $this->setAuthorTableFilter( true );
 
         $this->setPostTypeArgs(
