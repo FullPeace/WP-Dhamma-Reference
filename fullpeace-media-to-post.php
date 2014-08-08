@@ -6,13 +6,19 @@
  * For MP3 files, the following information is parsed:
  * - ID3Tag 'artist' > Speaker (custom taxonomy) term added.
  * - ID3Tag 'album' > Series (custom taxonomy) term added.
- * - WP attachment post content is copied to the post content of the Talk post that is created.
+ * - WP attachment post content is copied to the post content of the Audio post that is created.
+ * - ID3Tags 'comment' and 'length_formatted' are appended to the post content, if available in the file.
+ *
+ * For (e)Books, the plugin creates a new Books post type, allowing upload of:
+ * - PDF files
+ * - EPUB files
+ * - MOBI files
  *
  * @package FPMTP
  *
  * @wordpress-plugin
  * Plugin Name:       FullPeace Media To Post
- * Plugin URI:        http://github.com/tommcfarlin/post-meta-manager
+ * Plugin URI:        http://github.com/FullPeace/fullpeace-media-to-post
  * Description:       FullPeace Media To Post creates Custom Post Types for media files on upload via the Media Library.
  * Version:           0.1.0
  * Author:            FullPeace.org

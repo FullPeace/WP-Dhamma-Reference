@@ -37,7 +37,7 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
                     'search_items'        => __( 'Search Bios', FPMTP__I18N_NAMESPACE ),
                     'not_found'           => __( 'Not found', FPMTP__I18N_NAMESPACE ),
                     'not_found_in_trash'  => __( 'Not found in Trash', FPMTP__I18N_NAMESPACE ),
-                    'plugin_listing_table_title_cell_link'	=>	__( 'bios', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
+                    'plugin_listing_table_title_cell_link'	=>	__( 'Bios', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
                 ),
                 'public'			=>	true,
                 'menu_position' 	=>	5,

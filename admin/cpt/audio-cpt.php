@@ -37,12 +37,12 @@ public function start() {
                 'search_items'        => __( 'Search Audio', FPMTP__I18N_NAMESPACE ),
                 'not_found'           => __( 'Not found', FPMTP__I18N_NAMESPACE ),
                 'not_found_in_trash'  => __( 'Not found in Trash', FPMTP__I18N_NAMESPACE ),
-                'plugin_listing_table_title_cell_link'	=>	__( 'audio', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
+                'plugin_listing_table_title_cell_link'	=>	__( 'Audio', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
             ),
             'public'			=>	true,
             'menu_position' 	=>	5,
             'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-            'taxonomies'		=>	array( 'categories', 'fpmtp_speakers', 'fpmtp_series', 'fpmtp_languages' ),
+            'taxonomies'		=>	array( 'category', 'fpmtp_speakers', 'fpmtp_series', 'fpmtp_languages' ),
             'has_archive'		=>	true,
             'rewrite' => array( 'slug' => 'audio', 'with_front' => false ),
             'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
@@ -54,24 +54,6 @@ public function start() {
 
     // the setUp() method is too late to add taxonomies. So we use start_{class name} action hook.
     $aPostTypeSettings = AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_settings_audio' );
-//    $this->addTaxonomy(
-//        'fpmtp_type', // taxonomy slug
-//        array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
-//            'labels' => array(
-//                'name' => 'Type',
-//                'add_new_item' => 'Add New Type',
-//                'new_item_name' => "New Type"
-//            ),
-//            'show_ui' => true,
-//            'show_tagcloud' => true,
-//            'hierarchical' => false,
-//            'show_admin_column' => true,
-//            'show_in_nav_menus' => true,
-//            'rewrite' => array( 'slug' => 'audio-type', 'with_front' => false ),
-//            'show_table_filter' => true,	// framework specific key
-//            'show_in_sidebar_menus' => true,	// framework specific key
-//        )
-//    );
     if($aPostTypeSettings['fpmtp_enable_audio_languages']) {
         $this->addTaxonomy(
             'fpmtp_languages', // taxonomy slug

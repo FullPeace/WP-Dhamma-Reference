@@ -33,7 +33,7 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                 'public'			=>	true,
                 'menu_position' 	=>	5,
                 'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-                'taxonomies'		=>	array( 'categories', 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy', 'fpmtp_languages' ),
+                'taxonomies'		=>	array( 'category', 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy', 'fpmtp_languages' ),
                 'has_archive'		=>	true,
                 'rewrite' => array( 'slug' => 'books', 'with_front' => false ),
                 'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
