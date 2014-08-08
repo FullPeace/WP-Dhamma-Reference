@@ -1,10 +1,10 @@
 # FullPeace Media To Posts
 
-* Contributors: for [FullPeace.org](http://fullpeace.org/) (see [GitHub](https://github.com/FullPeace))
+* Contributors: [iohannis](http://callehunefalk.com/) for [FullPeace.org](http://fullpeace.org/) (see [GitHub](https://github.com/FullPeace))
 * Tags: custom-post-types, media-upload
-* Requires at least: 3.9.0
-* Tested up to: 3.9.1
-* Stable tag: 0.1.0
+* Requires at least: 3.8.0
+* Tested up to: 3.9.2
+* Stable tag: 0.1.2
 * License: GPLv2 or later
 * License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,14 +16,30 @@ FullPeace Media To Posts displays the post meta data associated with a given pos
 
 The plugin does not write any information to the database - it simply reads the information already stored and then provides the information in a user-friendly format.
 
+This plugin hooks into the upload feature in the Media Library in Wordpress (admin), parses the uploaded files and creates Custom Post Types and relevant related Custom Taxonomy terms.
+
+For MP3 files, the following information is parsed:
+- ID3Tag 'artist' > Speaker (custom taxonomy) term added.
+- ID3Tag 'album' > Series (custom taxonomy) term added.
+- WP attachment post content is copied to the post content of the Talk post that is created.
+- ID3Tags 'comment' and 'length_formatted' are appended to the post content, if available in the file.
+
+For (e)Books, the plugin creates a new Books post type, allowing upload of:
+- PDF files
+- EPUB files
+- MOBI files
+
+Additionally, a Bio (biography or profile) post type can be added from the settings.
+
 ## Installation
 
 ### Using The WordPress Dashboard
 
-1. Navigate to the 'Add New' Plugin Dashboard
-2. Select `FullPeace-Media-To-Post.zip` from your computer
-3. Upload
-4. Activate the plugin on the WordPress Plugin Dashboard
+1. Download the `fullpeace-media-to-post.zip` file
+2. Navigate to the 'Add New' Plugin Dashboard
+3. Select `fullpeace-media-to-post.zip` from your computer
+4. Upload
+5. Activate the plugin on the WordPress Plugin Dashboard
 
 ### Using FTP
 
