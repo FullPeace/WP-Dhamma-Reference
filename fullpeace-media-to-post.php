@@ -88,6 +88,8 @@ if ( is_admin() ) {
 
     // Allow updates from Github
     require_once( FPMTP__PLUGIN_DIR . 'library/plugin-updater/BFIGitHubPluginUploader.php' );
-    $this_plugin_file = plugin_basename( __FILE__ );
-    new BFIGitHubPluginUpdater( $this_plugin_file, 'FullPeace', "fullpeace-media-to-post" );
+    $this_plugin_file =  __FILE__ ;
+    $this_plugin_gituser =  'FullPeace' ;
+    $this_plugin_gitrepo =  "fullpeace-media-to-post" ;
+    new BFIGitHubPluginUpdater( $this_plugin_file, $this_plugin_gituser, $this_plugin_gitrepo );
 }
