@@ -31,6 +31,8 @@ Additionally, a Bio (biography or profile) post type can be added from the setti
 Please use the forums for questions, this page will be filled out with any questions that are relevant to many.
 
 == Changelog ==
+0.1.3 Bug fixes
+
 0.1.2 Further cleanup of code, better descriptions
 - Added a template for Bios CPT to be used is the template is missing one. NOTE: Only enabled for the X theme for now.
 
