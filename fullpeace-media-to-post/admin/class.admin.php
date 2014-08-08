@@ -32,10 +32,12 @@ class FullPeace_Media_To_Post_Admin {
         add_action('admin_init', array('FullPeace_Media_To_Post_Admin', 'admin_init'));
         add_action('admin_menu', array('FullPeace_Media_To_Post_Admin', 'admin_menu'), 5);
         add_action('admin_notices', array('FullPeace_Media_To_Post_Admin', 'display_notice'));
-        //add_filter('get_sample_permalink_html', array('FullPeace_Media_To_Post_Admin', 'disable_editing_url_for_talks_series'), '',4);
+        //add_filter('get_sample_permalink_html', array('FullPeace_Media_To_Post_Admin', 'disable_editing_url_for_audio_series'), '',4);
 
-        add_action( 'create_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_create_term' ), 1, 3 );
-        add_action( 'created_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_created_term' ), 1, 3 );
+        //add_action( 'create_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_create_term' ), 1, 3 );
+        //add_action( 'created_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_created_term' ), 1, 3 );
+
+        add_filter('upload_mimes',  array( 'FullPeace_Media_To_Post_Admin', 'add_ebook_mime_types'), 1, 1);
     }
 
     public static function admin_init() {
@@ -57,6 +59,30 @@ class FullPeace_Media_To_Post_Admin {
 //        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_audio') );
 //        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_video') );
 //        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_ebook') );
+    }
+
+
+    public static function add_ebook_mime_types($mime_types){
+
+        // @todo: The below would disable uploading images in the post content. Needs to restrict metabox upload.
+//        $screen = get_current_screen();
+//        if($screen->post_type == 'fpmtp_ebooks'){
+//            $aRestrictedMimeTypes = array();
+//            $aRestrictedMimeTypes['pdf'] = 'application/pdf';
+//            $aRestrictedMimeTypes['mobi'] = 'application/x-mobipocket-ebook';
+//            $aRestrictedMimeTypes['epub'] = 'application/epub+zip';
+//            return $aRestrictedMimeTypes; // Only allow these ebook formats
+//        }
+
+        //Adding ebook extensions
+        $mime_types['mobi'] = 'application/x-mobipocket-ebook';
+        $mime_types['epub'] = 'application/epub+zip';
+
+        // Just in case
+        if(!isset($mime_types['pdf']))
+            $mime_types['pdf'] = 'application/pdf';
+
+        return $mime_types;
     }
 
     public static function setting($setting, $option_value = FALSE)
@@ -192,11 +218,11 @@ var_dump($options);
     public static function load_menu() {
 
         add_submenu_page(
-            'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks',
+            'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_audio',
             'talks-series',
             'Talks Series',
             'edit_posts',
-            'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks_series');
+            'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_audio_series');
 
         self::register_settings();
 
@@ -215,9 +241,9 @@ var_dump($options);
 
 
 
-    function disable_editing_url_for_talks_series($return, $id, $new_title, $new_slug){
+    function disable_editing_url_for_audio_series($return, $id, $new_title, $new_slug){
         global $post;
-        if($post->post_type == FullPeace_Media_To_Post::$slug . '_talks_series')
+        if($post->post_type == FullPeace_Media_To_Post::$slug . '_audio_series')
         {
             $ret2 = preg_replace('/<span id="edit-slug-buttons">.*<\/span>|<span id=\'view-post-btn\'>.*<\/span>/i', '', $return);
         }
@@ -313,7 +339,7 @@ var_dump($options);
                     <tr valign="top">
                         <th scope="row"><label for="<?php FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>"">Enable parsing audio files:</label></th>
                         <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" <?php echo self::setting('enable_cpt_ebook') == 'enable' ? "checked" : "" ; ?> value="enable" />
-                            <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks'); ?>">Talks</a></td>
+                            <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_audio'); ?>">Talks</a></td>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><label for="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); ?>">Enable parsing video files:</label> (NOT YET IMPLEMENTED)</th>
@@ -361,9 +387,10 @@ var_dump($options);
     // Post create term
     function act_on_created_term( $term_id, $tt_id, $taxonomy)
     {
+        return;
         FullPeace_Media_To_Post_Admin::add_notice('hooked ' . __FUNCTION__ . ' term ' . $term_id .'.'.$tt_id .'.'.$taxonomy .'.');
 
-        if(taxonomy_exists(FullPeace_Media_To_Post::$slug . '_series') && post_type_exists(FullPeace_Media_To_Post::$slug . '_talks_series') && $taxonomy == FullPeace_Media_To_Post::$slug . '_series'){
+        if(taxonomy_exists(FullPeace_Media_To_Post::$slug . '_series') && post_type_exists(FullPeace_Media_To_Post::$slug . '_audio_series') && $taxonomy == FullPeace_Media_To_Post::$slug . '_series'){
             /**
              * Lookup the term name
              */
@@ -373,11 +400,11 @@ FullPeace_Media_To_Post_Admin::add_notice('hooked ' . __FUNCTION__ . ' term ' . 
             {
 //                $args=array(
 //                    'name' => $inserted_term->name,
-//                    'post_type' => FullPeace_Media_To_Post::$slug . '_talks_series',
+//                    'post_type' => FullPeace_Media_To_Post::$slug . '_audio_series',
 //                    'posts_per_page' => 1
 //                );
 //                $talks_series_posts = get_posts( $args );
-                $talks_series_posts = get_page_by_title( $inserted_term->name, 'OBJECT', FullPeace_Media_To_Post::$slug . '_talks_series' );
+                $talks_series_posts = get_page_by_title( $inserted_term->name, 'OBJECT', FullPeace_Media_To_Post::$slug . '_audio_series' );
 FullPeace_Media_To_Post_Admin::add_notice('hooked ' . __FUNCTION__ . ' $talks_series_posts ' . $talks_series_posts->ID);
 
                 if(empty($talks_series_posts))
@@ -388,7 +415,7 @@ FullPeace_Media_To_Post_Admin::add_notice('hooked ' . __FUNCTION__ . ' $talks_se
                         'post_title'    => $inserted_term->name,
                         'post_content'  => '',
                         'post_status'   => 'publish',
-                        'post_type'     => FullPeace_Media_To_Post::$slug . '_talks_series',
+                        'post_type'     => FullPeace_Media_To_Post::$slug . '_audio_series',
                     );
 
                     // Insert the post into the database

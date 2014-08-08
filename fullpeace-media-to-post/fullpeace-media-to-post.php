@@ -23,18 +23,22 @@
  * Domain Path:       /languages
  */
 
-if ( !function_exists( 'add_action' ) ) { // Don't expose the plugin
-    exit;
-}
+/* Exit if accessed directly */
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Definitions
  */
 define( 'FPMTP__VERSION', '0.1.0' );
+define( 'FPMTP__DEVMODE', true );
 define( 'FPMTP__I18N_NAMESPACE', 'fullpeace_org' );
 define( 'FPMTP__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'FPMTP__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
+/* Include the library */
+if ( ! class_exists( 'AdminPageFramework' ) ) {
+    include_once( FPMTP__PLUGIN_DIR . 'library/admin-page-framework.min.php'	    );
+}
 /**
  * Include the core class
  */
@@ -48,8 +52,18 @@ register_uninstall_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_uni
 add_action( 'init', array( 'FullPeace_Media_To_Post', 'init' ) );
 
 // Create a custom post type - this class deals with front-end components so checking with is_admin() is not necessary.
-require_once( FPMTP__PLUGIN_DIR . 'admin/cpt/ebooks-cpt.php' );
-new FullPeace_eBooks_PostType( 'fpmtp_ebooks' ); 	// post type slug
+if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_ebooks' )) {
+    require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/ebooks-cpt.php');
+    new FullPeace_eBooks_PostType('fpmtp_ebooks');    // post type slug
+}
+if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_audio' )) {
+    require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/audio-cpt.php');
+    new FullPeace_Audio_PostType('fpmtp_audio');    // post type slug
+}
+if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_bios' )) {
+    require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/bio-cpt.php');
+    new FullPeace_Bio_PostType('fpmtp_bios');    // post type slug
+}
 
 if ( is_admin() ) {
     require_once( FPMTP__PLUGIN_DIR . 'admin/class.optionspage.php' );
@@ -57,7 +71,7 @@ if ( is_admin() ) {
     include_once( FPMTP__PLUGIN_DIR . 'admin/metabox/ebookfields.php' );
     new FullPeace_eBooks_MetaBox(
         'fpmtp_ebooks_meta_box',	// meta box ID
-        __( 'Demo Meta Box with Built-in Field Types', FPMTP__I18N_NAMESPACE ),	// title
+        __( 'Upload eBook files (PDF, EPUB, MOBI)', FPMTP__I18N_NAMESPACE ),	// title
         array( 'fpmtp_ebooks' ),	// post type slugs: post, page, etc.
         'normal',	// context (what kind of metabox this is)
         'default'	// priority

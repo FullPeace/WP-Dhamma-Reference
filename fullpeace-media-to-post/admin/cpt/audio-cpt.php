@@ -9,8 +9,8 @@
  *
  * @since    0.1.0
  */
-}
-class FullPeace_Talks_PostType  extends AdminPageFramework_PostType {
+
+class FullPeace_Audio_PostType  extends AdminPageFramework_PostType {
 /**
  * This method is called at the end of the constructor.
  *
@@ -24,34 +24,53 @@ public function start() {
     $this->setPostTypeArgs(
         array(			// argument - for the array structure, refer to http://codex.wordpress.org/Function_Reference/register_post_type#Arguments
             'labels' => array(
-                'name'                => _x( 'Talks', 'Post Type General Name', FPMTP__I18N_NAMESPACE ),
-                'singular_name'       => _x( 'Talk', 'Post Type Singular Name', FPMTP__I18N_NAMESPACE ),
-                'menu_name'           => __( 'Talks', FPMTP__I18N_NAMESPACE ),
+                'name'                => _x( 'Audio', 'Post Type General Name', FPMTP__I18N_NAMESPACE ),
+                'singular_name'       => _x( 'Audio', 'Post Type Singular Name', FPMTP__I18N_NAMESPACE ),
+                'menu_name'           => __( 'Audio', FPMTP__I18N_NAMESPACE ),
                 'parent_item_colon'   => __( 'Parent Item:', FPMTP__I18N_NAMESPACE ),
-                'all_items'           => __( 'All Talks', FPMTP__I18N_NAMESPACE ),
-                'view_item'           => __( 'View Talk', FPMTP__I18N_NAMESPACE ),
-                'add_new_item'        => __( 'Add New Talk', FPMTP__I18N_NAMESPACE ),
+                'all_items'           => __( 'All Audio Files', FPMTP__I18N_NAMESPACE ),
+                'view_item'           => __( 'View Audio', FPMTP__I18N_NAMESPACE ),
+                'add_new_item'        => __( 'Add New Audio File', FPMTP__I18N_NAMESPACE ),
                 'add_new'             => __( 'Add New', FPMTP__I18N_NAMESPACE ),
-                'edit_item'           => __( 'Edit Talk', FPMTP__I18N_NAMESPACE ),
-                'update_item'         => __( 'Update Talk', FPMTP__I18N_NAMESPACE ),
-                'search_items'        => __( 'Search Talks', FPMTP__I18N_NAMESPACE ),
+                'edit_item'           => __( 'Edit Audio', FPMTP__I18N_NAMESPACE ),
+                'update_item'         => __( 'Update Audio', FPMTP__I18N_NAMESPACE ),
+                'search_items'        => __( 'Search Audio', FPMTP__I18N_NAMESPACE ),
                 'not_found'           => __( 'Not found', FPMTP__I18N_NAMESPACE ),
                 'not_found_in_trash'  => __( 'Not found in Trash', FPMTP__I18N_NAMESPACE ),
-                'plugin_listing_table_title_cell_link'	=>	__( 'eBooks', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
+                'plugin_listing_table_title_cell_link'	=>	__( 'audio', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
             ),
             'public'			=>	true,
             'menu_position' 	=>	5,
-            'supports'			=>	array( 'title', 'editor', 'thumbnail' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-            'taxonomies'		=>	array( 'speakers' ),
+            'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
+            'taxonomies'		=>	array( 'fpmtp_type', 'fpmtp_speakers', 'fpmtp_series' ),
             'has_archive'		=>	true,
+            'rewrite' => array( 'slug' => 'audio', 'with_front' => false ),
             'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
-            'menu_icon'			=>	plugins_url( 'asset/image/wp-logo_16x16.png', APFDEMO_FILE ),
+            //'menu_icon'			=>	plugins_url( 'asset/image/wp-logo_16x16.png', APFDEMO_FILE ),
             // ( framework specific key ) this sets the screen icon for the post type for WordPress v3.7.1 or below.
-            'screen_icon'		=>	dirname( APFDEMO_FILE  ) . '/asset/image/wp-logo_32x32.png', // a file path can be passed instead of a url, plugins_url( 'asset/image/wp-logo_32x32.png', APFDEMO_FILE )
+            //'screen_icon'		=>	dirname( APFDEMO_FILE  ) . '/asset/image/wp-logo_32x32.png', // a file path can be passed instead of a url, plugins_url( 'asset/image/wp-logo_32x32.png', APFDEMO_FILE )
         )
     );
 
     // the setUp() method is too late to add taxonomies. So we use start_{class name} action hook.
+    $this->addTaxonomy(
+        'fpmtp_type', // taxonomy slug
+        array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+            'labels' => array(
+                'name' => 'Type',
+                'add_new_item' => 'Add New Type',
+                'new_item_name' => "New Type"
+            ),
+            'show_ui' => true,
+            'show_tagcloud' => true,
+            'hierarchical' => false,
+            'show_admin_column' => true,
+            'show_in_nav_menus' => true,
+            'rewrite' => array( 'slug' => 'audio-type', 'with_front' => false ),
+            'show_table_filter' => true,	// framework specific key
+            'show_in_sidebar_menus' => true,	// framework specific key
+        )
+    );
     $this->addTaxonomy(
         'fpmtp_speakers', // taxonomy slug
         array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
@@ -65,6 +84,7 @@ public function start() {
             'hierarchical' => false,
             'show_admin_column' => true,
             'show_in_nav_menus' => true,
+            'rewrite' => array( 'slug' => 'speakers', 'with_front' => false ),
             'show_table_filter' => true,	// framework specific key
             'show_in_sidebar_menus' => true,	// framework specific key
         )
@@ -82,6 +102,7 @@ public function start() {
             'hierarchical' => false,
             'show_admin_column' => true,
             'show_in_nav_menus' => true,
+            'rewrite' => array( 'slug' => 'series', 'with_front' => false ),
             'show_table_filter' => true,	// framework specific key
             'show_in_sidebar_menus' => true,	// framework specific key
         )
@@ -99,30 +120,30 @@ public function start() {
 /*
  * Built-in callback methods
  */
-public function columns_fpmtp_talks( $aHeaderColumns ) {	// columns_{post type slug}
+public function columns_fpmtp_audio( $aHeaderColumns ) {	// columns_{post type slug}
 
     return array_merge(
         $aHeaderColumns,
         array(
             'cb'			=> '<input type="checkbox" />',	// Checkbox for bulk actions. 
             'title'			=> __( 'Title', FPMTP__I18N_NAMESPACE ),		// Post title. Includes "edit", "quick edit", "trash" and "view" links. If $mode (set from $_REQUEST['mode']) is 'excerpt', a post excerpt is included between the title and links.
-            'speakers'  => __( 'Speakers', FPMTP__I18N_NAMESPACE ),		// eBook author, not the post author.
+            //'speakers'  => __( 'Speakers', FPMTP__I18N_NAMESPACE ),		// eBook author, not the post author.
             // 'categories'	=> __( 'Categories', FPMTP__I18N_NAMESPACE ),	// Categories the post belongs to. 
             // 'tags'		=> __( 'Tags', FPMTP__I18N_NAMESPACE ),	// Tags for the post. 
-            'comments' 		=> '<div class="comment-grey-bubble"></div>', // Number of pending comments. 
+            //'comments' 		=> '<div class="comment-grey-bubble"></div>', // Number of pending comments.
             'date'			=> __( 'Date', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post. 
-            'series'			=> __( 'Series' ),
+            //'series'			=> __( 'Series' ),
         )
     );
 
 }
-public function sortable_columns_fpmtp_talks( $aSortableHeaderColumns ) {	// sortable_columns_{post type slug}
+public function sortable_columns_fpmtp_audio( $aSortableHeaderColumns ) {	// sortable_columns_{post type slug}
     return $aSortableHeaderColumns + array(
         'speakers' => 'speakers',
         'series' => 'series',
     );
 }
-public function cell_fpmtp_talks_series( $sCell, $iPostID ) {	// cell_{post type}_{column key}
+public function cell_fpmtp_audio_series( $sCell, $iPostID ) {	// cell_{post type}_{column key}
 
     return sprintf( __( 'Post ID: %1$s', FPMTP__I18N_NAMESPACE ), $iPostID ) . "<br />"
     . __( 'Text', FPMTP__I18N_NAMESPACE ) . ': ' . get_post_meta( $iPostID, 'metabox_text_field', true );
@@ -165,7 +186,7 @@ public function replyToSortCustomColumn( $aVars ){
  */
 public function replyToPrintOptionValues( $sContent ) {
 
-    if ( ! isset( $GLOBALS['post']->ID ) || get_post_type() != 'fpmtp_talks' ) return $sContent;
+    if ( ! isset( $GLOBALS['post']->ID ) || get_post_type() != 'fpmtp_audio' ) return $sContent;
 
     // 1. To retrieve the meta box data	- get_post_meta( $post->ID ) will return an array of all the meta field values.
     // or if you know the field id of the value you want, you can do $value = get_post_meta( $post->ID, $field_id, true );

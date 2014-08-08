@@ -13,7 +13,7 @@
     <tr valign="top">
         <th scope="row"><label for="<?php /*FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); */?>"">Enable parsing audio files:</label></th>
         <td><input type="checkbox" id="<?php /*echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); */?>" name="<?php /*echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); */?>" <?php /*echo self::setting('enable_cpt_ebook') == 'enable' ? "checked" : "" ; */?> value="enable" />
-            <a href="<?php /*echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_talks'); */?>">Talks</a></td>
+            <a href="<?php /*echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_audio'); */?>">Talks</a></td>
     </tr>
     <tr valign="top">
         <th scope="row"><label for="<?php /*echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); */?>">Enable parsing video files:</label> (NOT YET IMPLEMENTED)</th>

@@ -46,7 +46,7 @@ class FullPeace_Media_To_Post_Talks_Taxonomy {
                                                 'with_front' => false,
                                             ),
         );
-        register_taxonomy( FullPeace_Media_To_Post::$slug . '_speakers', array( FullPeace_Media_To_Post::$slug . '_talks' ), $args );
+        register_taxonomy( FullPeace_Media_To_Post::$slug . '_speakers', array( FullPeace_Media_To_Post::$slug . '_audio' ), $args );
 
     }
 
@@ -85,7 +85,7 @@ class FullPeace_Media_To_Post_Talks_Taxonomy {
                                                 'with_front' => false,
                                                 ),
         );
-        register_taxonomy( FullPeace_Media_To_Post::$slug . '_series', array( FullPeace_Media_To_Post::$slug . '_talks', FullPeace_Media_To_Post::$slug . '_talks_series' ), $args );
+        register_taxonomy( FullPeace_Media_To_Post::$slug . '_series', array( FullPeace_Media_To_Post::$slug . '_audio', FullPeace_Media_To_Post::$slug . '_audio_series' ), $args );
     }
 
     /**

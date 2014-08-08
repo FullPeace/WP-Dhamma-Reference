@@ -29,11 +29,11 @@ class FullPeace_Media_To_Post_Types {
 
 
         if(!empty($enable)) {
-            require_once FPMTP__PLUGIN_DIR . 'admin/cpt/talks-cpt.php';
+            require_once FPMTP__PLUGIN_DIR . 'admin/cpt/audio-cpt.php';
             if($enable['talks'])
                 FullPeace_Media_To_Post_Talks_CPT::register_cpt();
             if($enable['talks'])
-                FullPeace_Media_To_Post_Talks_CPT::register_talks_series_cpt();
+                FullPeace_Media_To_Post_Talks_CPT::register_audio_series_cpt();
             if($enable['ebooks'])
                 FullPeace_Media_To_Post_Talks_CPT::register_ebook_cpt();
         }

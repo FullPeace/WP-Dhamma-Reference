@@ -62,7 +62,7 @@ class FullPeace_Media_To_Post_Public {
 
         // Add our templates
         self::setTemplates( array(
-            'single-'.FullPeace_Media_To_Post::$slug.'_talks_series.php' => 'Talks Series Template', // @todo Create this
+            'single-'.FullPeace_Media_To_Post::$slug.'_audio_series.php' => 'Talks Series Template', // @todo Create this
             //'talks-template.php'        => 'Talks Template',        // @todo Create this
             //'series-template.php'       => 'Series Template',       // @todo Create this
         ));
@@ -141,10 +141,10 @@ class FullPeace_Media_To_Post_Public {
     }
 
     /**
-     * Shortcode handler for [fpmtp_talks] shortcode
+     * Shortcode handler for [fpmtp_audio] shortcode
      * @param $atts
      */
-    public static function custom_talks_shortcode( $atts ) {
+    public static function custom_audio_shortcode( $atts ) {
 
         // Attributes
         extract( shortcode_atts(
@@ -157,7 +157,7 @@ class FullPeace_Media_To_Post_Public {
         );
 
         // Code
-        // return WP_Query( array( 'post_type' => FullPeace_Media_To_Post::$slug . '_talks' ) );
+        // return WP_Query( array( 'post_type' => FullPeace_Media_To_Post::$slug . '_audio' ) );
     }
 
     /**
@@ -165,6 +165,6 @@ class FullPeace_Media_To_Post_Public {
      */
     public function register_shortcodes()
     {
-        add_shortcode( FullPeace_Media_To_Post::$slug . '_talks', array('FullPeace_Media_To_Post_Public', 'custom_talks_shortcode') );
+        add_shortcode( FullPeace_Media_To_Post::$slug . '_audio', array('FullPeace_Media_To_Post_Public', 'custom_audio_shortcode') );
     }
 }

@@ -42,9 +42,9 @@ class FullPeace_Media_To_Post {
         add_action( 'admin_notices', array( 'FullPeace_Media_To_Post_Admin', 'display_notice' ) );
         add_action( 'add_attachment', array( 'FullPeace_Media_To_Post', 'post_from_attachment' ) );
 
-        require_once FPMTP__PLUGIN_DIR . 'admin/class.types.php';
-        FullPeace_Media_To_Post_Types::register_custom_post_types();
-        FullPeace_Media_To_Post_Types::register_custom_taxonomies();
+//        require_once FPMTP__PLUGIN_DIR . 'admin/class.types.php';
+//        FullPeace_Media_To_Post_Types::register_custom_post_types();
+//        FullPeace_Media_To_Post_Types::register_custom_taxonomies();
 
         require_once FPMTP__PLUGIN_DIR . 'public/class.public.php';
         add_action( 'plugins_loaded', array( 'FullPeace_Media_To_Post_Public', 'init' ) );
@@ -62,6 +62,15 @@ class FullPeace_Media_To_Post {
     {
         echo self::get_slug($type);
     }
+	
+	public static function settings(){
+		return get_option( 'FullPeace_Media_To_Post' );
+	}
+	
+	public static function debugSettings(){
+		$x = self::settings();
+		var_export($x, true);
+	}
 
     public static function setting($setting, $option_value = FALSE)
     {
@@ -87,7 +96,7 @@ class FullPeace_Media_To_Post {
         $type = get_post_mime_type($attachment_ID);
         if(strpos($type, 'audio') === 0)
         {
-            self::create_talks_post_from_audio($attachment_ID);
+            self::create_audio_post_from_upload($attachment_ID);
         }
     }
 
@@ -104,7 +113,7 @@ class FullPeace_Media_To_Post {
      * @param $attachment_ID The attachment id of an attachment with mime type 'audio'
      * @todo Create a setting in wp-admin for creating a template for the post content.
      */
-    public static function create_talks_post_from_audio($attachment_ID)
+    public static function create_audio_post_from_upload($attachment_ID)
     {
         global $current_user;
         get_currentuserinfo();
@@ -122,10 +131,10 @@ class FullPeace_Media_To_Post {
             "\nYear: ".$metadata['year'];
 
         // Create new custom post object only for images
-        $my_post = array(
+        $talk_custom_post = array(
             'post_title'    => $attachment_post->post_title,
             'post_content'  => $new_post_content ,
-            'post_type'     => FullPeace_Media_To_Post::$slug . '_talks',
+            'post_type'     => FullPeace_Media_To_Post::$slug . '_audio',
             'post_author'   => $current_user->ID
         );
 
@@ -136,18 +145,42 @@ class FullPeace_Media_To_Post {
                 'post_parent' => $talk_post_id
             )
         );
-        FullPeace_Media_To_Post_Admin::add_notice('New Talk added ' . get_edit_post_link( $talk_post_id ));
+        //FullPeace_Media_To_Post_Admin::add_notice('New Talk added ' . get_edit_post_link( $talk_post_id ));
 
         wp_set_object_terms( $talk_post_id, array( $metadata['artist'] ), FullPeace_Media_To_Post::$slug . '_speakers', true );
         wp_set_object_terms( $talk_post_id, array( $metadata['album'] ), FullPeace_Media_To_Post::$slug . '_series', true );
 
         // I wonder if the file has an image attached?
         $post_thumbnail_id = get_post_thumbnail_id( $attachment_ID );
-        FullPeace_Media_To_Post_Admin::add_notice('post thumb ' . $post_thumbnail_id);
+        //FullPeace_Media_To_Post_Admin::add_notice('post thumb ' . $post_thumbnail_id);
         if(is_numeric($post_thumbnail_id) && (int)$post_thumbnail_id>0)
         {
             set_post_thumbnail($talk_post_id, $post_thumbnail_id);
         }
+		
+		// Now that the attachment is parsed, check the setting to see if the file should be moved to FTP
+		$plugin_settings = self::settings();
+		if($plugin_settings['fpmtp_enable_ftp']) {
+			require_once ( FPMTP__PLUGIN_DIR . 'library/Ftp.php' );
+			
+			try {
+				$ftp = new Ftp;
+
+				// Opens an FTP connection to the specified host
+				$ftp->connect($plugin_settings['fpmtp_ftp_domain']);
+
+				// Login with username and password
+				$ftp->login($plugin_settings['fpmtp_ftp_username'], $plugin_settings['fpmtp_ftp_password']);
+
+				$ftpdir = $plugin_settings['fpmtp_ftp_dir'];
+				// Get the local filepath and upload to FTP
+
+                /// THIS IS NOT DEVELOPED DUE TO CHANGED REQUIREMENTS
+
+			} catch (FtpException $e) {
+				echo 'Error: ', $e->getMessage();
+			}
+		}
     }
 
     /**
