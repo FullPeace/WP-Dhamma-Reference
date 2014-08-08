@@ -186,23 +186,23 @@ public function cell_fpmtp_audio_series( $sCell, $iPostID ) {	// cell_{post type
  */
 public function replyToSortCustomColumn( $aVars ){
 
-    if ( isset( $aVars['orderby'] ) && 'fpmtp_series' == $aVars['orderby'] ){
-        $aVars = array_merge(
-            $aVars,
-            array(
-                'meta_key'	=>	'metabox_text_field',
-                'orderby'	=>	'meta_value',
-            )
-        );
-    }elseif ( isset( $aVars['orderby'] ) && 'fpmtp_speakers' == $aVars['orderby'] ){
-        $aVars = array_merge(
-            $aVars,
-            array(
-                'meta_key'	=>	'metabox_text_field',
-                'orderby'	=>	'meta_value',
-            )
-        );
-    }
+//    if ( isset( $aVars['orderby'] ) && 'fpmtp_series' == $aVars['orderby'] ){
+//        $aVars = array_merge(
+//            $aVars,
+//            array(
+//                'meta_key'	=>	'metabox_text_field',
+//                'orderby'	=>	'meta_value',
+//            )
+//        );
+//    }elseif ( isset( $aVars['orderby'] ) && 'fpmtp_speakers' == $aVars['orderby'] ){
+//        $aVars = array_merge(
+//            $aVars,
+//            array(
+//                'meta_key'	=>	'metabox_text_field',
+//                'orderby'	=>	'meta_value',
+//            )
+//        );
+//    }
     return $aVars;
 }
 
