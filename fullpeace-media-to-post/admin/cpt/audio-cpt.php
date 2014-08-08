@@ -42,7 +42,7 @@ public function start() {
             'public'			=>	true,
             'menu_position' 	=>	5,
             'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-            'taxonomies'		=>	array( 'fpmtp_speakers', 'fpmtp_series', 'fpmtp_languages' ),
+            'taxonomies'		=>	array( 'categories', 'fpmtp_speakers', 'fpmtp_series', 'fpmtp_languages' ),
             'has_archive'		=>	true,
             'rewrite' => array( 'slug' => 'audio', 'with_front' => false ),
             'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
@@ -53,6 +53,7 @@ public function start() {
     );
 
     // the setUp() method is too late to add taxonomies. So we use start_{class name} action hook.
+    $aPostTypeSettings = AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_settings_audio' );
 //    $this->addTaxonomy(
 //        'fpmtp_type', // taxonomy slug
 //        array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
@@ -71,60 +72,66 @@ public function start() {
 //            'show_in_sidebar_menus' => true,	// framework specific key
 //        )
 //    );
-    $this->addTaxonomy(
-        'fpmtp_languages', // taxonomy slug
-        array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
-            'labels' => array(
-                'name' => 'Languages',
-                'add_new_item' => 'Add New Language',
-                'new_item_name' => "New Language"
-            ),
-            'show_ui' => true,
-            'show_tagcloud' => true,
-            'hierarchical' => false,
-            'show_admin_column' => true,
-            'show_in_nav_menus' => true,
-            'rewrite' => array( 'slug' => 'languages', 'with_front' => false ),
-            'show_table_filter' => true,	// framework specific key
-            'show_in_sidebar_menus' => true,	// framework specific key
-        )
-    );
-    $this->addTaxonomy(
-        'fpmtp_speakers', // taxonomy slug
-        array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
-            'labels' => array(
-                'name' => 'Speakers',
-                'add_new_item' => 'Add New Speaker',
-                'new_item_name' => "New Speaker"
-            ),
-            'show_ui' => true,
-            'show_tagcloud' => true,
-            'hierarchical' => false,
-            'show_admin_column' => true,
-            'show_in_nav_menus' => true,
-            'rewrite' => array( 'slug' => 'speakers', 'with_front' => false ),
-            'show_table_filter' => true,	// framework specific key
-            'show_in_sidebar_menus' => true,	// framework specific key
-        )
-    );
-    $this->addTaxonomy(
-        'fpmtp_series',
-        array(
-            'labels' => array(
-                'name' => 'Series',
-                'add_new_item' => 'Add New Series',
-                'new_item_name' => "New Series"
-            ),
-            'show_ui' => true,
-            'show_tagcloud' => true,
-            'hierarchical' => false,
-            'show_admin_column' => true,
-            'show_in_nav_menus' => true,
-            'rewrite' => array( 'slug' => 'series', 'with_front' => false ),
-            'show_table_filter' => true,	// framework specific key
-            'show_in_sidebar_menus' => true,	// framework specific key
-        )
-    );
+    if($aPostTypeSettings['fpmtp_enable_audio_languages']) {
+        $this->addTaxonomy(
+            'fpmtp_languages', // taxonomy slug
+            array(            // argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+                'labels' => array(
+                    'name' => 'Languages',
+                    'add_new_item' => 'Add New Language',
+                    'new_item_name' => "New Language"
+                ),
+                'show_ui' => true,
+                'show_tagcloud' => true,
+                'hierarchical' => false,
+                'show_admin_column' => true,
+                'show_in_nav_menus' => true,
+                'rewrite' => array('slug' => 'languages', 'with_front' => false),
+                'show_table_filter' => true,    // framework specific key
+                'show_in_sidebar_menus' => true,    // framework specific key
+            )
+        );
+    }
+    if($aPostTypeSettings['fpmtp_enable_audio_speakers']) {
+        $this->addTaxonomy(
+            'fpmtp_speakers', // taxonomy slug
+            array(            // argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+                'labels' => array(
+                    'name' => 'Speakers',
+                    'add_new_item' => 'Add New Speaker',
+                    'new_item_name' => "New Speaker"
+                ),
+                'show_ui' => true,
+                'show_tagcloud' => true,
+                'hierarchical' => false,
+                'show_admin_column' => true,
+                'show_in_nav_menus' => true,
+                'rewrite' => array('slug' => 'speakers', 'with_front' => false),
+                'show_table_filter' => true,    // framework specific key
+                'show_in_sidebar_menus' => true,    // framework specific key
+            )
+        );
+    }
+    if($aPostTypeSettings['fpmtp_enable_audio_series']) {
+        $this->addTaxonomy(
+            'fpmtp_series',
+            array(
+                'labels' => array(
+                    'name' => 'Series',
+                    'add_new_item' => 'Add New Series',
+                    'new_item_name' => "New Series"
+                ),
+                'show_ui' => true,
+                'show_tagcloud' => true,
+                'hierarchical' => false,
+                'show_admin_column' => true,
+                'show_in_nav_menus' => true,
+                'rewrite' => array('slug' => 'series', 'with_front' => false),
+                'show_table_filter' => true,    // framework specific key
+                'show_in_sidebar_menus' => true,    // framework specific key
+            )
+        );
+    }
 
     $this->setFooterInfoLeft( '<br />Custom Text on the left hand side.' );
     $this->setFooterInfoRight( '<br />Custom text on the right hand side' );
@@ -146,7 +153,7 @@ public function columns_fpmtp_audio( $aHeaderColumns ) {	// columns_{post type s
             'cb'			=> '<input type="checkbox" />',	// Checkbox for bulk actions. 
             'title'			=> __( 'Title', FPMTP__I18N_NAMESPACE ),		// Post title. Includes "edit", "quick edit", "trash" and "view" links. If $mode (set from $_REQUEST['mode']) is 'excerpt', a post excerpt is included between the title and links.
             //'speakers'  => __( 'Speakers', FPMTP__I18N_NAMESPACE ),		// eBook author, not the post author.
-            // 'categories'	=> __( 'Categories', FPMTP__I18N_NAMESPACE ),	// Categories the post belongs to. 
+            'categories'	=> __( 'Categories', FPMTP__I18N_NAMESPACE ),	// Categories the post belongs to.
             // 'tags'		=> __( 'Tags', FPMTP__I18N_NAMESPACE ),	// Tags for the post. 
             //'comments' 		=> '<div class="comment-grey-bubble"></div>', // Number of pending comments.
             'date'			=> __( 'Date', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post. 
@@ -157,8 +164,8 @@ public function columns_fpmtp_audio( $aHeaderColumns ) {	// columns_{post type s
 }
 public function sortable_columns_fpmtp_audio( $aSortableHeaderColumns ) {	// sortable_columns_{post type slug}
     return $aSortableHeaderColumns + array(
-        'speakers' => 'speakers',
-        'series' => 'series',
+        'fpmtp_speakers' => 'fpmtp_speakers',
+        'fpmtp_series' => 'fpmtp_series',
     );
 }
 public function cell_fpmtp_audio_series( $sCell, $iPostID ) {	// cell_{post type}_{column key}
@@ -179,7 +186,7 @@ public function cell_fpmtp_audio_series( $sCell, $iPostID ) {	// cell_{post type
  */
 public function replyToSortCustomColumn( $aVars ){
 
-    if ( isset( $aVars['orderby'] ) && 'series' == $aVars['orderby'] ){
+    if ( isset( $aVars['orderby'] ) && 'fpmtp_series' == $aVars['orderby'] ){
         $aVars = array_merge(
             $aVars,
             array(
@@ -187,7 +194,7 @@ public function replyToSortCustomColumn( $aVars ){
                 'orderby'	=>	'meta_value',
             )
         );
-    }elseif ( isset( $aVars['orderby'] ) && 'speakers' == $aVars['orderby'] ){
+    }elseif ( isset( $aVars['orderby'] ) && 'fpmtp_speakers' == $aVars['orderby'] ){
         $aVars = array_merge(
             $aVars,
             array(

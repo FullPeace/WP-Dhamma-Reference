@@ -7,25 +7,25 @@ class FullPeace_Books_MetaBox extends AdminPageFramework_MetaBox {
     public function setUp() {
 
         /*
-         * ( optional ) Adds a contextual help pane at the top right of the page that the meta box resides.
+         * Adds a contextual help pane at the top right of the page that the meta box resides.
          */
         $this->addHelpText(
-            __( 'This text will appear in the contextual help pane.', FPMTP__I18N_NAMESPACE ),
-            __( 'This description goes to the sidebar of the help pane.', FPMTP__I18N_NAMESPACE )
+            __( 'No help text.', FPMTP__I18N_NAMESPACE ),
+            __( 'We have not written any help text for this. Please contact the developer for support.', FPMTP__I18N_NAMESPACE )
         );
 
         /*
-         * ( optional ) Set form sections - if not set, the system default section will be applied so you don't worry about it.
+         * Set form sections .
          */
         $this->addSettingSections(
             array(
                 'section_id'	=> 'upload_media',
                 'title'	=> __( 'Upload files', FPMTP__I18N_NAMESPACE ),
-                'description'	=> __( 'Upload different file formats of this eBook.', FPMTP__I18N_NAMESPACE ),
+                'description'	=> __( 'Upload different file formats of this Book.', FPMTP__I18N_NAMESPACE ),
             )
         );
         /*
-         * ( optional ) Adds setting fields into the meta box.
+         * Adds setting fields into the meta box.
          */
         $this->addSettingFields(
             array( // Media File
@@ -34,7 +34,7 @@ class FullPeace_Books_MetaBox extends AdminPageFramework_MetaBox {
                 'title'			=>	__( 'Media File', FPMTP__I18N_NAMESPACE ),
                 'description'	=> __( 'Upload PDF, EPUB and MOBI files.', FPMTP__I18N_NAMESPACE ),
                 'help'			=> __( 'Click to Select File.', FPMTP__I18N_NAMESPACE ),
-                'help_aside'	=> __( 'To add ebook files to the post, click <code>Select File</code> and upload files or select from the Media Library of uploaded files.<br/>', FPMTP__I18N_NAMESPACE ),
+                'help_aside'	=> __( 'To add book files to the post, click <code>Select File</code> and upload files or select from the Media Library of uploaded files.<br/>', FPMTP__I18N_NAMESPACE ),
                 'type'			=>	'media',
                 'allow_external_source'	=>	false,
                 'repeatable'	=>	true,
@@ -43,10 +43,12 @@ class FullPeace_Books_MetaBox extends AdminPageFramework_MetaBox {
 
     }
 
-    public function content_FullPeace_eBooks_MetaBox( $sContent ) {	// content_{instantiated class name}
+    public function content_FullPeace_Books_MetaBox( $sContent ) {	// content_{instantiated class name}
 
         // Modify the output $sContent . '<pre>Insert</pre>'
-        $sInsert = "<p>" .  __( 'Upload files with the <code>Select File</code> option. Click the plus <code>+</code> sign to add multiple files (PDF, EPUB, MOBI formats).', FPMTP__I18N_NAMESPACE ) . "</p>";
+        $sInsert = "<p>" .  __( 'Upload files with the <code>Select File</code> option.', FPMTP__I18N_NAMESPACE ) .
+            "</p><p>" . __( 'Click the plus <code>+</code> button to add multiple files (PDF, EPUB, MOBI formats).', FPMTP__I18N_NAMESPACE ) .
+            "</p><p>" . __( 'Remove files with the minus <code>-</code> button.</p>', FPMTP__I18N_NAMESPACE ) . "</p>";
         return $sInsert . $sContent;
 
     }
@@ -57,7 +59,7 @@ class FullPeace_Books_MetaBox extends AdminPageFramework_MetaBox {
      * @return mixed
      * @todo Update validation
      */
-    public function validation_FullPeace_eBooks_MetaBox( $aInput, $aOldInput ) {	// validation_{instantiated class name}
+    public function validation_FullPeace_Books_MetaBox( $aInput, $aOldInput ) {	// validation_{instantiated class name}
 
         $_fIsValid = true;
         $_aErrors = array();

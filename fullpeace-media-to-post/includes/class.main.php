@@ -108,7 +108,7 @@ class FullPeace_Media_To_Post {
      *
      * Currently supporting:
      *
-     *  - MP3 format to Talks type
+     *  - MP3 format to Audio type
      *
      * @param $attachment_ID The attachment id of an attachment with mime type 'audio'
      * @todo Create a setting in wp-admin for creating a template for the post content.
@@ -134,6 +134,7 @@ class FullPeace_Media_To_Post {
         $talk_custom_post = array(
             'post_title'    => $attachment_post->post_title,
             'post_content'  => $new_post_content ,
+            'post_excerpt'  => $metadata['comment'] ,
             'post_type'     => FullPeace_Media_To_Post::$slug . '_audio',
             'post_author'   => $current_user->ID
         );

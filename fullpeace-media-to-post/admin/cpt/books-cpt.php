@@ -5,7 +5,6 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
     /**
      * This method is called at the end of the constructor.
      *
-     * ALternatevely, you may use the start_{extended class name} method, which also is called at the end of the constructor.
      */
     public function start() {
 
@@ -34,7 +33,7 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                 'public'			=>	true,
                 'menu_position' 	=>	5,
                 'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-                'taxonomies'		=>	array( 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy', 'fpmtp_languages' ),
+                'taxonomies'		=>	array( 'categories', 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy', 'fpmtp_languages' ),
                 'has_archive'		=>	true,
                 'rewrite' => array( 'slug' => 'books', 'with_front' => false ),
                 'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
@@ -45,61 +44,68 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
         );
 
         // the setUp() method is too late to add taxonomies. So we use start_{class name} action hook.
-        $this->addTaxonomy(
-            'fpmtp_authors_taxonomy', // taxonomy slug
-            array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
-                'labels' => array(
-                    'name' => 'Author',
-                    'add_new_item' => 'Add Author',
-                    'new_item_name' => "New Author"
-                ),
-                'show_ui' => true,
-                'show_tagcloud' => false,
-                'hierarchical' => true, // Hierarchical to allow 'Ajahn Sumedho', 'Luang Por Sumedho', and so on
-                'show_admin_column' => true,
-                'sortable'	=>	true,
-                'show_in_nav_menus' => true,
-                'rewrite' => array( 'slug' => 'authors', 'with_front' => false ),
-                'show_table_filter' => true,	// framework specific key
-                'show_in_sidebar_menus' => true,	// framework specific key
-            )
-        );
-        $this->addTaxonomy(
-            'fpmtp_languages', // taxonomy slug
-            array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
-                'labels' => array(
-                    'name' => 'Languages',
-                    'add_new_item' => 'Add New Language',
-                    'new_item_name' => "New Language"
-                ),
-                'show_ui' => true,
-                'show_tagcloud' => true,
-                'hierarchical' => false,
-                'show_admin_column' => true,
-                'show_in_nav_menus' => true,
-                'rewrite' => array( 'slug' => 'languages', 'with_front' => false ),
-                'show_table_filter' => true,	// framework specific key
-                'show_in_sidebar_menus' => true,	// framework specific key
-            )
-        );
-        $this->addTaxonomy(
-            'fpmtp_year_taxonomy',
-            array(
-                'labels' => array(
-                    'name' => 'Year published',
-                    'add_new_item' => 'Add Year',
-                    'new_item_name' => "New Year"
-                ),
-                'show_ui' => true,
-                'show_tagcloud' => false,
-                'hierarchical' => false,
-                'show_admin_column' => true,
-                'show_in_nav_menus' => true,
-                'rewrite' => array( 'slug' => 'books-by-year', 'with_front' => false ),
-                'show_table_filter' => true,	// framework specific key
-                'show_in_sidebar_menus' => false,	// framework specific key
-            )
-        );
+        $aPostTypeSettings = AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_settings_books' );
+        if($aPostTypeSettings['fpmtp_enable_books_authors'] ) {
+            $this->addTaxonomy(
+                'fpmtp_authors_taxonomy', // taxonomy slug
+                array(            // argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+                    'labels' => array(
+                        'name' => 'Author',
+                        'add_new_item' => 'Add Author',
+                        'new_item_name' => "New Author"
+                    ),
+                    'show_ui' => true,
+                    'show_tagcloud' => false,
+                    'hierarchical' => true, // Hierarchical to allow 'Ajahn Sumedho', 'Luang Por Sumedho', and so on
+                    'show_admin_column' => true,
+                    'sortable' => true,
+                    'show_in_nav_menus' => true,
+                    'rewrite' => array('slug' => 'authors', 'with_front' => false),
+                    'show_table_filter' => true,    // framework specific key
+                    'show_in_sidebar_menus' => true,    // framework specific key
+                )
+            );
+        }
+        if($aPostTypeSettings['fpmtp_enable_books_languages'] ) {
+            $this->addTaxonomy(
+                'fpmtp_languages', // taxonomy slug
+                array(            // argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+                    'labels' => array(
+                        'name' => 'Languages',
+                        'add_new_item' => 'Add New Language',
+                        'new_item_name' => "New Language"
+                    ),
+                    'show_ui' => true,
+                    'show_tagcloud' => true,
+                    'hierarchical' => false,
+                    'show_admin_column' => true,
+                    'show_in_nav_menus' => true,
+                    'rewrite' => array('slug' => 'languages', 'with_front' => false),
+                    'show_table_filter' => true,    // framework specific key
+                    'show_in_sidebar_menus' => true,    // framework specific key
+                )
+            );
+        }
+        if($aPostTypeSettings['fpmtp_enable_books_year'] ) {
+            $this->addTaxonomy(
+                'fpmtp_year_taxonomy',
+                array(
+                    'labels' => array(
+                        'name' => 'Year published',
+                        'add_new_item' => 'Add Year',
+                        'new_item_name' => "New Year"
+                    ),
+                    'show_ui' => true,
+                    'show_tagcloud' => false,
+                    'hierarchical' => false,
+                    'show_admin_column' => true,
+                    'show_in_nav_menus' => true,
+                    'rewrite' => array('slug' => 'books-by-year', 'with_front' => false),
+                    'show_table_filter' => true,    // framework specific key
+                    'show_in_sidebar_menus' => false,    // framework specific key
+                )
+            );
+        }
 
         $this->setFooterInfoLeft( '<br />Custom Text on the left hand side.' );
         $this->setFooterInfoRight( '<br />Custom text on the right hand side' );
@@ -122,7 +128,7 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                 'thumbnail' => __( 'Thumbnail', FPMTP__I18N_NAMESPACE ),
                 'title'			=> __( 'Title', FPMTP__I18N_NAMESPACE ),		// Post title. Includes "edit", "quick edit", "trash" and "view" links. If $mode (set from $_REQUEST['mode']) is 'excerpt', a post excerpt is included between the title and links.
                 //'fpmtp_authors_taxonomy'		=> __( 'Author', FPMTP__I18N_NAMESPACE ),		// Post author.
-                // 'categories'	=> __( 'Categories', FPMTP__I18N_NAMESPACE ),	// Categories the post belongs to. 
+                'categories'	=> __( 'Categories', FPMTP__I18N_NAMESPACE ),	// Categories the post belongs to.
                 // 'tags'		=> __( 'Tags', FPMTP__I18N_NAMESPACE ),	// Tags for the post. 
                 // 'comments' 		=> '<div class="comment-grey-bubble"></div>', // Number of pending comments.
                 //'date'			=> __( 'Date', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post.

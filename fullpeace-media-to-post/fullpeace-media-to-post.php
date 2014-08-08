@@ -52,15 +52,16 @@ register_uninstall_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_uni
 add_action( 'init', array( 'FullPeace_Media_To_Post', 'init' ) );
 
 // Create a custom post type - this class deals with front-end components so checking with is_admin() is not necessary.
-if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_books' )) {
+$aEnablePostTypes = AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_settings_general' );
+if($aEnablePostTypes['fpmtp_enable_books']) {
     require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/books-cpt.php');
     new FullPeace_Books_PostType('fpmtp_books');    // post type slug
 }
-if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_audio' )) {
+if($aEnablePostTypes['fpmtp_enable_audio']) {
     require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/audio-cpt.php');
     new FullPeace_Audio_PostType('fpmtp_audio');    // post type slug
 }
-if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_bios' )) {
+if($aEnablePostTypes['fpmtp_enable_bios']) {
     require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/bio-cpt.php');
     new FullPeace_Bio_PostType('fpmtp_bios');    // post type slug
 }

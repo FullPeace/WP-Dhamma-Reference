@@ -152,7 +152,7 @@ class FullPeace_Options_Page extends AdminPageFramework
             array(	// Single checkbox item - set a check box item to the 'label' element.
                 'field_id'		=>	'fpmtp_enable_books_year',
                 'section_id'    =>      'fpmtp_settings_books',
-                'title'			=>	__( 'Enable Books Year' , FPMTP__I18N_NAMESPACE ),
+                'title'			=>	__( 'Enable Year Published' , FPMTP__I18N_NAMESPACE ),
                 'tip'			=>	__( 'Enable Year Published for Books.', FPMTP__I18N_NAMESPACE ),
                 'type'			=>	'checkbox',
                 'label'			=>	__( 'Enabling this allows for tagging Books with Year Published.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
@@ -185,7 +185,7 @@ class FullPeace_Options_Page extends AdminPageFramework
             ),
             array(
                 'tab_slug'    =>    'fpmtp_tab_books',
-                'title'        =>    __( 'EBooks', FPMTP__I18N_NAMESPACE ),
+                'title'        =>    __( 'Books', FPMTP__I18N_NAMESPACE ),
             )//,
 //            array(
 //                'tab_slug'    =>    'fpmtp_tab_ftp',
