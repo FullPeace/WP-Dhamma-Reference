@@ -20,7 +20,7 @@
  * Plugin Name:       FullPeace Media To Post
  * Plugin URI:        http://github.com/FullPeace/fullpeace-media-to-post
  * Description:       FullPeace Media To Post creates Custom Post Types for media files on upload via the Media Library.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Author:            FullPeace.org
  * Author URI:        http://fullpeace.org
  * Text Domain:       fullpeace-media-to-posts
