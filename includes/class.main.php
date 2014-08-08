@@ -41,6 +41,7 @@ class FullPeace_Media_To_Post {
         self::$initiated = true;
         add_action( 'admin_notices', array( 'FullPeace_Media_To_Post_Admin', 'display_notice' ) );
         add_action( 'add_attachment', array( 'FullPeace_Media_To_Post', 'post_from_attachment' ) );
+        add_filter( 'template_include', array( 'FullPeace_Media_To_Post', 'template_chooser' ) );
 
 //        require_once FPMTP__PLUGIN_DIR . 'admin/class.types.php';
 //        FullPeace_Media_To_Post_Types::register_custom_post_types();
@@ -240,17 +241,50 @@ class FullPeace_Media_To_Post {
         FullPeace_Media_To_Post_Setup::on_uninstall();
     }
 
-    public static function view( $name, array $args = array() ) {
-        $args = apply_filters( self::$slug . '_view_arguments', $args, $name );
 
-        foreach ( $args AS $key => $val ) {
-            $$key = $val;
+    /**
+     * Returns the template file
+     *
+     * @since       0.1.2
+     */
+
+    public static function  template_chooser($template) {
+
+        // Post ID
+        $post_id = get_the_ID();
+
+        // For all other CPT
+        if( get_post_type( $post_id ) != 'fpmtp_bios' ) {
+            return $template;
         }
 
-        load_plugin_textdomain( FPMTP__I18N_NAMESPACE );
+        // Else use custom template
+        if ( is_single() ) {
+            return get_template_hierarchy('single');
+        }
 
-        $file = FPMTP__PLUGIN_DIR . 'admin/views/'. $name . '.php';
+    }
 
-        include_once( $file );
+    /**
+     * Get the custom template if is set
+     *
+     * @since       0.1.2
+     */
+
+    function rc_tc_get_template_hierarchy( $template ) {
+
+        // Get the template slug
+        $template_slug = rtrim($template, '.php');
+        $template      = $template_slug . '.php';
+
+        // Check if a custom template exists in the theme folder, if not, load the plugin template file
+        if ( $theme_file = locate_template(array('plugin_template/'.$template)) ) {
+            $file = $theme_file;
+        }
+        else {
+            $file = FPMTP__PLUGIN_DIR . 'templates/' . $template;
+        }
+
+        return apply_filters( 'repl_template_'.$template, $file);
     }
 }

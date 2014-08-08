@@ -32,6 +32,7 @@ Please use the forums for questions, this page will be filled out with any quest
 
 == Changelog ==
 0.1.2 Further cleanup of code, better descriptions
+- Added a template for Bios CPT to be used is the template is missing one. NOTE: Only enabled for the X theme for now.
 
 0.1.1 This is the nearly ready version, changes contain:
       - Bug fixes
