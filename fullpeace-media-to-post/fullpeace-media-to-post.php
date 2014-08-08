@@ -79,4 +79,8 @@ if ( is_admin() ) {
     );
     require_once( FPMTP__PLUGIN_DIR . 'admin/class.admin.php' );
     add_action( 'init', array( 'FullPeace_Media_To_Post_Admin', 'init' ) );
+
+    // Allow updates from Github
+    require_once( FPMTP__PLUGIN_DIR . 'library/plugin-updater/BFIGitHubPluginUploader.php' );
+    new BFIGitHubPluginUpdater( __FILE__, 'FullPeace', "fullpeace-media-to-post" );
 }
