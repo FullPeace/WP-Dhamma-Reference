@@ -37,7 +37,7 @@ class FullPeace_Media_To_Post_Admin {
         //add_action( 'create_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_create_term' ), 1, 3 );
         //add_action( 'created_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_created_term' ), 1, 3 );
 
-        add_filter('upload_mimes',  array( 'FullPeace_Media_To_Post_Admin', 'add_ebook_mime_types'), 1, 1);
+        add_filter('upload_mimes',  array( 'FullPeace_Media_To_Post_Admin', 'add_book_mime_types'), 1, 1);
     }
 
     public static function admin_init() {
@@ -45,7 +45,7 @@ class FullPeace_Media_To_Post_Admin {
 
 //        self::setting('enable_cpt_audio', 'enable');
 //        self::setting('enable_cpt_video', '');
-//        self::setting('enable_cpt_ebook', '');
+//        self::setting('enable_cpt_book', '');
 
         // New approach ^_^
         //self::register_settings();
@@ -53,29 +53,29 @@ class FullPeace_Media_To_Post_Admin {
 //        //add_option( FullPeace_Media_To_Post::get_slug('set_cpt_video'), 'Video');
 //        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_audio'), 'enable');
 //        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_video'), '');
-//        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_ebook'), '');
+//        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_book'), '');
 //        //register_setting( 'default', FullPeace_Media_To_Post::get_slug('set_cpt_audio') );
 //        //register_setting( 'default', FullPeace_Media_To_Post::get_slug('set_cpt_video') );
 //        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_audio') );
 //        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_video') );
-//        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_ebook') );
+//        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_book') );
     }
 
 
-    public static function add_ebook_mime_types($mime_types){
+    public static function add_book_mime_types($mime_types){
 
         // @todo: The below would disable uploading images in the post content. Needs to restrict metabox upload.
 //        $screen = get_current_screen();
-//        if($screen->post_type == 'fpmtp_ebooks'){
+//        if($screen->post_type == 'fpmtp_books'){
 //            $aRestrictedMimeTypes = array();
 //            $aRestrictedMimeTypes['pdf'] = 'application/pdf';
-//            $aRestrictedMimeTypes['mobi'] = 'application/x-mobipocket-ebook';
+//            $aRestrictedMimeTypes['mobi'] = 'application/x-mobipocket-book';
 //            $aRestrictedMimeTypes['epub'] = 'application/epub+zip';
-//            return $aRestrictedMimeTypes; // Only allow these ebook formats
+//            return $aRestrictedMimeTypes; // Only allow these book formats
 //        }
 
-        //Adding ebook extensions
-        $mime_types['mobi'] = 'application/x-mobipocket-ebook';
+        //Adding book extensions
+        $mime_types['mobi'] = 'application/x-mobipocket-book';
         $mime_types['epub'] = 'application/epub+zip';
 
         // Just in case
@@ -130,9 +130,9 @@ class FullPeace_Media_To_Post_Admin {
         );
 
         add_settings_field(
-            FullPeace_Media_To_Post::get_slug('setting_field_ebook'),
-            'Enable eBooks',
-            array( __CLASS__, 'render_option_input_html_ebook' ),
+            FullPeace_Media_To_Post::get_slug('setting_field_book'),
+            'Enable Books',
+            array( __CLASS__, 'render_option_input_html_book' ),
             FullPeace_Media_To_Post::get_slug('settings'),
             'settings_section'
         );
@@ -177,17 +177,17 @@ var_dump($options);
      *
      * @since 0.1.0
      */
-    public static function render_option_input_html_ebook() {
+    public static function render_option_input_html_book() {
         // First, we read the option from db
-        $options = get_option( FullPeace_Media_To_Post::get_slug('setting_enable_ebook') );
+        $options = get_option( FullPeace_Media_To_Post::get_slug('setting_enable_book') );
         var_dump($options);
 
-        $html = '<input type="checkbox" id="'.FullPeace_Media_To_Post::get_slug('setting_enable_ebook').'" name="'.FullPeace_Media_To_Post::get_slug('setting_enable_ebook').'" value="1"' . checked( 1, $options[FullPeace_Media_To_Post::get_slug('setting_enable_ebook')], false ) . '/>';
-        $html .= '<label for="'.FullPeace_Media_To_Post::get_slug('setting_enable_ebook').'"> Custom Post Type for attaching eBook files</label>';
+        $html = '<input type="checkbox" id="'.FullPeace_Media_To_Post::get_slug('setting_enable_book').'" name="'.FullPeace_Media_To_Post::get_slug('setting_enable_book').'" value="1"' . checked( 1, $options[FullPeace_Media_To_Post::get_slug('setting_enable_book')], false ) . '/>';
+        $html .= '<label for="'.FullPeace_Media_To_Post::get_slug('setting_enable_book').'"> Custom Post Type for attaching Book files</label>';
 
         echo $html;
 
-    } // end render_option_input_html_ebook
+    } // end render_option_input_html_book
 
     /**
      * This function provides a simple description for the Sunny Demo Options page.
@@ -338,7 +338,7 @@ var_dump($options);
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><label for="<?php FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>"">Enable parsing audio files:</label></th>
-                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" <?php echo self::setting('enable_cpt_ebook') == 'enable' ? "checked" : "" ; ?> value="enable" />
+                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_audio'); ?>" <?php echo self::setting('enable_cpt_book') == 'enable' ? "checked" : "" ; ?> value="enable" />
                             <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_audio'); ?>">Talks</a></td>
                     </tr>
                     <tr valign="top">
@@ -346,8 +346,8 @@ var_dump($options);
                         <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_video'); ?>" <?php echo self::setting('enable_cpt_video') == 'enable' ? "checked" : "" ; ?> value="enable" /> <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_video'); ?>">Video</a></td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row"><label for="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_ebook'); ?>">Enable eBooks (PDF, EPUB, MOBI files):</label> (NOT YET IMPLEMENTED)</th>
-                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_ebook'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_ebook'); ?>" <?php echo self::setting('enable_cpt_ebook') == 'enable' ? "checked" : "" ; ?> value="enable" /> <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_ebook'); ?>">eBook</a></td>
+                        <th scope="row"><label for="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_book'); ?>">Enable Books (PDF, EPUB, MOBI files):</label> (NOT YET IMPLEMENTED)</th>
+                        <td><input type="checkbox" id="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_book'); ?>" name="<?php echo FullPeace_Media_To_Post::the_slug('enable_cpt_book'); ?>" <?php echo self::setting('enable_cpt_book') == 'enable' ? "checked" : "" ; ?> value="enable" /> <a href="<?php echo admin_url('edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_book'); ?>">Book</a></td>
                     </tr>
                 </table>
                 <!--

@@ -52,9 +52,9 @@ register_uninstall_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_uni
 add_action( 'init', array( 'FullPeace_Media_To_Post', 'init' ) );
 
 // Create a custom post type - this class deals with front-end components so checking with is_admin() is not necessary.
-if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_ebooks' )) {
-    require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/ebooks-cpt.php');
-    new FullPeace_eBooks_PostType('fpmtp_ebooks');    // post type slug
+if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_books' )) {
+    require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/books-cpt.php');
+    new FullPeace_Books_PostType('fpmtp_books');    // post type slug
 }
 if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_audio' )) {
     require_once(FPMTP__PLUGIN_DIR . 'admin/cpt/audio-cpt.php');
@@ -68,11 +68,11 @@ if(AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_enable_bios' 
 if ( is_admin() ) {
     require_once( FPMTP__PLUGIN_DIR . 'admin/class.optionspage.php' );
     // Create meta boxes with form fields that appear in post definition pages (where you create a post) of the given post type.
-    include_once( FPMTP__PLUGIN_DIR . 'admin/metabox/ebookfields.php' );
-    new FullPeace_eBooks_MetaBox(
-        'fpmtp_ebooks_meta_box',	// meta box ID
-        __( 'Upload eBook files (PDF, EPUB, MOBI)', FPMTP__I18N_NAMESPACE ),	// title
-        array( 'fpmtp_ebooks' ),	// post type slugs: post, page, etc.
+    include_once( FPMTP__PLUGIN_DIR . 'admin/metabox/bookfields.php' );
+    new FullPeace_Books_MetaBox(
+        'fpmtp_books_meta_box',	// meta box ID
+        __( 'Upload Book files (PDF, EPUB, MOBI)', FPMTP__I18N_NAMESPACE ),	// title
+        array( 'fpmtp_books' ),	// post type slugs: post, page, etc.
         'normal',	// context (what kind of metabox this is)
         'default'	// priority
     );

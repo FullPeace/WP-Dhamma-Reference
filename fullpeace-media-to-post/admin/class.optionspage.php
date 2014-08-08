@@ -34,11 +34,18 @@ class FullPeace_Options_Page extends AdminPageFramework
                 'order' => 10,
             ),
             array(
-                'section_id'    => 'fpmtp_settings_ebooks',
+                'section_id'    => 'fpmtp_settings_audio',
                 'page_slug'     => 'fpmtp_settings',
-                'tab_slug'      => 'fpmtp_tab_ebooks',
-                'title' => 'eBooks',
-                'description'   => 'Settings for eBooks',
+                'tab_slug'      => 'fpmtp_tab_audio',
+                'title' => 'Books',
+                'description'   => 'Settings for Audio',
+            ),
+            array(
+                'section_id'    => 'fpmtp_settings_books',
+                'page_slug'     => 'fpmtp_settings',
+                'tab_slug'      => 'fpmtp_tab_books',
+                'title' => 'Books',
+                'description'   => 'Settings for Books',
             )
         );
 
@@ -54,12 +61,12 @@ class FullPeace_Options_Page extends AdminPageFramework
                 'default'		=>	true,
             ),
             array(	// Single checkbox item - set a check box item to the 'label' element.
-                'field_id'		=>	'fpmtp_enable_ebooks',
+                'field_id'		=>	'fpmtp_enable_books',
                 'section_id'    =>      'fpmtp_settings_general',
-                'title'			=>	__( 'Enable eBooks', FPMTP__I18N_NAMESPACE ),
-                'tip'			=>	__( 'Enable eBooks Custom Post Type.', FPMTP__I18N_NAMESPACE ),
+                'title'			=>	__( 'Enable Books', FPMTP__I18N_NAMESPACE ),
+                'tip'			=>	__( 'Enable Books Custom Post Type.', FPMTP__I18N_NAMESPACE ),
                 'type'			=>	'checkbox',
-                'label'			=>	__( 'Enabling this creates an eBooks type that allows upload of PDF, EPUB and MOBI files.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+                'label'			=>	__( 'Enabling this creates an Books type that allows upload of PDF, EPUB and MOBI files.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
                 'default'		=>	true,
             ),
             array(	// Single checkbox item - set a check box item to the 'label' element.
@@ -88,18 +95,81 @@ class FullPeace_Options_Page extends AdminPageFramework
 
         // Add form fields
         $this->addSettingFields(
+//            array(	// Single checkbox item - set a check box item to the 'label' element.
+//                'field_id'		=>	'fpmtp_enable_audio_types',
+//                'section_id'    =>      'fpmtp_settings_audio',
+//                'title'			=>	__( 'Enable Audio Types' , FPMTP__I18N_NAMESPACE ),
+//                'tip'			=>	__( 'Enable Types (classifying as Guided Meditation, Chanting, or other).', FPMTP__I18N_NAMESPACE ),
+//                'type'			=>	'checkbox',
+//                'label'			=>	__( 'Enable Audio Types to allow classifying Audio with a Type (such as Guided Meditation, Dhamma Talk, Chanting, ...).', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+//                'default'		=>	true,
+//            ),
             array(	// Single checkbox item - set a check box item to the 'label' element.
-                'field_id'		=>	'fpmtp_enable_ebooks_authors',
-                'section_id'    =>      'fpmtp_settings_ebooks',
-                'title'			=>	__( 'Enable eBooks Authors' , FPMTP__I18N_NAMESPACE ),
-                'tip'			=>	__( 'Enable Authors for eBooks.', FPMTP__I18N_NAMESPACE ),
+                'field_id'		=>	'fpmtp_enable_audio_speakers',
+                'section_id'    =>      'fpmtp_settings_audio',
+                'title'			=>	__( 'Enable Audio Speakers' , FPMTP__I18N_NAMESPACE ),
+                'tip'			=>	__( 'Enable Speakers for Audio.', FPMTP__I18N_NAMESPACE ),
                 'type'			=>	'checkbox',
-                'label'			=>	__( 'Enabling this allows for tagging eBooks with an Author.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+                'label'			=>	__( 'Autimatically tag Audio with Speakers based on the MP3 ID3 <code>artist</code> tag.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+                'default'		=>	true,
+            ),
+            array(	// Single checkbox item - set a check box item to the 'label' element.
+                'field_id'		=>	'fpmtp_enable_audio_series',
+                'section_id'    =>      'fpmtp_settings_audio',
+                'title'			=>	__( 'Enable Audio Series' , FPMTP__I18N_NAMESPACE ),
+                'tip'			=>	__( 'Enable Series for Audio.', FPMTP__I18N_NAMESPACE ),
+                'type'			=>	'checkbox',
+                'label'			=>	__( 'Automatically parse the MP3 ID3 tag <code>album</code> as a Series term.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+                'default'		=>	true,
+            ),
+            array(	// Single checkbox item - set a check box item to the 'label' element.
+                'field_id'		=>	'fpmtp_enable_audio_languages',
+                'section_id'    =>      'fpmtp_settings_audio',
+                'title'			=>	__( 'Enable Audio Languages' , FPMTP__I18N_NAMESPACE ),
+                'tip'			=>	__( 'Enable Languages for Audio.', FPMTP__I18N_NAMESPACE ),
+                'type'			=>	'checkbox',
+                'label'			=>	__( 'Enabling this allows for tagging Audio with one or more languages.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
                 'default'		=>	true,
             ),
             array( // Submit button
                 'field_id' => 'submit_button',
-                'section_id'    =>      'fpmtp_settings_ebooks',
+                'section_id'    =>      'fpmtp_settings_audio',
+                'type' => 'submit',
+            )
+        );
+
+        // Add form fields
+        $this->addSettingFields(
+            array(	// Single checkbox item - set a check box item to the 'label' element.
+                'field_id'		=>	'fpmtp_enable_books_authors',
+                'section_id'    =>      'fpmtp_settings_books',
+                'title'			=>	__( 'Enable Book Authors' , FPMTP__I18N_NAMESPACE ),
+                'tip'			=>	__( 'Enable Authors for Books.', FPMTP__I18N_NAMESPACE ),
+                'type'			=>	'checkbox',
+                'label'			=>	__( 'Enabling this allows for tagging Books with an Author.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+                'default'		=>	true,
+            ),
+            array(	// Single checkbox item - set a check box item to the 'label' element.
+                'field_id'		=>	'fpmtp_enable_books_year',
+                'section_id'    =>      'fpmtp_settings_books',
+                'title'			=>	__( 'Enable Books Year' , FPMTP__I18N_NAMESPACE ),
+                'tip'			=>	__( 'Enable Year Published for Books.', FPMTP__I18N_NAMESPACE ),
+                'type'			=>	'checkbox',
+                'label'			=>	__( 'Enabling this allows for tagging Books with Year Published.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+                'default'		=>	true,
+            ),
+            array(	// Single checkbox item - set a check box item to the 'label' element.
+                'field_id'		=>	'fpmtp_enable_books_languages',
+                'section_id'    =>      'fpmtp_settings_books',
+                'title'			=>	__( 'Enable Books Languages' , FPMTP__I18N_NAMESPACE ),
+                'tip'			=>	__( 'Enable Languages for Books.', FPMTP__I18N_NAMESPACE ),
+                'type'			=>	'checkbox',
+                'label'			=>	__( 'Enabling this allows for tagging Books with one or more languages.', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+                'default'		=>	true,
+            ),
+            array( // Submit button
+                'field_id' => 'submit_button',
+                'section_id'    =>      'fpmtp_settings_books',
                 'type' => 'submit',
             )
         );
@@ -114,7 +184,7 @@ class FullPeace_Options_Page extends AdminPageFramework
                 'title'        =>    __( 'Audio', FPMTP__I18N_NAMESPACE ),
             ),
             array(
-                'tab_slug'    =>    'fpmtp_tab_ebooks',
+                'tab_slug'    =>    'fpmtp_tab_books',
                 'title'        =>    __( 'EBooks', FPMTP__I18N_NAMESPACE ),
             )//,
 //            array(
@@ -138,10 +208,10 @@ class FullPeace_Options_Page extends AdminPageFramework
         . '<p>These are the settings for audio posts (currently MP3 files are supported). The files have to have valid ID3Tags ("artist", "album", and so on) to be rendered correctly.</p>';
 
     }
-    function content_my_tabs_fpmtp_tab_ebooks( $sContent ) {            // content_{page slug}_{tab slug}
+    function content_my_tabs_fpmtp_tab_books( $sContent ) {            // content_{page slug}_{tab slug}
         return $sContent
-        . '<h3>eBook posts</h3>'
-        . '<p>Settings for eBook entries (PDF, EPUB, MOBI).</p>';
+        . '<h3>Book posts</h3>'
+        . '<p>Settings for Book entries (PDF, EPUB, MOBI).</p>';
     }
 //    function content_my_tabs_fpmtp_tab_ftp( $sContent ) {            // content_{page slug}_{tab slug}
 //        return $sContent

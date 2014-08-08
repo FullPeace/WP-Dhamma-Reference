@@ -42,30 +42,30 @@ class FullPeace_Media_To_Post_Public {
         self::$initiated = true;
 
         // Add a filter to the attributes metabox to inject template into the cache.
-        add_filter(
-            'page_attributes_dropdown_pages_args',
-            array( 'FullPeace_Media_To_Post_Public', 'register_project_templates' )
-        );
-
-        // Add a filter to the save post to inject our template into the page cache
-        add_filter(
-            'wp_insert_post_data',
-            array( 'FullPeace_Media_To_Post_Public', 'register_project_templates' )
-        );
-
-        // Add a filter to the template include to determine if the page has our
-        // template assigned and return it's path
-        add_filter(
-            'template_include',
-            array( 'FullPeace_Media_To_Post_Public', 'view_project_template')
-        );
-
-        // Add our templates
-        self::setTemplates( array(
-            'single-'.FullPeace_Media_To_Post::$slug.'_audio_series.php' => 'Talks Series Template', // @todo Create this
-            //'talks-template.php'        => 'Talks Template',        // @todo Create this
-            //'series-template.php'       => 'Series Template',       // @todo Create this
-        ));
+//        add_filter(
+//            'page_attributes_dropdown_pages_args',
+//            array( 'FullPeace_Media_To_Post_Public', 'register_project_templates' )
+//        );
+//
+//        // Add a filter to the save post to inject our template into the page cache
+//        add_filter(
+//            'wp_insert_post_data',
+//            array( 'FullPeace_Media_To_Post_Public', 'register_project_templates' )
+//        );
+//
+//        // Add a filter to the template include to determine if the page has our
+//        // template assigned and return it's path
+//        add_filter(
+//            'template_include',
+//            array( 'FullPeace_Media_To_Post_Public', 'view_project_template')
+//        );
+//
+//        // Add our templates
+//        self::setTemplates( array(
+//            'single-'.FullPeace_Media_To_Post::$slug.'_audio_series.php' => 'Talks Series Template', // @todo Create this
+//            //'talks-template.php'        => 'Talks Template',        // @todo Create this
+//            //'series-template.php'       => 'Series Template',       // @todo Create this
+//        ));
     }
 
 

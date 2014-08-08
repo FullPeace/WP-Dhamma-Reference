@@ -1,5 +1,5 @@
 <?php
-class FullPeace_eBooks_MetaBox extends AdminPageFramework_MetaBox {
+class FullPeace_Books_MetaBox extends AdminPageFramework_MetaBox {
 
     /*
      * ( optional ) Use the setUp() method to define settings of this meta box.

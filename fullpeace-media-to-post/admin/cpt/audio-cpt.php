@@ -42,7 +42,7 @@ public function start() {
             'public'			=>	true,
             'menu_position' 	=>	5,
             'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-            'taxonomies'		=>	array( 'fpmtp_type', 'fpmtp_speakers', 'fpmtp_series' ),
+            'taxonomies'		=>	array( 'fpmtp_speakers', 'fpmtp_series', 'fpmtp_languages' ),
             'has_archive'		=>	true,
             'rewrite' => array( 'slug' => 'audio', 'with_front' => false ),
             'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
@@ -53,20 +53,38 @@ public function start() {
     );
 
     // the setUp() method is too late to add taxonomies. So we use start_{class name} action hook.
+//    $this->addTaxonomy(
+//        'fpmtp_type', // taxonomy slug
+//        array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+//            'labels' => array(
+//                'name' => 'Type',
+//                'add_new_item' => 'Add New Type',
+//                'new_item_name' => "New Type"
+//            ),
+//            'show_ui' => true,
+//            'show_tagcloud' => true,
+//            'hierarchical' => false,
+//            'show_admin_column' => true,
+//            'show_in_nav_menus' => true,
+//            'rewrite' => array( 'slug' => 'audio-type', 'with_front' => false ),
+//            'show_table_filter' => true,	// framework specific key
+//            'show_in_sidebar_menus' => true,	// framework specific key
+//        )
+//    );
     $this->addTaxonomy(
-        'fpmtp_type', // taxonomy slug
+        'fpmtp_languages', // taxonomy slug
         array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
             'labels' => array(
-                'name' => 'Type',
-                'add_new_item' => 'Add New Type',
-                'new_item_name' => "New Type"
+                'name' => 'Languages',
+                'add_new_item' => 'Add New Language',
+                'new_item_name' => "New Language"
             ),
             'show_ui' => true,
             'show_tagcloud' => true,
             'hierarchical' => false,
             'show_admin_column' => true,
             'show_in_nav_menus' => true,
-            'rewrite' => array( 'slug' => 'audio-type', 'with_front' => false ),
+            'rewrite' => array( 'slug' => 'languages', 'with_front' => false ),
             'show_table_filter' => true,	// framework specific key
             'show_in_sidebar_menus' => true,	// framework specific key
         )

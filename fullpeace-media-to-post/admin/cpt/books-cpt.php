@@ -1,6 +1,6 @@
 <?php
 
-class FullPeace_eBooks_PostType  extends AdminPageFramework_PostType {
+class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
 
     /**
      * This method is called at the end of the constructor.
@@ -15,28 +15,28 @@ class FullPeace_eBooks_PostType  extends AdminPageFramework_PostType {
         $this->setPostTypeArgs(
             array(			// argument - for the array structure, refer to http://codex.wordpress.org/Function_Reference/register_post_type#Arguments
                 'labels' => array(
-                    'name'			=>	'eBooks',
-                    'all_items' 	=>	__( 'All eBooks', FPMTP__I18N_NAMESPACE ),
-                    'singular_name' =>	'eBook',
+                    'name'			=>	'Books',
+                    'all_items' 	=>	__( 'All Books', FPMTP__I18N_NAMESPACE ),
+                    'singular_name' =>	'Book',
                     'add_new'		=>	__( 'Add New', FPMTP__I18N_NAMESPACE ),
-                    'add_new_item'	=>	__( 'Add New eBook', FPMTP__I18N_NAMESPACE ),
+                    'add_new_item'	=>	__( 'Add New Book', FPMTP__I18N_NAMESPACE ),
                     'edit'			=>	__( 'Edit', FPMTP__I18N_NAMESPACE ),
-                    'edit_item'		=>	__( 'Edit eBook', FPMTP__I18N_NAMESPACE ),
-                    'new_item'		=>	__( 'New eBook', FPMTP__I18N_NAMESPACE ),
+                    'edit_item'		=>	__( 'Edit Book', FPMTP__I18N_NAMESPACE ),
+                    'new_item'		=>	__( 'New Book', FPMTP__I18N_NAMESPACE ),
                     'view'			=>	__( 'View', FPMTP__I18N_NAMESPACE ),
-                    'view_item'		=>	__( 'View eBook', FPMTP__I18N_NAMESPACE ),
-                    'search_items'	=>	__( 'Search eBooks', FPMTP__I18N_NAMESPACE ),
-                    'not_found'		=>	__( 'No eBook found', FPMTP__I18N_NAMESPACE ),
-                    'not_found_in_trash' => __( 'No eBook found in Trash', FPMTP__I18N_NAMESPACE ),
-                    'parent'		=>	__( 'Parent eBook', FPMTP__I18N_NAMESPACE ),
-                    'plugin_listing_table_title_cell_link'	=>	__( 'eBooks', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
+                    'view_item'		=>	__( 'View Book', FPMTP__I18N_NAMESPACE ),
+                    'search_items'	=>	__( 'Search Books', FPMTP__I18N_NAMESPACE ),
+                    'not_found'		=>	__( 'No Book found', FPMTP__I18N_NAMESPACE ),
+                    'not_found_in_trash' => __( 'No Book found in Trash', FPMTP__I18N_NAMESPACE ),
+                    'parent'		=>	__( 'Parent Book', FPMTP__I18N_NAMESPACE ),
+                    'plugin_listing_table_title_cell_link'	=>	__( 'Books', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
                 ),
                 'public'			=>	true,
                 'menu_position' 	=>	5,
                 'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-                'taxonomies'		=>	array( 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy' ),
+                'taxonomies'		=>	array( 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy', 'fpmtp_languages' ),
                 'has_archive'		=>	true,
-                'rewrite' => array( 'slug' => 'ebooks', 'with_front' => false ),
+                'rewrite' => array( 'slug' => 'books', 'with_front' => false ),
                 'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
                 //'menu_icon'			=>	plugins_url( 'asset/image/wp-logo_16x16.png', APFDEMO_FILE ),
                 // ( framework specific key ) this sets the screen icon for the post type for WordPress v3.7.1 or below.
@@ -65,6 +65,24 @@ class FullPeace_eBooks_PostType  extends AdminPageFramework_PostType {
             )
         );
         $this->addTaxonomy(
+            'fpmtp_languages', // taxonomy slug
+            array(			// argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+                'labels' => array(
+                    'name' => 'Languages',
+                    'add_new_item' => 'Add New Language',
+                    'new_item_name' => "New Language"
+                ),
+                'show_ui' => true,
+                'show_tagcloud' => true,
+                'hierarchical' => false,
+                'show_admin_column' => true,
+                'show_in_nav_menus' => true,
+                'rewrite' => array( 'slug' => 'languages', 'with_front' => false ),
+                'show_table_filter' => true,	// framework specific key
+                'show_in_sidebar_menus' => true,	// framework specific key
+            )
+        );
+        $this->addTaxonomy(
             'fpmtp_year_taxonomy',
             array(
                 'labels' => array(
@@ -77,7 +95,7 @@ class FullPeace_eBooks_PostType  extends AdminPageFramework_PostType {
                 'hierarchical' => false,
                 'show_admin_column' => true,
                 'show_in_nav_menus' => true,
-                'rewrite' => array( 'slug' => 'ebooks-by-year', 'with_front' => false ),
+                'rewrite' => array( 'slug' => 'books-by-year', 'with_front' => false ),
                 'show_table_filter' => true,	// framework specific key
                 'show_in_sidebar_menus' => false,	// framework specific key
             )
@@ -95,7 +113,7 @@ class FullPeace_eBooks_PostType  extends AdminPageFramework_PostType {
     /*
      * Built-in callback methods
      */
-    public function columns_fpmtp_ebooks( $aHeaderColumns ) {	// columns_{post type slug}
+    public function columns_fpmtp_books( $aHeaderColumns ) {	// columns_{post type slug}
 
         return array_merge(
             $aHeaderColumns,
@@ -113,7 +131,7 @@ class FullPeace_eBooks_PostType  extends AdminPageFramework_PostType {
         );
 
     }
-    public function sortable_columns_fpmtp_ebooks( $aSortableHeaderColumns ) {	// sortable_columns_{post type slug}
+    public function sortable_columns_fpmtp_books( $aSortableHeaderColumns ) {	// sortable_columns_{post type slug}
         return $aSortableHeaderColumns + array(
             'title' => 'title',
             'thumbnail' => 'thumbnail',
@@ -159,7 +177,7 @@ class FullPeace_eBooks_PostType  extends AdminPageFramework_PostType {
      */
     public function replyToPrintOptionValues( $sContent ) {
 
-        if ( ! isset( $GLOBALS['post']->ID ) || get_post_type() != 'fpmtp_ebooks' ) return $sContent;
+        if ( ! isset( $GLOBALS['post']->ID ) || get_post_type() != 'fpmtp_books' ) return $sContent;
 
         // 1. To retrieve the meta box data	- get_post_meta( $post->ID ) will return an array of all the meta field values.
         // or if you know the field id of the value you want, you can do $value = get_post_meta( $post->ID, $field_id, true );
