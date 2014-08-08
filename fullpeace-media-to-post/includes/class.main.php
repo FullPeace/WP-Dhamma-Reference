@@ -124,39 +124,42 @@ class FullPeace_Media_To_Post {
         $attached_audio = get_attached_media ( 'audio', $attachment_ID );
         $metadata = wp_read_audio_metadata( $filepath );
 
+        $meta_comment = (isset($metadata['comment'])) ? $metadata['comment'] : "";
+        $meta_length = (isset($metadata['length_formatted'])) ? "\n\n".__('Length of recording', FPMTP__I18N_NAMESPACE ) .": ".$metadata['length_formatted'] : "";
+        $meta_year = (isset($metadata['year'])) ? "\n".__('Year', FPMTP__I18N_NAMESPACE ) .": ".$metadata['year'] : "";
+
         $new_post_content = '[audio src="'.$attachment_post->guid.'"]'.
-            "\n\n".$metadata['comment'] .
             "\n\n".$attachment_post->post_content .
-            "\n\nLength of recording: ".$metadata['length_formatted'] .
-            "\nYear: ".$metadata['year'];
+            $meta_length .
+            $meta_year;
 
         // Create new custom post object only for images
         $talk_custom_post = array(
             'post_title'    => $attachment_post->post_title,
             'post_content'  => $new_post_content ,
-            'post_excerpt'  => $metadata['comment'] ,
+            'post_excerpt'  => $meta_comment ,
             'post_type'     => FullPeace_Media_To_Post::$slug . '_audio',
             'post_author'   => $current_user->ID
         );
 
         // Insert the custom post into the database
-        $talk_post_id = wp_insert_post( $talk_custom_post );
+        $audio_post_id = wp_insert_post( $talk_custom_post );
         wp_update_post( array(
                 'ID' => $attachment_ID ,
-                'post_parent' => $talk_post_id
+                'post_parent' => $audio_post_id
             )
         );
-        //FullPeace_Media_To_Post_Admin::add_notice('New Talk added ' . get_edit_post_link( $talk_post_id ));
 
-        wp_set_object_terms( $talk_post_id, array( $metadata['artist'] ), FullPeace_Media_To_Post::$slug . '_speakers', true );
-        wp_set_object_terms( $talk_post_id, array( $metadata['album'] ), FullPeace_Media_To_Post::$slug . '_series', true );
+        if(isset($metadata['artist'] ))
+            wp_set_object_terms( $audio_post_id, array( $metadata['artist'] ), FullPeace_Media_To_Post::$slug . '_speakers', true );
+        if(isset($metadata['album'] ))
+            wp_set_object_terms( $audio_post_id, array( $metadata['album'] ), FullPeace_Media_To_Post::$slug . '_series', true );
 
         // I wonder if the file has an image attached?
         $post_thumbnail_id = get_post_thumbnail_id( $attachment_ID );
-        //FullPeace_Media_To_Post_Admin::add_notice('post thumb ' . $post_thumbnail_id);
         if(is_numeric($post_thumbnail_id) && (int)$post_thumbnail_id>0)
         {
-            set_post_thumbnail($talk_post_id, $post_thumbnail_id);
+            set_post_thumbnail($audio_post_id, $post_thumbnail_id);
         }
 		
 		// Now that the attachment is parsed, check the setting to see if the file should be moved to FTP

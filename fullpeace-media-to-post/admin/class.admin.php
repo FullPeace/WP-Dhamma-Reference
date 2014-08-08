@@ -85,110 +85,6 @@ class FullPeace_Media_To_Post_Admin {
         return $mime_types;
     }
 
-    public static function setting($setting, $option_value = FALSE)
-    {
-        return FullPeace_Media_To_Post::setting($setting, $option_value);
-    }
-
-    private static function register_settings() {
-
-        register_setting( FullPeace_Media_To_Post::get_slug( 'option_group' ), FullPeace_Media_To_Post::get_slug('setting_enable_audio') );
-        register_setting( FullPeace_Media_To_Post::get_slug( 'option_group' ), FullPeace_Media_To_Post::get_slug('setting_enable_video') );
-        register_setting( FullPeace_Media_To_Post::get_slug( 'option_group' ), FullPeace_Media_To_Post::get_slug('setting_enable_audio') );
-        add_option( FullPeace_Media_To_Post::get_slug('setting_enable_audio'), 1);
-        add_option( FullPeace_Media_To_Post::get_slug('setting_enable_video'), 0);
-        add_option( FullPeace_Media_To_Post::get_slug('setting_enable_audio'), 1);
-
-        add_settings_section( 'main_settings' , 'Main Settings', array( __CLASS__, 'display_settings_section' ), FullPeace_Media_To_Post::get_slug( 'settings' ));
-        add_settings_field('plugin_text_string', 'Plugin Text Input', array( __CLASS__, 'display_settings_section' ), FullPeace_Media_To_Post::get_slug( 'settings' ), FullPeace_Media_To_Post::get_slug( 'main_settings' ));
-
-        add_settings_section(
-        // ID used to identify this section and with which to register options
-            'settings_section',
-            // Title to be displayed on the administration page
-            'Configuration of Media To Post',
-            // Callback used to render the description of the section
-            array( __CLASS__, 'display_settings_section' ),
-            // Page on which to add this section of options
-            FullPeace_Media_To_Post::get_slug('settings')
-        );
-
-        add_settings_field(
-            FullPeace_Media_To_Post::get_slug('setting_field_audio'),
-            'Enable Talks',
-            array( __CLASS__, 'render_option_input_html_audio' ),
-            FullPeace_Media_To_Post::get_slug('settings'),
-            'settings_section'
-        );
-
-        add_settings_field(
-            FullPeace_Media_To_Post::get_slug('setting_field_video'),
-            'Enable Video',
-            array( __CLASS__, 'render_option_input_html_video' ),
-            FullPeace_Media_To_Post::get_slug('settings'),
-            'settings_section'
-        );
-
-        add_settings_field(
-            FullPeace_Media_To_Post::get_slug('setting_field_book'),
-            'Enable Books',
-            array( __CLASS__, 'render_option_input_html_book' ),
-            FullPeace_Media_To_Post::get_slug('settings'),
-            'settings_section'
-        );
-
-    }// end of register_settings()
-
-    /**
-     * Generate the HTML input element
-     *
-     * @since 0.1.0
-     */
-    public static function render_option_input_html_audio() {
-        // First, we read the option from db
-        $options = get_option( FullPeace_Media_To_Post::get_slug('setting_enable_audio') );
-var_dump($options);
-        $html = '<input type="checkbox" id="checkbox_audio" name="render_option_input_html_audio[checkbox_audio]" value="1"' . checked( 1, $options['checkbox_audio'], false ) . '/>';
-        $html .= '<label for="checkbox_audio">This is an example of a checkbox</label>';
-
-        echo $html;
-
-    } // end render_option_input_html_audio
-
-    /**
-     * Generate the HTML input element
-     *
-     * @since 0.1.0
-     */
-    public static function render_option_input_html_video() {
-        // First, we read the option from db
-        $options = get_option( FullPeace_Media_To_Post::get_slug('setting_enable_video') );
-        var_dump($options);
-
-        $html = '<input type="checkbox" id="'.FullPeace_Media_To_Post::get_slug('setting_enable_video').'" name="'.FullPeace_Media_To_Post::get_slug('setting_enable_video').'" value="1"' . checked( 1, $options[FullPeace_Media_To_Post::get_slug('setting_enable_video')], false ) . '/>';
-        $html .= '<label for="'.FullPeace_Media_To_Post::get_slug('setting_enable_video').'">This is an example of a checkbox</label>';
-
-        echo $html;
-
-    } // end render_option_input_html_video
-
-    /**
-     * Generate the HTML input element
-     *
-     * @since 0.1.0
-     */
-    public static function render_option_input_html_book() {
-        // First, we read the option from db
-        $options = get_option( FullPeace_Media_To_Post::get_slug('setting_enable_book') );
-        var_dump($options);
-
-        $html = '<input type="checkbox" id="'.FullPeace_Media_To_Post::get_slug('setting_enable_book').'" name="'.FullPeace_Media_To_Post::get_slug('setting_enable_book').'" value="1"' . checked( 1, $options[FullPeace_Media_To_Post::get_slug('setting_enable_book')], false ) . '/>';
-        $html .= '<label for="'.FullPeace_Media_To_Post::get_slug('setting_enable_book').'"> Custom Post Type for attaching Book files</label>';
-
-        echo $html;
-
-    } // end render_option_input_html_book
-
     /**
      * This function provides a simple description for the Sunny Demo Options page.
      * This function is being passed as a parameter in the add_settings_section function.
@@ -200,8 +96,7 @@ var_dump($options);
     } // end of display_settings_section
 
     public static function admin_menu() {
-        // Replaced by admin page framework
-        //self::load_menu();
+        self::load_menu();
     }
 
     public static function admin_head() {
@@ -216,26 +111,13 @@ var_dump($options);
     }
 
     public static function load_menu() {
-
+        remove_submenu_page( 'edit.php?post_type=fpmtp_audio', 'post-new.php?post_type=fpmtp_audio' );
         add_submenu_page(
-            'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_audio',
-            'talks-series',
-            'Talks Series',
+            'edit.php?post_type=fpmtp_audio',
+            'upload_media',
+            'Upload Audio',
             'edit_posts',
-            'edit.php?post_type='.FullPeace_Media_To_Post::$slug.'_audio_series');
-
-        self::register_settings();
-
-        $hook = add_options_page(
-            __('Media To Post', FPMTP__I18N_NAMESPACE),
-            __('FullPeace Media To Post Settings', FPMTP__I18N_NAMESPACE),
-            'manage_options',
-            FullPeace_Media_To_Post::get_slug('settings'),
-            array( 'FullPeace_Media_To_Post_Admin', 'display_page' ) );
-
-        if ( version_compare( $GLOBALS['wp_version'], '3.3', '>=' ) ) {
-            add_action( "load-$hook", array( 'FullPeace_Media_To_Post_Admin', 'admin_help' ) );
-        }
+            'media-new.php');
 
     }
 
