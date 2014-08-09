@@ -10,6 +10,14 @@
  * the style sheet responsible for styling the content of the meta box.
  *
  * @since    0.1.0
+ *
+ * @todo Create template for single & archive Bio with links to Author & Speaker taxonomies
+ * @todo Create template fpr single & archive Audio
+ * @todo Create template for single & archive Book
+ * @todo create template for taxonomy-fpmtp_series with playlist on term pages
+ * @todo Create template for speakers and authors taxonomy pages for listing authors and number of related posts, with Bio excerpt
+ * @todo Create search template for all CPTs + taxonomies
+ * @todo Create search parsing function
  */
 class FullPeace_Media_To_Post {
 
@@ -112,17 +120,18 @@ class FullPeace_Media_To_Post {
      *  - MP3 format to Audio type
      *
      * @param $attachment_ID The attachment id of an attachment with mime type 'audio'
-     * @todo Create a setting in wp-admin for creating a template for the post content.
      */
     public static function create_audio_post_from_upload($attachment_ID)
     {
         global $current_user;
         get_currentuserinfo();
 
+        $aAudioSettings = AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_settings_audio' );
+
         $attachment_post = get_post( $attachment_ID );
         $filepath = get_attached_file( $attachment_ID );
-        $attachment_meta = wp_get_attachment_metadata( $attachment_ID );
-        $attached_audio = get_attached_media ( 'audio', $attachment_ID );
+        //$attachment_meta = wp_get_attachment_metadata( $attachment_ID );
+        //$attached_audio = get_attached_media ( 'audio', $attachment_ID );
         $metadata = wp_read_audio_metadata( $filepath );
 
         $meta_comment = (isset($metadata['comment'])) ? $metadata['comment'] : "";
@@ -135,7 +144,7 @@ class FullPeace_Media_To_Post {
             $meta_year;
 
         // Create new custom post object only for images
-        $talk_custom_post = array(
+        $audio_custom_post = array(
             'post_title'    => $attachment_post->post_title,
             'post_content'  => $new_post_content ,
             'post_excerpt'  => $meta_comment ,
@@ -143,8 +152,12 @@ class FullPeace_Media_To_Post {
             'post_author'   => $current_user->ID
         );
 
+        if(isset($aAudioSettings['fpmtp_audio_post_status'])){
+            $audio_custom_post['post_status'] = $aAudioSettings['fpmtp_audio_post_status'];
+        }
+
         // Insert the custom post into the database
-        $audio_post_id = wp_insert_post( $talk_custom_post );
+        $audio_post_id = wp_insert_post( $audio_custom_post );
         wp_update_post( array(
                 'ID' => $attachment_ID ,
                 'post_parent' => $audio_post_id

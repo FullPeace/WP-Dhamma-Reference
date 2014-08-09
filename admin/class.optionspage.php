@@ -95,15 +95,25 @@ class FullPeace_Options_Page extends AdminPageFramework
 
         // Add form fields
         $this->addSettingFields(
-//            array(	// Single checkbox item - set a check box item to the 'label' element.
-//                'field_id'		=>	'fpmtp_enable_audio_types',
-//                'section_id'    =>      'fpmtp_settings_audio',
-//                'title'			=>	__( 'Enable Audio Types' , FPMTP__I18N_NAMESPACE ),
-//                'tip'			=>	__( 'Enable Types (classifying as Guided Meditation, Chanting, or other).', FPMTP__I18N_NAMESPACE ),
-//                'type'			=>	'checkbox',
-//                'label'			=>	__( 'Enable Audio Types to allow classifying Audio with a Type (such as Guided Meditation, Dhamma Talk, Chanting, ...).', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
-//                'default'		=>	true,
-//            ),
+            array(	// Single Drop-down List
+                'field_id'		=>	'fpmtp_audio_post_status',
+                'section_id'    =>      'fpmtp_settings_audio',
+                'title'			=>	__( 'Post status', FPMTP__I18N_NAMESPACE ),
+                'type'			=>	'select',
+                'help'			=>	__( 'This is the <em>select</em> field type.', FPMTP__I18N_NAMESPACE ),
+                'default'		=>	'draft',	// the index key of the label array below which yields 'Yellow'.
+                'label'			=>	array(
+                    'draft'	    =>	'Draft',
+                    'publish'	=>	'Publish',
+                    'pending'	=>	'Pending',
+                    'private'	=>	'Private',
+                ),
+                'description'	=>	__( 'Specify the post status for imported posts.', FPMTP__I18N_NAMESPACE )
+                    . ' ' . __( 'This defaults to <code>Draft</code> to allow you to manually publish Audio after reviewing (this can be done in bulk).', FPMTP__I18N_NAMESPACE )
+                    . ' ' . __( '<code>Publish</code> will publish each post immediately.', FPMTP__I18N_NAMESPACE )
+                    . ' ' . __( '<code>Pending</code> will set the post in queue for review.', FPMTP__I18N_NAMESPACE )
+                    . ' ' . __( '<code>Private</code> will set the post to private, inaccessible unless logged in.', FPMTP__I18N_NAMESPACE ),
+            ),
             array(	// Single checkbox item - set a check box item to the 'label' element.
                 'field_id'		=>	'fpmtp_enable_audio_speakers',
                 'section_id'    =>      'fpmtp_settings_audio',
