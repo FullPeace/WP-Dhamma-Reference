@@ -152,7 +152,8 @@ class FullPeace_Media_To_Post {
             'post_author'   => $current_user->ID
         );
 
-        if(isset($aAudioSettings['fpmtp_audio_post_status'])){
+        if(isset($aAudioSettings['fpmtp_audio_post_status']))
+        {
             $audio_custom_post['post_status'] = $aAudioSettings['fpmtp_audio_post_status'];
         }
 

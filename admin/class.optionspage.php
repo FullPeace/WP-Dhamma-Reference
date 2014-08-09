@@ -95,6 +95,10 @@ class FullPeace_Options_Page extends AdminPageFramework
 
         // Add form fields
         $this->addSettingFields(
+        /**
+         * Select post_status
+         * @since 0.1.4
+         */
             array(	// Single Drop-down List
                 'field_id'		=>	'fpmtp_audio_post_status',
                 'section_id'    =>      'fpmtp_settings_audio',
