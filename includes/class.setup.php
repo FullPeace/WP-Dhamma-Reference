@@ -21,7 +21,11 @@ class FullPeace_Media_To_Post_Setup
         $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
         check_admin_referer( "activate-plugin_{$plugin}" );
 
-        FullPeace_Media_To_Post_Admin::add_notice('Thank you for installing the FullPeace.org Media To Post plugin.<br/> If there is anything we can do to help you with it, please let us know by emailing developer@fullpeace.org');
+        FullPeace_Media_To_Post_Admin::add_notice( 
+				__('Thank you for installing the FullPeace.org Media To Post plugin.', FPMTP__I18N_NAMESPACE ) . '<br/>' .  
+				__('If there is anything we can do to help you with it, please let us know by emailing <a href="mailto:developer@fullpeace.org" target="_blank">developer@fullpeace.org</a>', FPMTP__I18N_NAMESPACE ) . '<br/>' .  
+				__('To start using the plugin, go to <code>Settings</code> &gt; <code>Media To Post Settings</code>', FPMTP__I18N_NAMESPACE )
+				);
 
         $version_setting_name = FullPeace_Media_To_Post::$slug . '_version';
 

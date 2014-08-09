@@ -46,6 +46,13 @@ class FullPeace_Options_Page extends AdminPageFramework
                 'tab_slug'      => 'fpmtp_tab_books',
                 'title' => 'Books',
                 'description'   => 'Settings for Books',
+            ),
+            array(
+                'section_id'    => 'fpmtp_settings_bios',
+                'page_slug'     => 'fpmtp_settings',
+                'tab_slug'      => 'fpmtp_tab_bios',
+                'title' => 'Books',
+                'description'   => 'Settings for Bios',
             )
         );
 
@@ -187,6 +194,23 @@ class FullPeace_Options_Page extends AdminPageFramework
                 'type' => 'submit',
             )
         );
+        // Add form fields
+        $this->addSettingFields(
+            array(	// Single checkbox item - set a check box item to the 'label' element.
+                'field_id'		=>	'fpmtp_enable_bios_communitymembers',
+                'section_id'    =>      'fpmtp_settings_bios',
+                'title'			=>	__( 'Enable Bios Community Members' , FPMTP__I18N_NAMESPACE ),
+                'tip'			=>	__( 'Enable Community Member classification.', FPMTP__I18N_NAMESPACE ),
+                'type'			=>	'checkbox',
+                'label'			=>	__( 'Enabling this allows for tagging Bios with Community Member (Monk/Bhikkhu, Lay resident, and so on).', FPMTP__I18N_NAMESPACE ),	//'syntax fixer
+                'default'		=>	true,
+            ),
+            array( // Submit button
+                'field_id' => 'submit_button',
+                'section_id'    =>      'fpmtp_settings_bios',
+                'type' => 'submit',
+            )
+        );
         $this->addInPageTabs(
             'fpmtp_settings',    // set the target page slug so that the 'page_slug' key can be omitted from the next continuing in-page tab arrays.
             array(
@@ -249,7 +273,7 @@ class FullPeace_Options_Page extends AdminPageFramework
     // Let's try using methods for filters. For filters, the method must return the output.
     // The method name is content_ + page slug, similar to the above methods for action hooks.
     public function content_fpmtp_settings( $sContent ) {
-        return $sContent . '<h3>Media To Post Settings</h3><p>Please contact the developer for help with these settings.</p>';
+        return $sContent . '<h3>'.__('Media To Post Settings</h3><p>Please contact the developer for help with these settings.', FPMTP__I18N_NAMESPACE) . '</p>';
     }
 
 }

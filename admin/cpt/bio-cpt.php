@@ -52,8 +52,31 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
             )
         );
 
+        // the setUp() method is too late to add taxonomies. So we use start_{class name} action hook.
+        $aPostTypeSettings = AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_settings_bios' );
+        if($aPostTypeSettings['fpmtp_enable_bios_communitymembers'] ) {
+            $this->addTaxonomy(
+                'fpmtp_communitymember', // taxonomy slug
+                array(            // argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+                    'labels' => array(
+                        'name' => 'Community Member',
+                        'add_new_item' => 'Add Community Member',
+                        'new_item_name' => "New Community Member"
+                    ),
+                    'show_ui' => true,
+                    'show_tagcloud' => false,
+                    'hierarchical' => true, // Hierarchical to allow 'Ajahn', 'Bhikkhu', and so on
+                    'show_admin_column' => true,
+                    'sortable' => true,
+                    'show_in_nav_menus' => true,
+                    'rewrite' => array('slug' => 'authors', 'with_front' => false),
+                    'show_table_filter' => true,    // framework specific key
+                    'show_in_sidebar_menus' => true,    // framework specific key
+                )
+            );
+        }
 
-        $this->setFooterInfoLeft( '<br />Biography details for author, speakers and other members of the organisation.' );
+        $this->setFooterInfoLeft( '<br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
         $this->setFooterInfoRight( '<br />Created for <a href="http://amaravati.org/" target="_blank" >Amaravati B.M.</a>' );
 
         add_filter( 'the_content', array( $this, 'replyToPrintOptionValues' ) );

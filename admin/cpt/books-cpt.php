@@ -107,12 +107,13 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
             );
         }
 
-        $this->setFooterInfoLeft( '<br />Custom Text on the left hand side.' );
-        $this->setFooterInfoRight( '<br />Custom text on the right hand side' );
+        $this->setFooterInfoLeft( '<br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
+        $this->setFooterInfoRight( '<br />Created for <a href="http://amaravati.org/" target="_blank" >Amaravati B.M.</a>' );
 
         add_filter( 'the_content', array( $this, 'replyToPrintOptionValues' ) );
 
-        add_filter( 'request', array( $this, 'replyToSortCustomColumn' ) );
+        // Disabled custom sorting method
+        //add_filter( 'request', array( $this, 'replyToSortCustomColumn' ) );
 
     }
 
