@@ -285,7 +285,7 @@ class FullPeace_Media_To_Post {
      * @since       0.1.2
      */
 
-    function rc_tc_get_template_hierarchy( $template ) {
+    function    get_template_hierarchy( $template ) {
 
         // Get the template slug
         $template_slug = rtrim($template, '.php');

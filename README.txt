@@ -31,6 +31,8 @@ Additionally, a Bio (biography or profile) post type can be added from the setti
 Please use the forums for questions, this page will be filled out with any questions that are relevant to many.
 
 == Changelog ==
+0.1.5 Bug fixes
+
 0.1.4 Added post_status option for imported Audio
 
 0.1.3 Bug fixes
