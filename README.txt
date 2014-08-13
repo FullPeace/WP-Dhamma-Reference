@@ -31,6 +31,8 @@ Additionally, a Bio (biography or profile) post type can be added from the setti
 Please use the forums for questions, this page will be filled out with any questions that are relevant to many.
 
 == Changelog ==
+0.1.7 Removed the Template Chooser method
+
 0.1.6 Bug fixes
 
 0.1.5 Bug fixes
