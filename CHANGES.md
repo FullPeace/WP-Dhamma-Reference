@@ -1,5 +1,7 @@
 ### ChangeLog for FullPeace Media To Post
 
+#### 0.1.6 Bug fixes
+
 #### 0.1.5 Bug fixes
 
 #### 0.1.4 Added post_status option for imported Audio

@@ -274,7 +274,7 @@ class FullPeace_Media_To_Post {
 
         // Else use custom template
         if ( is_single() ) {
-            return get_template_hierarchy('single');
+            return self::get_template_hierarchy('single');
         }
 
     }
@@ -285,7 +285,7 @@ class FullPeace_Media_To_Post {
      * @since       0.1.2
      */
 
-    function    get_template_hierarchy( $template ) {
+    public static function    get_template_hierarchy( $template ) {
 
         // Get the template slug
         $template_slug = rtrim($template, '.php');
