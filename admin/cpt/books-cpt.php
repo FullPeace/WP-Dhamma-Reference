@@ -37,9 +37,6 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                 'has_archive'		=>	true,
                 'rewrite' => array( 'slug' => 'books', 'with_front' => false ),
                 'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
-                //'menu_icon'			=>	plugins_url( 'asset/image/wp-logo_16x16.png', APFDEMO_FILE ),
-                // ( framework specific key ) this sets the screen icon for the post type for WordPress v3.7.1 or below.
-                //'screen_icon'		=>	dirname( APFDEMO_FILE  ) . '/asset/image/wp-logo_32x32.png', // a file path can be passed instead of a url, plugins_url( 'asset/image/wp-logo_32x32.png', APFDEMO_FILE )
             )
         );
 

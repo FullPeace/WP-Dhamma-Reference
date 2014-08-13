@@ -112,6 +112,8 @@ class FullPeace_Media_To_Post_Admin {
 
     public static function load_menu() {
         remove_submenu_page( 'edit.php?post_type=fpmtp_audio', 'post-new.php?post_type=fpmtp_audio' );
+        remove_submenu_page( 'edit.php?post_type=fpmtp_audio', 'edit-tags.php?taxonomy=category&post_type=fpmtp_audio' );
+        remove_submenu_page( 'edit.php?post_type=fpmtp_books', 'edit-tags.php?taxonomy=category&post_type=fpmtp_books' );
         add_submenu_page(
             'edit.php?post_type=fpmtp_audio',
             'upload_media',
