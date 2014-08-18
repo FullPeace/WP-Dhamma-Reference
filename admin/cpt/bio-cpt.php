@@ -118,7 +118,8 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
         // to the first parameter of the constructor of the AdminPageFramework class.
         $aSavedOptions = get_option( 'FullPeace_Media_To_Post' );
 
-        return "<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>"
+        return $sContent
+		. "<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>"
         . $this->oDebug->getArray( $aPostData )
         . "<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>"
         . $this->oDebug->getArray( $aSavedOptions );

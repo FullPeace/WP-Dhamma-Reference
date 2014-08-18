@@ -72,6 +72,8 @@ if($aEnablePostTypes['fpmtp_enable_bios']) {
     new FullPeace_Bio_PostType('fpmtp_bios');    // post type slug
 }
 
+require_once( FPMTP__PLUGIN_DIR . 'public/class.bioswidget.php' );
+
 if ( is_admin() ) {
     require_once( FPMTP__PLUGIN_DIR . 'admin/class.optionspage.php' );
     // Create meta boxes with form fields that appear in post definition pages (where you create a post) of the given post type.

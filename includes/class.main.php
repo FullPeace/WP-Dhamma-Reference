@@ -49,6 +49,9 @@ class FullPeace_Media_To_Post {
         self::$initiated = true;
         add_action( 'admin_notices', array( 'FullPeace_Media_To_Post_Admin', 'display_notice' ) );
         add_action( 'add_attachment', array( 'FullPeace_Media_To_Post', 'post_from_attachment' ) );
+		
+		add_action('admin_head',array( 'FullPeace_Media_To_Post','hide_add_buttons'));
+		
         // Remove this, instead encourage custom templates
         //add_filter( 'template_include', array( 'FullPeace_Media_To_Post', 'template_chooser' ) );
 
@@ -59,6 +62,16 @@ class FullPeace_Media_To_Post {
         require_once FPMTP__PLUGIN_DIR . 'public/class.public.php';
         add_action( 'plugins_loaded', array( 'FullPeace_Media_To_Post_Public', 'init' ) );
     }
+	
+	// hide "add new" button on edit page
+	public static function hide_add_buttons() {
+	  global $pagenow;
+	  if(is_admin()){
+		if($pagenow == 'edit.php' && $_GET['post_type'] == 'fpmtp_audio'){
+			echo '.add-new-h2{display: none;}';
+		}  
+	  }
+	}
 
     public static function get_slug($type = FALSE)
     {
