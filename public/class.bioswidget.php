@@ -23,15 +23,14 @@ class FullPeace_Bios_Widget extends WP_Widget {
     
 		if ( is_page($page->ID) )
         {
-        $message 	= $page->post_title;
+        $message 	= "<h3>" . $page->post_title . "</h3>"
+					. "<p>" . $page->post_excerpt . "</p>";
 		
         ?>
               <?php echo $before_widget; ?>
                   <?php if ( $title )
                         echo $before_title . $title . $after_title; ?>
-							<ul>
-								<li><?php echo $message; ?></li>
-							</ul>
+						<?php echo $message; ?>
               <?php echo $after_widget; ?>
         <?php
 		}

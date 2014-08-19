@@ -53,11 +53,11 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                     ),
                     'show_ui' => true,
                     'show_tagcloud' => false,
-                    'hierarchical' => true, // Hierarchical to allow 'Ajahn Sumedho', 'Luang Por Sumedho', and so on
+                    'hierarchical' => false, 
                     'show_admin_column' => true,
                     'sortable' => true,
                     'show_in_nav_menus' => true,
-                    'rewrite' => array('slug' => 'authors', 'with_front' => false),
+                    'rewrite' => array('slug' => 'book-authors', 'with_front' => false),
                     'show_table_filter' => true,    // framework specific key
                     'show_in_sidebar_menus' => true,    // framework specific key
                 )

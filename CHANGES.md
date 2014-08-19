@@ -1,5 +1,7 @@
 ### ChangeLog for FullPeace Media To Post
 
+#### 0.1.8 Bug fixes
+
 #### 0.1.8 Added Bios widget
 
 #### 0.1.7 Removed the Template Chooser method
