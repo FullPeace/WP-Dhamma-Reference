@@ -86,7 +86,7 @@ class FullPeace_Media_To_Post_Admin {
     }
 
     /**
-     * This function provides a simple description for the Sunny Demo Options page.
+     * This function provides a simple description for the  page.
      * This function is being passed as a parameter in the add_settings_section function.
      *
      * @since 0.1.0

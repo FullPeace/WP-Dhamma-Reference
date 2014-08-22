@@ -19,21 +19,22 @@ class FullPeace_Bios_Widget extends WP_Widget {
 			return;
 		extract( $args );
         $title 		= apply_filters('widget_title', $instance['title']);
-		$page = get_page_by_title(  );
+		$page = get_page_by_title( single_term_title("", false), 'OBJECT', 'fpmtp_bios' );
     
-		if ( is_page($page->ID) )
-        {
-        $message 	= "<h3>" . $page->post_title . "</h3>"
-					. "<p>" . $page->post_excerpt . "</p>";
 		
         ?>
               <?php echo $before_widget; ?>
                   <?php if ( $title )
                         echo $before_title . $title . $after_title; ?>
-						<?php echo $message; ?>
+                        <?php 
+							echo get_the_post_thumbnail($page->ID);
+						?>
+						<h3><?php echo $page->post_title ?></h3>
+						<p><?php echo $page->post_excerpt; ?></p>
+						<p><a href="<?php echo get_permalink( $page->ID ); ?>"><?php echo __('More about', FPMTP__I18N_NAMESPACE);?> <?php echo $page->post_title; ?></a></p>
+						<?php/*<p><?php echo var_export($page,true); ?></p>*/?>
               <?php echo $after_widget; ?>
         <?php
-		}
     }
  
     /** @see WP_Widget::update -- do not rename this */

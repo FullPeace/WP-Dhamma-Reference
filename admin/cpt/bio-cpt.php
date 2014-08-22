@@ -75,6 +75,27 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
                 )
             );
         }
+        if($aPostTypeSettings['fpmtp_enable_bios_locations'] ) {
+            $this->addTaxonomy(
+                'fpmtp_locations', // taxonomy slug
+                array(            // argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
+                    'labels' => array(
+                        'name' => 'Location',
+                        'add_new_item' => 'Add Location',
+                        'new_item_name' => "New Location"
+                    ),
+                    'show_ui' => true,
+                    'show_tagcloud' => false,
+                    'hierarchical' => false,
+                    'show_admin_column' => true,
+                    'sortable' => true,
+                    'show_in_nav_menus' => true,
+                    'rewrite' => array('slug' => 'locations', 'with_front' => true),
+                    'show_table_filter' => true,    // framework specific key
+                    'show_in_sidebar_menus' => true,    // framework specific key
+                )
+            );
+        }
 
         $this->setFooterInfoLeft( '<br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
         $this->setFooterInfoRight( '<br />Created for <a href="http://amaravati.org/" target="_blank" >Amaravati B.M.</a>' );
@@ -118,11 +139,11 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
         // to the first parameter of the constructor of the AdminPageFramework class.
         $aSavedOptions = get_option( 'FullPeace_Media_To_Post' );
 
-        return $sContent
-		. "<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>"
-        . $this->oDebug->getArray( $aPostData )
-        . "<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>"
-        . $this->oDebug->getArray( $aSavedOptions );
+        return $sContent;
+		// . "<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>"
+        // . $this->oDebug->getArray( $aPostData )
+        // . "<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>"
+        // . $this->oDebug->getArray( $aSavedOptions );
 
     }
 
