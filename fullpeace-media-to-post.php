@@ -57,6 +57,7 @@ register_uninstall_hook( __FILE__, array( 'FullPeace_Media_To_Post', 'plugin_uni
 
 add_action( 'init', array( 'FullPeace_Media_To_Post', 'init' ) );
 
+
 // Create a custom post type - this class deals with front-end components so checking with is_admin() is not necessary.
 $aEnablePostTypes = AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_settings_general' );
 if($aEnablePostTypes['fpmtp_enable_books']) {
@@ -95,3 +96,5 @@ if ( is_admin() ) {
     $this_plugin_gitrepo =  "fullpeace-media-to-post" ;
     new BFIGitHubPluginUpdater( $this_plugin_file, $this_plugin_gituser, $this_plugin_gitrepo );
 }
+
+include_once(FPMTP__PLUGIN_DIR . 'library/wpse-playlist/wpse-playlist.php');

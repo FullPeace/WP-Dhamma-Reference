@@ -50,8 +50,8 @@ class FullPeace_Media_To_Post {
         add_action( 'admin_notices', array( 'FullPeace_Media_To_Post_Admin', 'display_notice' ) );
         add_action( 'add_attachment', array( 'FullPeace_Media_To_Post', 'post_from_attachment' ) );
 		
-		add_action('admin_head',array( 'FullPeace_Media_To_Post','hide_add_buttons'));
-		
+		add_action('admin_head', array( 'FullPeace_Media_To_Post','hide_add_buttons'));
+        add_filter( 'query_vars', array( 'FullPeace_Media_To_Post','add_query_vars_filter' ) );
         // Remove this, instead encourage custom templates
         //add_filter( 'template_include', array( 'FullPeace_Media_To_Post', 'template_chooser' ) );
 
@@ -72,6 +72,11 @@ class FullPeace_Media_To_Post {
 		}  
 	  }
 	}
+
+    public static function add_query_vars_filter( $vars ){
+        $vars[] = "playlist"; // Add param to parse playlist=series as mp3 (m3u) playlist
+        return $vars;
+    }
 
     public static function get_slug($type = FALSE)
     {
