@@ -69,7 +69,7 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
                     'show_admin_column' => true,
                     'sortable' => true,
                     'show_in_nav_menus' => true,
-                    'rewrite' => array('slug' => 'authors', 'with_front' => false),
+                    'rewrite' => array('slug' => 'community-members', 'with_front' => false),
                     'show_table_filter' => true,    // framework specific key
                     'show_in_sidebar_menus' => true,    // framework specific key
                 )
