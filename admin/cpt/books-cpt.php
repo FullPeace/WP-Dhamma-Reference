@@ -208,10 +208,17 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                 foreach ($aPostData['upload_media']['media_field'] as $key => $sFileUrl) {
                     $sUploadedMedia .= ' <a href="' . $sFileUrl . '" title="' . $GLOBALS['post']->post_title . '"><img src="' . FPMTP__PLUGIN_URL . "assets/img/" . substr(strrchr($sFileUrl, "."), 1) . '.png"></a>';
                 }
-            $sUploadedMedia = "<h3>" . __( 'Download', FPMTP__I18N_NAMESPACE ) .' '. $sUploadedMedia . "</h3>";
+            $sUploadedMedia = " <h3>" . __( 'Download', FPMTP__I18N_NAMESPACE ) .' '. $sUploadedMedia . "</h3>";
         }
 
-        return $sContent . $sAuthorLinks . $sUploadedMedia;
+        return $sContent . $sAuthorLinks . $sUploadedMedia
+        . "<!--\n<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>  \n"
+        . $this->oDebug->getArray( $aPostData )
+        . "\n<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+        . $this->oDebug->getArray( $aSavedOptions )
+        . "\n<h3>" . __( 'Post data', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+        . "\n<pre>" . var_export($GLOBALS['post'],true) . "</pre>\n"
+        . "\n-->";
         //. $this->oDebug->getArray( $aPostData )
         //. $this->oDebug->getArray( $aSavedOptions );
 

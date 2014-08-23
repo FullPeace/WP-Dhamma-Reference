@@ -39,6 +39,11 @@ class FullPeace_Media_To_Post {
         }
     }
 
+    public static function isPluginPost($sPostTypeName){
+        $validPostTypes = array("fpmtp_bios", "fpmtp_books", "fpmtp_audio");
+        return in_array($sPostTypeName, $validPostTypes);
+    }
+
     /**
      * Initializes WordPress hooks
      * @todo Add check for enabled CPTs and load them based on that.

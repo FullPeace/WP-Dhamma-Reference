@@ -207,11 +207,16 @@ public function replyToPrintOptionValues( $sContent ) {
     // to the first parameter of the constructor of the AdminPageFramework class.		
     $aSavedOptions = get_option( 'FullPeace_Media_To_Post' );
 
-    return $sContent;
-	// "<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>"
-    // . $this->oDebug->getArray( $aPostData )
-    // . "<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>"
-    // . $this->oDebug->getArray( $aSavedOptions );
+    return $sContent
+	 . "<!--\n<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>  \n"
+     . $this->oDebug->getArray( $aPostData )
+     . "\n<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+     . $this->oDebug->getArray( $aSavedOptions )
+    . "\n<h3>" . __( 'Post data', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+    . "\n<pre>" . var_export($GLOBALS['post'],true) . "</pre>\n"
+    . "\n<h3>" . __( 'Attached media', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+    . "\n<pre>" . var_export( get_attached_media( 'audio' ),true) . "</pre>\n"
+     . "\n-->";
 
 }
 

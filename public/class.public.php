@@ -68,6 +68,54 @@ class FullPeace_Media_To_Post_Public {
 //        ));
     }
 
+    // get taxonomies terms links
+    public static function custom_taxonomies_terms_links(){
+        // get post by post id
+        $post = get_post( get_the_ID() );
+
+        // get post type by post
+        $post_type = $post->post_type;
+
+        // get post type taxonomies
+        $taxonomies = get_object_taxonomies( $post_type, 'objects' );
+
+        $out = array();
+        foreach ( $taxonomies as $taxonomy_slug => $taxonomy ){
+
+            // get the terms related to post
+            $terms = get_the_terms( $post->ID, $taxonomy_slug );
+
+            if ( !empty( $terms ) ) {
+                $out[] = "<h2>" . $taxonomy->label . "</h2>\n<ul>";
+                foreach ( $terms as $term ) {
+                    $out[] =
+                        '  <li><a href="'
+                        .    get_term_link( $term->slug, $taxonomy_slug ) .'">'
+                        .    $term->name
+                        . "</a></li>\n";
+                }
+                $out[] = "</ul>\n";
+            }
+        }
+
+        return implode('', $out );
+    }
+
+    public static function getAuthorBio($bookId){
+
+    }
+
+    public static function getBio($name){
+        global $FPMTP;
+        if(!empty($FPMTP['bios'][$name])) return $FPMTP['bios'][$name];
+        return self::setBio($name, get_page_by_title( $name, 'OBJECT', 'fpmtp_bios' ));
+    }
+
+    public static function setBio($name, $post){
+        global $FPMTP;
+        $FPMTP['bios'][$name] = $post;
+        return $FPMTP['bios'][$name];
+    }
 
     /**
      * @return array
