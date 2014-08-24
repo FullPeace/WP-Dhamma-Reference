@@ -47,16 +47,16 @@ class FullPeace_Bios_Widget extends WP_Widget {
             <p><?php echo $bio['excerpt']; ?></p>
             <ul class="bio-links">
                 <li>
-                    <a href="<?php $bio['bio_link']; ?>"><?php echo __('More about', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
+                    <a href="<?php echo $bio['bio_link']; ?>" title="<?php echo __('More about', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('About', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
                 </li>
                 <?php if ($bio['author_link']) : ?>
                     <li>
-                        <a href="<?php $bio['author_link']; ?>"><?php echo __('Books by', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
+                        <a href="<?php $bio['author_link']; ?>" title="<?php echo __('Books by', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('Books', FPMTP__I18N_NAMESPACE); ?></a>
                     </li>
                 <?php endif; ?>
                 <?php if ($bio['speaker_link']) : ?>
                     <li>
-                        <a href="<?php $bio['speaker_link']; ?>"><?php echo __('Audio with', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
+                        <a href="<?php $bio['speaker_link']; ?>" title="<?php echo __('Audio with', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('Audio', FPMTP__I18N_NAMESPACE); ?></a>
                     </li>
                 <?php endif; ?>
             </ul>
