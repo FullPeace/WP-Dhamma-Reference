@@ -14,27 +14,60 @@ class FullPeace_Bios_Widget extends WP_Widget {
 	/**
 	 * @todo 
 	 **/
-    function widget($args, $instance) {	
+    function widget($args, $instance) {
         if(!is_tax( 'fpmtp_authors_taxonomy' ) && !is_tax( 'fpmtp_speakers' ))
 			return;
 		extract( $args );
         $title 		= apply_filters('widget_title', $instance['title']);
-		$page = get_page_by_title( single_term_title("", false), 'OBJECT', 'fpmtp_bios' );
-    
-		
-        ?>
-              <?php echo $before_widget; ?>
-                  <?php if ( $title )
-                        echo $before_title . $title . $after_title; ?>
-                        <?php 
-							echo get_the_post_thumbnail($page->ID);
-						?>
-						<h3><?php echo $page->post_title ?></h3>
-						<p><?php echo $page->post_excerpt; ?></p>
-						<p><a href="<?php echo get_permalink( $page->ID ); ?>"><?php echo __('More about', FPMTP__I18N_NAMESPACE);?> <?php echo $page->post_title; ?></a></p>
-						<?php/*<p><?php echo var_export($page,true); ?></p>*/?>
-              <?php echo $after_widget; ?>
+		// Removed in favor of transient array
+		//$page = get_page_by_title( single_term_title("", false), 'OBJECT', 'fpmtp_bios' );
+        $term_title = get_queried_object()->slug;//single_term_title("", false);
+        if(!is_wp_error($term_title)) {
+            echo "<!-- $term_title -->";
+            $bio = FullPeace_Media_To_Post_Public::getBio($term_title);
+            //echo "<!-- ".var_export($bio,true)." -->";
+        }
+        else
+        {
+            $error_string = $term_title->get_error_message();
+            echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+        }
+
+
+        if(!empty($bio) && !is_wp_error($bio)) {
+            ?>
+            <!-- <?php echo single_term_title("", false); ?> -->
+            <?php echo $before_widget; ?>
+            <?php if ($title)
+                echo $before_title . $title . $after_title; ?>
+            <?php
+            echo $bio['bio_thumbnail'];
+            ?>
+            <h3><?php echo $bio['name'] ?></h3>
+            <p><?php echo $bio['excerpt']; ?></p>
+            <ul class="bio-links">
+                <li>
+                    <a href="<?php $bio['bio_link']; ?>"><?php echo __('More about', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
+                </li>
+                <?php if ($bio['author_link']) : ?>
+                    <li>
+                        <a href="<?php $bio['author_link']; ?>"><?php echo __('Books by', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
+                    </li>
+                <?php endif; ?>
+                <?php if ($bio['speaker_link']) : ?>
+                    <li>
+                        <a href="<?php $bio['speaker_link']; ?>"><?php echo __('Audio with', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+            <?php /*<p><?php echo var_export($page,true); ?></p>*/ ?>
+            <?php echo $after_widget; ?>
         <?php
+        }elseif(is_wp_error($bio))
+        {
+            $error_string = $bio->get_error_message();
+            echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+        }
     }
  
     /** @see WP_Widget::update -- do not rename this */

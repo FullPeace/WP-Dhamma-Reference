@@ -58,6 +58,7 @@ class FullPeace_Media_To_Post {
 		add_action('admin_head', array( 'FullPeace_Media_To_Post','hide_add_buttons'));
         add_filter( 'query_vars', array( 'FullPeace_Media_To_Post','add_query_vars_filter' ) );
         add_shortcode( 'audio_series', array( 'FullPeace_Media_To_Post','shortcode_series') );
+        add_shortcode( 'bios', array( 'FullPeace_Media_To_Post','shortcode_bios') );
         add_action( 'save_post',  array( 'FullPeace_Media_To_Post',' plugin_post_save'), 10, 2 );
 
         // Remove this, instead encourage custom templates
@@ -101,9 +102,9 @@ class FullPeace_Media_To_Post {
             $result = "";
 
         $result .= '<div id="' .  $container_id . '" class="' .  $container_class . '">';
-        $result .= '<!--';
-        $result .=  print_r($audio_series_query, true);
-        $result .= '-->';
+//        $result .= '<!--';
+//        $result .=  print_r($audio_series_query, true);
+//        $result .= '-->';
 
            foreach ( $audio_series_query as $series_cat ) {
                if ( $series_cat[$thumbnail] ) {
@@ -121,12 +122,13 @@ class FullPeace_Media_To_Post {
                    //$result .= '<h3><a href="' .  $series_cat['term_link'] . '" class="title-overlay">' .  $series_cat['name'] . '</a></h3>';
                    $result .= '</div>';
                    $result .= '</article>';
-               }else{
-
-                   $result .= '<!-- cat ';
-                   $result .=  print_r($series_cat, true);
-                   $result .= '-->';
                }
+//               else{
+//
+//                   $result .= '<!-- cat ';
+//                   $result .=  print_r($series_cat, true);
+//                   $result .= '-->';
+//               }
            }
 
         $result .= '</div><!-- #' .  $container_id . ' -->';
@@ -209,8 +211,56 @@ class FullPeace_Media_To_Post {
         return $audio_series_query;
     }
 
-    public static function shortcode_bio($name){
+    public static function shortcode_bio($atts){
 
+        extract( shortcode_atts( array(
+            'container_id' => 'all-audio-series',
+            'container_class' => 'x-iso-container x-iso-container-portfolio cols-4 isotope',
+            'thumb_class' => 'entry-thumb',
+            'img_class' => 'attachment-entry-renew wp-post-image',
+            'bio_name' => false, // For displaying a single bio
+        ), $atts, 'audio_series' ) );
+
+        $bios_query = get_transient('fpmtp_audio_series_query');
+        if ( !$bios_query ) {
+            $bios_query = FullPeace_Media_To_Post::bios_cache();
+        }
+
+        $thumbnail = 'bio_thumbnail';
+        if(!isset($result))
+            $result = "";
+
+        $result .= '<div id="' .  $container_id . '" class="' .  $container_class . '">';
+//        $result .= '<!--';
+//        $result .=  print_r($audio_series_query, true);
+//        $result .= '-->';
+
+        foreach ( $bios_query as $bio ) {
+            if ( $bio[$thumbnail] ) {
+                $result .= '<article style="opacity:1" class="x-portfolio type-x-portfolio status-publish has-post-thumbnail hentry has-post-thumbnail">';
+                $result .= '<div class="entry-featured">';
+                $result .= '<a href="' .  $bio['term_link'] . '" class="' .  $thumb_class . '"><img src="' .  $bio[$thumbnail] . '" class="' .  $img_class . '"></a>';
+                $result .= '<div class="entry-cover">
+        <div class="entry-cover-content">
+          <span>'.__('Bio', FPMTP__I18N_NAMESPACE ).'</span>
+          <h2 class="entry-title entry-title-portfolio">
+            <a href="'.$bio['term_link'].'" title="'.$bio['name'].'">'.((strlen($bio['name'])>53)?substr($bio['name'], 0, 50).'...':$bio['name']).'</a>
+          </h2>
+        </div>
+      </div>';
+                //$result .= '<h3><a href="' .  $series_cat['term_link'] . '" class="title-overlay">' .  $series_cat['name'] . '</a></h3>';
+                $result .= '</div>';
+                $result .= '</article>';
+            }
+//               else{
+//
+//                   $result .= '<!-- cat ';
+//                   $result .=  print_r($series_cat, true);
+//                   $result .= '-->';
+//               }
+        }
+
+        $result .= '</div><!-- #' .  $container_id . ' -->';
     }
 
     public static function  bios_cache() {
@@ -240,51 +290,63 @@ class FullPeace_Media_To_Post {
 
             $page = get_page_by_title( $category->name, 'OBJECT', 'fpmtp_bios' );
 
+            if(!is_wp_error($page)) {
                 $bio_thumbnail = null;
-                $bio_thumbnail = wp_get_attachment_image_src( $page->ID );
+                $bio_thumbnail = wp_get_attachment_image_src($page->ID);
 
                 /* All the data pulled is saved into an array which we'll save later */
-
+                $speaker_link = get_term_link($category->slug, 'fpmtp_speakers');
+                if(is_wp_error($speaker_link)){
+                    $speaker_link = $speaker_link->get_error_message();
+                    //echo $speaker_link;
+                }
                 $bios_query[$category->slug] = array(
-                    'name' => get_the_title(),
-                    'bio_link' =>  esc_attr( get_term_link( $category->slug, 'fpmtp_series' ) ),
+                    'name' => get_the_title($page->ID),
+                    'excerpt' => $page->post_excerpt,
+                    'bio_link' => get_permalink($page->ID),
                     'bio_thumbnail' => $bio_thumbnail[0],
-                    'speaker_link' => esc_attr( get_term_link( $category->slug, 'fpmtp_series' ) ),
+                    'speaker_link' => esc_attr($speaker_link),
                     'speaker_talk_count' => $category->count,
                     'author_link' => false,
                     'author_book_count' => false,
                 );
+            }
         }
 
         foreach( $books_categories as $category ) {
-
             $page = get_page_by_title( $category->name, 'OBJECT', 'fpmtp_bios' );
 
-            $bio_thumbnail = null;
-            $bio_thumbnail = wp_get_attachment_image_src( $page->ID );
+            if(!is_wp_error($page)) {
+                $bio_thumbnail = null;
+                $bio_thumbnail = wp_get_attachment_image_src($page->ID);
 
-            /* All the data pulled is saved into an array which we'll save later */
-            if(isset($bios_query[$category->slug]) && !empty($bios_query[$category->slug]))
-            {
-                $bios_query[$category->slug]['author_link'] =  esc_attr(get_term_link($category->slug, 'fpmtp_authors_taxonomy'));
-                $bios_query[$category->slug]['author_book_count'] =  $category->count;
-            }
-            else
-            {
-                $bios_query[$category->slug] = array(
-                    'name' => get_the_title(),
-                    'bio_link' => esc_attr(get_term_link($category->slug, 'fpmtp_series')),
-                    'bio_thumbnail' => $bio_thumbnail[0],
-                    'speaker_link' => false,
-                    'speaker_talk_count' => false,
-                    'author_link' => esc_attr(get_term_link($category->slug, 'fpmtp_authors_taxonomy')),
-                    'author_book_count' => $category->count,
-                );
+                /* All the data pulled is saved into an array which we'll save later */
+                if (isset($bios_query[$category->slug]) && !empty($bios_query[$category->slug])) {
+                    $bios_query[$category->slug]['author_link'] = esc_attr(get_term_link($category->slug, 'fpmtp_authors_taxonomy'));
+                    $bios_query[$category->slug]['author_book_count'] = $category->count;
+                } else {
+                    $author_link = get_term_link($category->slug, 'fpmtp_authors_taxonomy');
+                    if(is_wp_error($author_link)){
+                        $author_link = $author_link->get_error_message();
+                        //echo $author_link;
+                    }
+
+                    $bios_query[$category->slug] = array(
+                        'name' => get_the_title($page->ID),
+                        'excerpt' => $page->post_excerpt,
+                        'bio_link' => get_permalink($page->ID),
+                        'bio_thumbnail' => $bio_thumbnail[0],
+                        'speaker_link' => false,
+                        'speaker_talk_count' => false,
+                        'author_link' => esc_attr($author_link),
+                        'author_book_count' => $category->count,
+                    );
+                }
             }
         }
 
         // Reset Post Data - Do we need to do this without having called a WP_Query?
-        wp_reset_postdata();
+        //wp_reset_postdata();
 
         set_transient( 'fpmtp_bios_query', $bios_query );
 

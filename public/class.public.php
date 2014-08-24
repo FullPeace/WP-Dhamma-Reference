@@ -106,15 +106,24 @@ class FullPeace_Media_To_Post_Public {
     }
 
     public static function getBio($name){
-        global $FPMTP;
-        if(!empty($FPMTP['bios'][$name])) return $FPMTP['bios'][$name];
-        return self::setBio($name, get_page_by_title( $name, 'OBJECT', 'fpmtp_bios' ));
-    }
 
-    public static function setBio($name, $post){
-        global $FPMTP;
-        $FPMTP['bios'][$name] = $post;
-        return $FPMTP['bios'][$name];
+        if(is_wp_error($name))
+        {
+            return $name->get_error_message();
+        }
+
+        $bios_query=false;
+        //$bios_query = get_transient('fpmtp_bios_query');
+        if ( !$bios_query ) {
+            $bios_query = FullPeace_Media_To_Post::bios_cache();
+        }
+
+        //echo "<!-- ".var_export($bios_query,true)." -->";
+
+        if(isset($bios_query[$name]))
+            return $bios_query[$name];
+        else
+            return false;
     }
 
     /**
