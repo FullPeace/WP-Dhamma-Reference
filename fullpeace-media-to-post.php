@@ -91,6 +91,14 @@ if ( is_admin() ) {
         'normal',	// context (what kind of metabox this is)
         'default'	// priority
     );
+    include_once( FPMTP__PLUGIN_DIR . 'admin/metabox/biofields.php' );
+    new FullPeace_Bios_MetaBox(
+        'fpmtp_bios_meta_box',	// meta box ID
+        __( 'Bio details', FPMTP__I18N_NAMESPACE ),	// title
+        array( 'fpmtp_bios' ),	// post type slugs: post, page, etc.
+        'normal',	// context (what kind of metabox this is)
+        'default'	// priority
+    );
     require_once( FPMTP__PLUGIN_DIR . 'admin/class.admin.php' );
     add_action( 'init', array( 'FullPeace_Media_To_Post_Admin', 'init' ) );
 
