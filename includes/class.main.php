@@ -105,7 +105,7 @@ class FullPeace_Media_To_Post {
 
            foreach ( $audio_series_query as $series_cat ) {
                if ( $series_cat[$thumbnail] ) {
-                   $result .= '<article style="opacity:1" class="x-portfolio type-x-portfolio status-publish has-post-thumbnail hentry has-post-thumbnail">';
+                   $result .= '<article style="opacity:1;float:left;" class="x-portfolio type-x-portfolio status-publish has-post-thumbnail hentry has-post-thumbnail">';
                    $result .= '<div class="entry-featured">';
                    $result .= '<a href="' .  $series_cat['term_link'] . '" class="' .  $thumb_class . '"><img src="' .  $series_cat[$thumbnail] . '" class="' .  $img_class . '"></a>';
                    $result .= '<div class="entry-cover">
