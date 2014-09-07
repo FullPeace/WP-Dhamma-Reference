@@ -3,7 +3,7 @@ Contributors: iohannis
 Tags: media, custom-post-types, upload
 Donate link: http://fullpeace.org/donations/
 Requires at least: 3.8.0
-Tested up to: 3.9.2
+Tested up to: 4.0
 License: GPLv2
 
 This plugin creates Custom Post Types for media files - particularly MP3 files to Talk posts.
@@ -31,6 +31,7 @@ Additionally, a Bio (biography or profile) post type can be added from the setti
 Please use the forums for questions, this page will be filled out with any questions that are relevant to many.
 
 == Changelog ==
+0.1.14 Added Bios details, several shortcodes and a series playlist. Bug fixes for upload parsing.
 
 0.1.9 Bug fixes
 

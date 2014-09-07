@@ -19,11 +19,11 @@ class FullPeace_Media_To_Post_Public {
      * @var bool
      */
     private static $initiated = false;
-    /**
-     * The templates array defines the templates available to use in the frontend.
-     * @var array
-     */
-    private static $templates = array();
+//    /**
+//     * The templates array defines the templates available to use in the frontend.
+//     * @var array
+//     */
+//    private static $templates = array();
 
     /**
      * Initializes the class
@@ -126,102 +126,115 @@ class FullPeace_Media_To_Post_Public {
             return false;
     }
 
-    /**
-     * @return array
-     */
-    public static function getTemplates()
+    public static function getPlaylist()
     {
-        return self::$templates;
-    }
-
-    /**
-     * @param array $templates
-     */
-    public static function setTemplates($templates)
-    {
-        self::$templates = $templates;
-    }
-
-    public static function register_project_templates( $atts ) {
-
-        // Create the key used for the themes cache
-        $cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
-
-        // Retrieve the cache list.
-        // If it doesn't exist or is empty, prepare an array
-        $templates = wp_get_theme()->get_page_templates();
-        if ( empty( $templates ) ) {
-            $templates = array();
+        $term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
+        $termSlug = $term->slug;
+        // FOR DEBUGGING:
+        delete_transient('fpmtp_audio_series_query_' . $termSlug);
+        $audio_series_query = get_transient('fpmtp_audio_series_query_' . $termSlug);
+        if ( !$audio_series_query ) {
+            $audio_series_query = FullPeace_Media_To_Post::series_playlist_shortcode_cache($termSlug);
         }
-
-        // New cache, therefore remove the old one
-        wp_cache_delete( $cache_key , 'themes');
-
-        // Now add our template to the list of templates by merging our templates
-        // with the existing templates array from the cache.
-        $templates = array_merge( $templates, self::getTemplates() );
-
-        // Add the modified cache to allow WordPress to pick it up for listing
-        // available templates
-        wp_cache_add( $cache_key, $templates, 'themes', 1800 );
-
-        return $atts;
-
+        return '<!-- '.$audio_series_query.' -->' . do_shortcode($audio_series_query);
     }
+//
+//    /**
+//     * @return array
+//     */
+//    public static function getTemplates()
+//    {
+//        return self::$templates;
+//    }
+//
+//    /**
+//     * @param array $templates
+//     */
+//    public static function setTemplates($templates)
+//    {
+//        self::$templates = $templates;
+//    }
 
-    /**
-     * Checks if the template is assigned to the page
-     * @var $template
-     */
-    public function view_project_template( $template )
-    {
-        global $post;
+//    public static function register_project_templates( $atts ) {
+//
+//        // Create the key used for the themes cache
+//        $cache_key = 'page_templates-' . md5( get_theme_root() . '/' . get_stylesheet() );
+//
+//        // Retrieve the cache list.
+//        // If it doesn't exist or is empty, prepare an array
+//        $templates = wp_get_theme()->get_page_templates();
+//        if ( empty( $templates ) ) {
+//            $templates = array();
+//        }
+//
+//        // New cache, therefore remove the old one
+//        wp_cache_delete( $cache_key , 'themes');
+//
+//        // Now add our template to the list of templates by merging our templates
+//        // with the existing templates array from the cache.
+//        $templates = array_merge( $templates, self::getTemplates() );
+//
+//        // Add the modified cache to allow WordPress to pick it up for listing
+//        // available templates
+//        wp_cache_add( $cache_key, $templates, 'themes', 1800 );
+//
+//        return $atts;
+//
+//    }
 
-        if (!isset($this->templates[get_post_meta(
-                $post->ID, '_wp_page_template', true
-            )] ) )
-        {
-            return $template;
-        }
+//    /**
+//     * Checks if the template is assigned to the page
+//     * @var $template
+//     */
+//    public function view_project_template( $template )
+//    {
+//        global $post;
+//
+//        if (!isset($this->templates[get_post_meta(
+//                $post->ID, '_wp_page_template', true
+//            )] ) )
+//        {
+//            return $template;
+//        }
+//
+//        $file = plugin_dir_path(__FILE__). get_post_meta(
+//                $post->ID, '_wp_page_template', true
+//            );
+//
+//        // Just to be safe, we check if the file exist first
+//        if( file_exists( $file ) ) {
+//            return $file;
+//        }
+//        else { echo $file; }
+//
+//        return $template;
+//    }
 
-        $file = plugin_dir_path(__FILE__). get_post_meta(
-                $post->ID, '_wp_page_template', true
-            );
+//    /**
+//     * Shortcode handler for [fpmtp_audio] shortcode
+//     * @param $atts
+//     */
+//    public static function custom_audio_shortcode( $atts ) {
+//
+//        // Attributes
+//        extract( shortcode_atts(
+//                array(
+//                    'speaker' => '',
+//                    'series' => '',
+//                    'category' => '',
+//                    'year' => '',
+//                ), $atts )
+//        );
+//
+//        // Code
+//        // return WP_Query( array( 'post_type' => FullPeace_Media_To_Post::$slug . '_audio' ) );
+//    }
 
-        // Just to be safe, we check if the file exist first
-        if( file_exists( $file ) ) {
-            return $file;
-        }
-        else { echo $file; }
-
-        return $template;
-    }
-
-    /**
-     * Shortcode handler for [fpmtp_audio] shortcode
-     * @param $atts
-     */
-    public static function custom_audio_shortcode( $atts ) {
-
-        // Attributes
-        extract( shortcode_atts(
-                array(
-                    'speaker' => '',
-                    'series' => '',
-                    'category' => '',
-                    'year' => '',
-                ), $atts )
-        );
-
-        // Code
-        // return WP_Query( array( 'post_type' => FullPeace_Media_To_Post::$slug . '_audio' ) );
-    }
-
-    /**
-     * Register shortcodes
-     */
-    public function register_shortcodes()
-    {
-        add_shortcode( FullPeace_Media_To_Post::$slug . '_audio', array('FullPeace_Media_To_Post_Public', 'custom_audio_shortcode') );
-    }
+//    /**
+//     * Register shortcodes
+//     */
+//    public function register_shortcodes()
+//    {
+//        add_shortcode( FullPeace_Media_To_Post::$slug . '_audio', array('FullPeace_Media_To_Post_Public', 'custom_audio_shortcode') );
+//    }
 }

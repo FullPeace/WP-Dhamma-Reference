@@ -11,13 +11,6 @@
  *
  * @since    0.1.0
  *
- * @todo Create template for single & archive Bio with links to Author & Speaker taxonomies
- * @todo Create template fpr single & archive Audio
- * @todo Create template for single & archive Book
- * @todo create template for taxonomy-fpmtp_series with playlist on term pages
- * @todo Create template for speakers and authors taxonomy pages for listing authors and number of related posts, with Bio excerpt
- * @todo Create search template for all CPTs + taxonomies
- * @todo Create search parsing function
  */
 class FullPeace_Media_To_Post {
 
@@ -58,8 +51,8 @@ class FullPeace_Media_To_Post {
 		add_action('admin_head', array( 'FullPeace_Media_To_Post','hide_add_buttons'));
         add_filter( 'query_vars', array( 'FullPeace_Media_To_Post','add_query_vars_filter' ) );
         add_shortcode( 'audio_series', array( 'FullPeace_Media_To_Post','shortcode_series') );
-        add_shortcode( 'bios', array( 'FullPeace_Media_To_Post','shortcode_bios') );
-        add_action( 'save_post',  array( 'FullPeace_Media_To_Post',' plugin_post_save'), 10, 2 );
+        add_shortcode( 'bios', array( 'FullPeace_Media_To_Post','shortcode_bio') );
+        add_action( 'save_post',  'FullPeace_Media_To_Post_plugin_post_save' );
 
         // Remove this, instead encourage custom templates
         //add_filter( 'template_include', array( 'FullPeace_Media_To_Post', 'template_chooser' ) );
@@ -85,6 +78,10 @@ class FullPeace_Media_To_Post {
     // Add a shortcode that executes our function
     public static function shortcode_series( $atts )
     {
+        $container_id = false;
+        $container_class = false;
+        $thumb_class = false;
+        $img_class = false;
         extract( shortcode_atts( array(
             'container_id' => 'all-audio-series',
             'container_class' => 'x-iso-container x-iso-container-portfolio cols-4 isotope',
@@ -134,25 +131,6 @@ class FullPeace_Media_To_Post {
         $result .= '</div><!-- #' .  $container_id . ' -->';
 
         return $result;
-    }
-
-    /**
-     * Deletes the audio_series_query transient if a post is updated
-     */
-
-    public static function  plugin_post_save( $post_id, $post ) {
-
-        // If this is an auto save routine don't do anyting
-        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
-            return;
-
-        if ( $post->post_type == 'fpmtp_audio' ) {
-            delete_transient( 'fpmtp_audio_series_query' );
-        }
-
-        if ( $post->post_type == 'fpmtp_bios' ) {
-            delete_transient( 'fpmtp_bios_query' );
-        }
     }
 
     public static function  audio_series_cache() {
@@ -211,56 +189,214 @@ class FullPeace_Media_To_Post {
         return $audio_series_query;
     }
 
-    public static function shortcode_bio($atts){
+    public static function  series_playlist_shortcode_cache($termSlug) {
 
-        extract( shortcode_atts( array(
-            'container_id' => 'all-audio-series',
-            'container_class' => 'x-iso-container x-iso-container-portfolio cols-4 isotope',
-            'thumb_class' => 'entry-thumb',
-            'img_class' => 'attachment-entry-renew wp-post-image',
-            'bio_name' => false, // For displaying a single bio
-        ), $atts, 'audio_series' ) );
+        $audio_series_query = array();
 
-        $bios_query = get_transient('fpmtp_audio_series_query');
-        if ( !$bios_query ) {
-            $bios_query = FullPeace_Media_To_Post::bios_cache();
+        $result = '';
+
+        $args = array(
+            'posts_per_page' => -1,
+            'post_type' => 'fpmtp_audio',
+            'fpmtp_series' => $termSlug,
+            'no_found_rows' => true,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false
+        );
+        $the_query = new WP_Query( $args );
+
+        // The Loop
+        while ( $the_query->have_posts() ) :
+
+            $the_query->the_post();
+
+            $series_thumbnail = null;
+            $series_thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id());
+
+            /* All the data pulled is saved into an array which we'll save later */
+
+            $attached_media = get_attached_media( 'audio' );
+
+            $audio_trac = reset($attached_media);
+            $audio_series_query[] = '[wpse_trac title="'.get_the_title().'" src="'.str_replace("https:","",$audio_trac->guid).'"]';
+
+        endwhile;
+
+
+        // Reset Post Data
+        wp_reset_postdata();
+
+        if(!empty($audio_series_query))
+        {
+            $result = '[wpse_playlist type="audio" current="no" tracklist="yes" tracknumbers="no" images="yes" artist="yes"]' . "\n" . implode("\n", $audio_series_query)."\n".'[/wpse_playlist]';
         }
+        set_transient( 'fpmtp_audio_series_query_'.$termSlug, $result );
 
-        $thumbnail = 'bio_thumbnail';
-        if(!isset($result))
-            $result = "";
+        return $result;
+    }
 
-        $result .= '<div id="' .  $container_id . '" class="' .  $container_class . '">';
-//        $result .= '<!--';
-//        $result .=  print_r($audio_series_query, true);
-//        $result .= '-->';
+    public static function shortcode_bio($atts)
+    {
+        //ob_start();
 
-        foreach ( $bios_query as $bio ) {
-            if ( $bio[$thumbnail] ) {
-                $result .= '<article style="opacity:1" class="x-portfolio type-x-portfolio status-publish has-post-thumbnail hentry has-post-thumbnail">';
-                $result .= '<div class="entry-featured">';
-                $result .= '<a href="' .  $bio['term_link'] . '" class="' .  $thumb_class . '"><img src="' .  $bio[$thumbnail] . '" class="' .  $img_class . '"></a>';
-                $result .= '<div class="entry-cover">
-        <div class="entry-cover-content">
-          <span>'.__('Bio', FPMTP__I18N_NAMESPACE ).'</span>
-          <h2 class="entry-title entry-title-portfolio">
-            <a href="'.$bio['term_link'].'" title="'.$bio['name'].'">'.((strlen($bio['name'])>53)?substr($bio['name'], 0, 50).'...':$bio['name']).'</a>
-          </h2>
-        </div>
-      </div>';
-                //$result .= '<h3><a href="' .  $series_cat['term_link'] . '" class="title-overlay">' .  $series_cat['name'] . '</a></h3>';
-                $result .= '</div>';
-                $result .= '</article>';
-            }
-//               else{
-//
-//                   $result .= '<!-- cat ';
-//                   $result .=  print_r($series_cat, true);
-//                   $result .= '-->';
-//               }
+        $order = 'ASC';
+        $orderby = 'year_ordained';
+        $limit = null;
+        $community_member = null;
+        $ids = null;
+        $show_excerpt = false;
+
+        // define attributes and their defaults
+        extract(shortcode_atts(array(
+            'order' => 'ASC',
+            'orderby' => $orderby,
+            'limit' => -1,
+            'ids' => false,
+            'community_member' => false,
+            'show_excerpt' => true,
+        ), $atts));
+
+        $order = (in_array($order, array('ASC','DESC')) ? $order : 'ASC');
+
+        // define query parameters based on attributes
+        $options = array(
+            'post_type' => 'fpmtp_bios',
+            'order' => $order,
+            'orderby' => (in_array($orderby, array('ID', 'title', 'name')) ? $orderby : 'ID'),
+            'posts_per_page' => $limit,
+        );
+        if ($ids) {
+            $options['post__in'] = $ids;
         }
+        if ($community_member) {
+            $options['tax_query'] = array(
+                array(
+                    'taxonomy' => 'fpmtp_communitymember',
+                    'field' => 'slug',
+                    'terms' => explode(",", $community_member),
+                ),
+            );
+        }
+        $query = new WP_Query($options);
+        $row_class = 'even';
 
-        $result .= '</div><!-- #' .  $container_id . ' -->';
+        $aResult = array();
+        $sortKey = (in_array($orderby, array('ID', 'title', 'name')) ? '' : $orderby );
+
+        
+        // run the loop based on the query
+        if ($query->have_posts()) {
+			while ( $query->have_posts() ) :
+                $query->the_post();
+                    $row = "";
+                $row_class = ($row_class == 'even') ? 'odd' : 'even';
+                $post = $query->get_queried_object();
+                $term_list = wp_get_post_terms(get_the_ID(), 'fpmtp_communitymember', array("fields" => "all"));
+
+                $get_the_title = get_the_title();
+                $get_permalink = get_permalink();
+                $post_name = basename(get_the_permalink());
+                $iPostID = get_the_ID();
+                 if(has_post_thumbnail()):
+                     $thumb_id = get_post_thumbnail_id();
+                     $thumb_url = wp_get_attachment_image_src($thumb_id,'thumbnail', true);
+                    $thmb_nail = get_the_post_thumbnail();
+                    $thumb_result = <<<THUMBRESULT
+                <a class="x-img x-img-link x-img-circle left" href="#bio-picture" title="$get_the_title"  data-toggle="tooltip" data-placement="bottom" data-trigger="hover"   data-options="thumbnail: '$thumb_url'">$thmb_nail</a>
+THUMBRESULT;
+                endif;
+
+
+                if($show_excerpt) :
+                    $get_the_excerpt = get_the_excerpt();
+                    $the_excerpt = <<<OUTPUTRESULT
+    <div id="details-$post_name" class="details">
+        $get_the_excerpt
+    </div>
+OUTPUTRESULT;
+                endif;
+
+                $aPostData = array();
+                foreach( ( array ) get_post_custom_keys( $iPostID ) as $sKey ) {    // This way, array will be unserialized; easier to view.
+                    $aPostData[$sKey] = get_post_meta($iPostID, $sKey, true);
+                }
+
+                $meta_ordained = date("Y");
+                    $get_ordained = "";
+                $meta_position = "";
+                    $get_position = "";
+                if(!empty($aPostData['bio_details'])) {
+                    if($aPostData['bio_details']['year_ordained']) :
+                        $meta_ordained = $aPostData['bio_details']['year_ordained'];
+                        $label_ordained = __('Ordained', FPMTP__I18N_NAMESPACE) . ":";
+                        $get_ordained = <<<OUTPUTRESULT
+                            <h4 class="fpmtp-bios-ordained">$label_ordained $meta_ordained</h4>
+OUTPUTRESULT;
+                    endif;
+                    if($aPostData['bio_details']['community_position']) :
+                        $meta_position = $aPostData['bio_details']['community_position'];
+                        $get_position = <<<OUTPUTRESULT
+                            <h4 class="fpmtp-bios-position">$meta_position</h4>
+OUTPUTRESULT;
+                    endif;
+                }
+
+                    $row = <<<OUTPUTRESULT
+			
+                <div class="fpmtp-bios $row_class post-{$post->ID} {$post->post_name}">
+                    $thumb_result
+                    <div class="fpmtp-bios-info-wrap">
+                        <h3 class="fpmtp-bios-name">$get_the_title</h3>
+                        $get_position
+                        $get_ordained
+                        <a href="$get_permalink">Full biography</a>
+                        $the_excerpt
+                    </div>
+                </div>
+
+OUTPUTRESULT;
+                    if(!empty($sortKey)) :
+                        if($sortKey=='year_ordained') :
+                            $aResult[$meta_ordained][] = $row . '<!-- o '.$meta_ordained.' -->';
+                        elseif($sortKey=='community_position') :
+                            $aResult[$meta_position][] = $row . '<!-- p '.$meta_position.' -->';
+                        else :
+                            $aResult[] = $row . '<!-- i '.$iPostID.' -->';
+                        endif;
+                    else :
+                        $aResult[] = $row . '<!-- ii '.$iPostID.' -->';
+                    endif;
+
+				endwhile;
+			}
+
+        /* Restore original Post Data */
+        wp_reset_postdata();
+
+        if(!empty($aResult)) :
+            $result = <<<OUTPUTRESULT
+    <div class="fpmtp-bios-listing">
+OUTPUTRESULT;
+            //$result = ob_get_clean();
+            if($sortKey=='year_ordained') :
+                if($order=='ASC') sort($aResult);
+                if($order=='DESC') rsort($aResult);
+                foreach ($aResult as $s) {
+                    $result .= implode("",$s);
+                }
+            else :
+                $result .= implode("",$aResult);
+            endif;
+            $result .= <<<OUTPUTRESULT
+                <!-- Close fpmtp-bios-listing -->
+                <!-- $sortKey -->
+            </div>
+OUTPUTRESULT;
+            unset($aResult);
+            return $result;
+        else :
+                return '';
+        endif;
     }
 
     public static function  bios_cache() {
@@ -599,5 +735,35 @@ class FullPeace_Media_To_Post {
         }
 
         return apply_filters( 'repl_template_'.$template, $file);
+    }
+}
+
+
+
+/**
+ * Deletes the audio_series_query transient if a post is updated.
+ *
+ * Moved this outside the class, since WP 4.0 was throwing an error.
+ */
+
+function  FullPeace_Media_To_Post_plugin_post_save( $post_id ) {
+
+    // If this is an auto save routine don't do anyting
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+        return;
+
+    $post = get_post($post_id);
+
+    if ( $post->post_type == 'fpmtp_audio' ) {
+        delete_transient( 'fpmtp_audio_series_query' );
+        $term_list = wp_get_post_terms($post->ID, 'fpmtp_series', array("fields" => "all"));
+        foreach ($term_list as $t) {
+            delete_transient( 'fpmtp_audio_series_query_' . $t->slug );
+        }
+
+    }
+
+    if ( $post->post_type == 'fpmtp_bios' ) {
+        delete_transient( 'fpmtp_bios_query' );
     }
 }

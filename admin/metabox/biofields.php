@@ -20,8 +20,8 @@ class FullPeace_Bios_MetaBox extends AdminPageFramework_MetaBox {
         $this->addSettingSections(
             array(
                 'section_id'	=> 'bio_details',
-                'title'	=> __( 'Upload files', FPMTP__I18N_NAMESPACE ),
-                'description'	=> __( 'Upload different file formats of this Book.', FPMTP__I18N_NAMESPACE ),
+                'title'	=> __( 'Biography additional details (optional)', FPMTP__I18N_NAMESPACE ),
+                //'description'	=> __( '', FPMTP__I18N_NAMESPACE ),
             )
         );
         /*
@@ -39,6 +39,14 @@ class FullPeace_Bios_MetaBox extends AdminPageFramework_MetaBox {
                 'type'			=>	'select',
                 'label'			=> $ordain_years,
                 'default' 		=>	0,	// 0 means the first item
+            )
+        );
+        $this->addSettingFields(
+            array( // Media File
+                'field_id'		=>	'community_position',
+                'section_id'	=>	'bio_details',
+                'title'			=>	__( 'Position', FPMTP__I18N_NAMESPACE ),
+                'type'			=>	'text',
             )
         );
 
