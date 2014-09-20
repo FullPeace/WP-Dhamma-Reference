@@ -31,6 +31,8 @@ Additionally, a Bio (biography or profile) post type can be added from the setti
 Please use the forums for questions, this page will be filled out with any questions that are relevant to many.
 
 == Changelog ==
+0.1.15 Updated AdminPageFramework. Bug fixes.
+
 0.1.14 Added Bios details, several shortcodes and a series playlist. Bug fixes for upload parsing.
 
 0.1.9 Bug fixes

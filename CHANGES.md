@@ -1,5 +1,7 @@
 ### ChangeLog for FullPeace Media To Post
 
+#### 0.1.15 Updated AdminPageFramework. Bug fixes.
+
 #### 0.1.14 Added Bios details, several shortcodes and a series playlist. Bug fixes for upload parsing.
 
 #### 0.1.9 Bug fixes

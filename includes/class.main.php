@@ -52,6 +52,7 @@ class FullPeace_Media_To_Post {
         add_filter( 'query_vars', array( 'FullPeace_Media_To_Post','add_query_vars_filter' ) );
         add_shortcode( 'audio_series', array( 'FullPeace_Media_To_Post','shortcode_series') );
         add_shortcode( 'bios', array( 'FullPeace_Media_To_Post','shortcode_bio') );
+        add_shortcode( 'dhamma', array( 'FullPeace_Media_To_Post','shortcode_dhamma') );
         add_action( 'save_post',  'FullPeace_Media_To_Post_plugin_post_save' );
 
         // Remove this, instead encourage custom templates
@@ -69,11 +70,84 @@ class FullPeace_Media_To_Post {
 	public static function hide_add_buttons() {
 	  global $pagenow;
 	  if(is_admin()){
-		if($pagenow == 'edit.php' && $_GET['post_type'] == 'fpmtp_audio'){
-			echo '.add-new-h2{display: none;}';
+		if( ($pagenow == 'edit.php' || $pagenow == 'post.php') && $_GET['post_type'] == 'fpmtp_audio'){
+			echo '<style>.add-new-h2{display: none;}</style>';
+		}  
+		if( ($pagenow == 'post-new.php' || $pagenow == 'post.php') && $_GET['post_type'] == 'fpmtp_books'){
+			remove_action( 'media_buttons', 'media_buttons' );
 		}  
 	  }
 	}
+
+    // Add a shortcode that executes our function
+    public static function shortcode_dhamma( $atts )
+    {
+        $include = false;
+        $type = false;
+
+        $result = '<!-- include or type param required -->';
+        extract( shortcode_atts( array(
+            'include' => 0,
+            'type' => 0,
+        ), $atts, 'dhamma' ) );
+
+		if(!$include && !$type){return $result;}
+
+        $posts = array();
+        if($include) {
+            $post = get_post($include);
+
+            if ($post) {
+                $posts[] = $post;
+                $result = '';
+            }
+        }elseif($type){
+            switch($type){
+                case 'talks':
+                    $type = 'fpmtp_audio';
+                    break;
+                case 'books':
+                    $type = 'fpmtp_books';
+                    break;
+                case 'bios':
+                    $type = 'fpmtp_bios';
+                    break;
+                default:
+                    break;
+            }
+
+            $args=array(
+                'post_type' => $type,
+                'post_status' => 'publish',
+                'posts_per_page' => -1,
+            );
+            $posts = get_posts($args);
+        }
+        foreach($posts as $post):
+            $result .= '
+            <article  id="' . $post->post_name . '" class="dhamma-included ' . $post->post_type . '">';
+
+            if (has_post_thumbnail($post->ID)) {
+                $result .= '<div class="dhamma-include-featured">';
+                $result .= '<a href="' . get_post_permalink($post->ID) . '" class=""><img src="' . wp_get_attachment_url(get_post_thumbnail_id($post->ID)) . '" class=""></a>';
+                $result .= '</div>';
+            }
+            $result .= '
+                  <h2 class="dhamma-include-header">
+                    <a href="' . get_post_permalink($post->ID) . '" title="' . $post->post_title . '">' . ((strlen($post->post_title) > 53) ? substr($post->post_title, 0, 50) . '...' : $post->post_title) . '</a>
+                  </h2>
+                    <div class="dhamma-include-content">
+          ';
+            $result .= do_shortcode($post->post_content);
+            $result .= '
+                    </div>';
+
+            $result .= '
+            </article><!-- #' . $post->post_name . ' -->';
+        endforeach;
+
+        return $result;
+    }
 
     // Add a shortcode that executes our function
     public static function shortcode_series( $atts )
@@ -565,8 +639,7 @@ OUTPUTRESULT;
 
         $attachment_post = get_post( $attachment_ID );
         $filepath = get_attached_file( $attachment_ID );
-        //$attachment_meta = wp_get_attachment_metadata( $attachment_ID );
-        //$attached_audio = get_attached_media ( 'audio', $attachment_ID );
+
         $metadata = wp_read_audio_metadata( $filepath );
 
         $meta_comment = (isset($metadata['comment'])) ? $metadata['comment'] : "";
@@ -605,11 +678,20 @@ OUTPUTRESULT;
         if(isset($metadata['album'] ))
             wp_set_object_terms( $audio_post_id, array( $metadata['album'] ), FullPeace_Media_To_Post::$slug . '_series', true );
 
-        // I wonder if the file has an image attached?
-        $post_thumbnail_id = get_post_thumbnail_id( $attachment_ID );
-        if(is_numeric($post_thumbnail_id) && (int)$post_thumbnail_id>0)
-        {
-            set_post_thumbnail($audio_post_id, $post_thumbnail_id);
+
+        // MP3 featured image is not set at this point, defer to next page load
+        $option_name = 'fpmtp_deferred_featured_images' ;
+        if ( get_option( $option_name ) !== false ) {
+            $new_value = (array)get_option( $option_name );
+            $new_value[$attachment_ID] = $audio_post_id;
+            // The option already exists, so we just update it.
+            update_option( $option_name, $new_value );
+        } else {
+            $new_value = array($attachment_ID => $audio_post_id);
+            // The option hasn't been added yet. We'll add it with $autoload set to 'no'.
+            $deprecated = null;
+            $autoload = 'no';
+            add_option( $option_name, $new_value, $deprecated, $autoload );
         }
 		
 		// Now that the attachment is parsed, check the setting to see if the file should be moved to FTP

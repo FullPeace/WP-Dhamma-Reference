@@ -24,26 +24,28 @@ public function start() {
     $this->setPostTypeArgs(
         array(			// argument - for the array structure, refer to http://codex.wordpress.org/Function_Reference/register_post_type#Arguments
             'labels' => array(
-                'name'                => _x( 'Audio', 'Post Type General Name', FPMTP__I18N_NAMESPACE ),
-                'singular_name'       => _x( 'Audio', 'Post Type Singular Name', FPMTP__I18N_NAMESPACE ),
-                'menu_name'           => __( 'Audio', FPMTP__I18N_NAMESPACE ),
+                'name'                => _x( 'Dhamma Talks', 'Post Type General Name', FPMTP__I18N_NAMESPACE ),
+                'singular_name'       => _x( 'Dhamma Talk', 'Post Type Singular Name', FPMTP__I18N_NAMESPACE ),
+                'menu_name'           => __( 'Dhamma Talks', FPMTP__I18N_NAMESPACE ),
                 'parent_item_colon'   => __( 'Parent Item:', FPMTP__I18N_NAMESPACE ),
-                'all_items'           => __( 'All Audio Files', FPMTP__I18N_NAMESPACE ),
-                'view_item'           => __( 'View Audio', FPMTP__I18N_NAMESPACE ),
-                'add_new_item'        => __( 'Add New Audio File', FPMTP__I18N_NAMESPACE ),
+                'all_items'           => __( 'All Dhamma Talks', FPMTP__I18N_NAMESPACE ),
+                'view_item'           => __( 'View Talk', FPMTP__I18N_NAMESPACE ),
+                'add_new_item'        => __( 'Add New Dhamma Talk', FPMTP__I18N_NAMESPACE ),
                 'add_new'             => __( 'Add New', FPMTP__I18N_NAMESPACE ),
-                'edit_item'           => __( 'Edit Audio', FPMTP__I18N_NAMESPACE ),
-                'update_item'         => __( 'Update Audio', FPMTP__I18N_NAMESPACE ),
-                'search_items'        => __( 'Search Audio', FPMTP__I18N_NAMESPACE ),
+                'edit_item'           => __( 'Edit Talk', FPMTP__I18N_NAMESPACE ),
+                'update_item'         => __( 'Update Talk', FPMTP__I18N_NAMESPACE ),
+                'search_items'        => __( 'Search Talk', FPMTP__I18N_NAMESPACE ),
                 'not_found'           => __( 'Not found', FPMTP__I18N_NAMESPACE ),
                 'not_found_in_trash'  => __( 'Not found in Trash', FPMTP__I18N_NAMESPACE ),
-                'plugin_listing_table_title_cell_link'	=>	__( 'Audio', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
+                'plugin_listing_table_title_cell_link'	=>	__( 'Dhamma Talk', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
             ),
             'public'			=>	true,
-            'menu_position' 	=>	5,
+            'menu_position' 	=>	4,
+            'menu_icon' => 'dashicons-media-audio',
             'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
             'taxonomies'		=>	array( 'category', 'fpmtp_speakers', 'fpmtp_series', 'fpmtp_languages' ),
             'has_archive'		=>	true,
+            'show_in_menu'      =>  true,
             'rewrite' => array( 'slug' => 'audio', 'with_front' => false ),
             'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
             //'menu_icon'			=>	plugins_url( 'asset/image/wp-logo_16x16.png', APFDEMO_FILE ),
@@ -140,6 +142,7 @@ public function columns_fpmtp_audio( $aHeaderColumns ) {	// columns_{post type s
             //'comments' 		=> '<div class="comment-grey-bubble"></div>', // Number of pending comments.
             'date'			=> __( 'Date', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post. 
             //'series'			=> __( 'Series' ),
+				'shortcodecolumn' => __( 'Shortcode' ),
         )
     );
 
@@ -151,10 +154,11 @@ public function sortable_columns_fpmtp_audio( $aSortableHeaderColumns ) {	// sor
     );
 }
 public function cell_fpmtp_audio_series( $sCell, $iPostID ) {	// cell_{post type}_{column key}
-
     return sprintf( __( 'Post ID: %1$s', FPMTP__I18N_NAMESPACE ), $iPostID ) . "<br />"
     . __( 'Text', FPMTP__I18N_NAMESPACE ) . ': ' . get_post_meta( $iPostID, 'metabox_text_field', true );
-
+}
+public function cell_fpmtp_audio_shortcodecolumn( $sCell, $iPostID ) { // cell_{post type}_{column key}
+	return '[dhamma include="'.$iPostID.'"]';
 }
 
 /**
@@ -207,16 +211,16 @@ public function replyToPrintOptionValues( $sContent ) {
     // to the first parameter of the constructor of the AdminPageFramework class.		
     $aSavedOptions = get_option( 'FullPeace_Media_To_Post' );
 
-    return $sContent
-	 . "<!--\n<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>  \n"
-     . $this->oDebug->getArray( $aPostData )
-     . "\n<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
-     . $this->oDebug->getArray( $aSavedOptions )
-    . "\n<h3>" . __( 'Post data', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
-    . "\n<pre>" . var_export($GLOBALS['post'],true) . "</pre>\n"
-    . "\n<h3>" . __( 'Attached media', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
-    . "\n<pre>" . var_export( get_attached_media( 'audio' ),true) . "</pre>\n"
-     . "\n-->";
+    return $sContent;
+//	 . "<!--\n<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>  \n"
+//     . $this->oDebug->getArray( $aPostData )
+//     . "\n<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+//     . $this->oDebug->getArray( $aSavedOptions )
+//    . "\n<h3>" . __( 'Post data', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+//    . "\n<pre>" . var_export($GLOBALS['post'],true) . "</pre>\n"
+//    . "\n<h3>" . __( 'Attached media', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+//    . "\n<pre>" . var_export( get_attached_media( 'audio' ),true) . "</pre>\n"
+//     . "\n-->";
 
 }
 

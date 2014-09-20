@@ -20,7 +20,7 @@
  * Plugin Name:       FullPeace Media To Post
  * Plugin URI:        http://github.com/FullPeace/fullpeace-media-to-post
  * Description:       FullPeace Media To Post creates Custom Post Types for media files on upload via the Media Library.
- * Version:           0.1.14
+ * Version:           0.1.15
  * Author:            FullPeace.org
  * Author URI:        http://fullpeace.org
  * Text Domain:       fullpeace-media-to-posts
@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Definitions
  */
-define( 'FPMTP__VERSION', '0.1.14' );
+define( 'FPMTP__VERSION', '0.1.15' );
 define( 'FPMTP__DEVMODE', false );
 define( 'FPMTP__I18N_NAMESPACE', 'fullpeace-media-to-posts' );
 define( 'FPMTP__PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -89,7 +89,7 @@ if ( is_admin() ) {
         __( 'Upload Book files (PDF, EPUB, MOBI)', FPMTP__I18N_NAMESPACE ),	// title
         array( 'fpmtp_books' ),	// post type slugs: post, page, etc.
         'normal',	// context (what kind of metabox this is)
-        'default'	// priority
+        'high'	// priority
     );
     include_once( FPMTP__PLUGIN_DIR . 'admin/metabox/biofields.php' );
     new FullPeace_Bios_MetaBox(

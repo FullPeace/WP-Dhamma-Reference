@@ -14,9 +14,10 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
         $this->setPostTypeArgs(
             array(			// argument - for the array structure, refer to http://codex.wordpress.org/Function_Reference/register_post_type#Arguments
                 'labels' => array(
-                    'name'			=>	'Books',
+                    'name'			=>	'Dhamma Books',
                     'all_items' 	=>	__( 'All Books', FPMTP__I18N_NAMESPACE ),
-                    'singular_name' =>	'Book',
+                    'singular_name' =>	'Dhamma Book',
+                    'menu_name'     => __( 'Dhamma Books', FPMTP__I18N_NAMESPACE ),
                     'add_new'		=>	__( 'Add New', FPMTP__I18N_NAMESPACE ),
                     'add_new_item'	=>	__( 'Add New Book', FPMTP__I18N_NAMESPACE ),
                     'edit'			=>	__( 'Edit', FPMTP__I18N_NAMESPACE ),
@@ -28,14 +29,16 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                     'not_found'		=>	__( 'No Book found', FPMTP__I18N_NAMESPACE ),
                     'not_found_in_trash' => __( 'No Book found in Trash', FPMTP__I18N_NAMESPACE ),
                     'parent'		=>	__( 'Parent Book', FPMTP__I18N_NAMESPACE ),
-                    'plugin_listing_table_title_cell_link'	=>	__( 'Books', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
+                    'plugin_listing_table_title_cell_link'	=>	__( 'Dhamma Books', FPMTP__I18N_NAMESPACE ),		// framework specific key. [3.0.6+]
                 ),
                 'public'			=>	true,
                 'menu_position' 	=>	5,
+                'menu_icon' => 'dashicons-book-alt',
                 'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
                 'taxonomies'		=>	array( 'category', 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy', 'fpmtp_languages' ),
                 'has_archive'		=>	true,
-                'rewrite' => array( 'slug' => 'books', 'with_front' => false ),
+                'show_in_menu'      =>  true,
+                'rewrite' => array( 'slug' => 'dhamma-books', 'with_front' => false ),
                 'show_admin_column' =>	true,	// this is for custom taxonomies to automatically add the column in the listing table.
             )
         );
@@ -108,9 +111,10 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
         $this->setFooterInfoRight( '<br />Created for <a href="http://amaravati.org/" target="_blank" >Amaravati B.M.</a>' );
 
         add_filter( 'the_content', array( $this, 'replyToPrintOptionValues' ) );
+        add_filter( 'the_excerpt', array( $this, 'replyToPrintOptionValues' ) );
 
         // Disabled custom sorting method
-        //add_filter( 'request', array( $this, 'replyToSortCustomColumn' ) );
+        add_filter( 'request', array( $this, 'replyToSortCustomColumn' ) );
 
     }
 
@@ -131,6 +135,7 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                 // 'comments' 		=> '<div class="comment-grey-bubble"></div>', // Number of pending comments.
                 //'date'			=> __( 'Date', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post.
                 //'fpmtp_year_taxonomy'			=> __( 'Year published' ),
+				'shortcodecolumn' => __( 'Shortcode' ),
             )
         );
 
@@ -142,6 +147,9 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
             'fpmtp_authors_taxonomy' => 'fpmtp_authors_taxonomy',
             'fpmtp_year_taxonomy' => 'fpmtp_year_taxonomy',
         );
+    }
+    public function cell_fpmtp_books_shortcodecolumn( $sCell, $iPostID ) { // cell_{post type}_{column key}
+        return '[dhamma include="'.$iPostID.'"]';
     }
 
     /**
@@ -201,24 +209,25 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                 if( !empty($sAuthorLinks) ) $sAuthorLinks .= ", ";
                 $sAuthorLinks .= '<a href="'.get_term_link( $term ).'" title="' . sprintf(__('View all books by %s', FPMTP__I18N_NAMESPACE), $term->name) . '">' . $term->name . "</a>";
             }
-            $sAuthorLinks = "<p>" . __( 'Author:', FPMTP__I18N_NAMESPACE ) .' '. $sAuthorLinks . "</p>";
+            $sAuthorLinks = '<p class="author-links">' . __( 'Author:', FPMTP__I18N_NAMESPACE ) .' '. $sAuthorLinks . "</p>";
         }
-        $sUploadedMedia = ": ";
+        $sUploadedMedia = " ";
         if(!empty($aPostData['upload_media']) && !empty($aPostData['upload_media']['media_field'])) {
                 foreach ($aPostData['upload_media']['media_field'] as $key => $sFileUrl) {
                     $sUploadedMedia .= ' <a href="' . $sFileUrl . '" title="' . $GLOBALS['post']->post_title . '"><img src="' . FPMTP__PLUGIN_URL . "assets/img/" . substr(strrchr($sFileUrl, "."), 1) . '.png"></a>';
+                    $sUploadedMedia .= '<!-- '.$key.' '.$sFileUrl.' -->';
                 }
-            $sUploadedMedia = " <h3>" . __( 'Download', FPMTP__I18N_NAMESPACE ) .' '. $sUploadedMedia . "</h3>";
+            $sUploadedMedia = ' <h3 class="download-links">' . __( 'Download', FPMTP__I18N_NAMESPACE ) .' '. $sUploadedMedia . "</h3>";
         }
 
-        return $sContent . $sAuthorLinks . $sUploadedMedia
-        . "<!--\n<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>  \n"
-        . $this->oDebug->getArray( $aPostData )
-        . "\n<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
-        . $this->oDebug->getArray( $aSavedOptions )
-        . "\n<h3>" . __( 'Post data', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
-        . "\n<pre>" . var_export($GLOBALS['post'],true) . "</pre>\n"
-        . "\n-->";
+        return $sAuthorLinks . $sUploadedMedia . $sContent ;
+//        . "<!--\n<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>  \n"
+//        . $this->oDebug->getArray( $aPostData )
+//        . "\n<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+//        . $this->oDebug->getArray( $aSavedOptions )
+//        . "\n<h3>" . __( 'Post data', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+//        . "\n<pre>" . var_export($GLOBALS['post'],true) . "</pre>\n"
+//        . "\n-->";
         //. $this->oDebug->getArray( $aPostData )
         //. $this->oDebug->getArray( $aSavedOptions );
 

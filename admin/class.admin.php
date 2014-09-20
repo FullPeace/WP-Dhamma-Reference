@@ -43,22 +43,23 @@ class FullPeace_Media_To_Post_Admin {
     public static function admin_init() {
         load_plugin_textdomain( FPMTP__I18N_NAMESPACE );
 
-//        self::setting('enable_cpt_audio', 'enable');
-//        self::setting('enable_cpt_video', '');
-//        self::setting('enable_cpt_book', '');
-
-        // New approach ^_^
-        //self::register_settings();
-//        //add_option( FullPeace_Media_To_Post::get_slug('set_cpt_audio'), 'Talks');
-//        //add_option( FullPeace_Media_To_Post::get_slug('set_cpt_video'), 'Video');
-//        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_audio'), 'enable');
-//        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_video'), '');
-//        add_option( FullPeace_Media_To_Post::get_slug('enable_cpt_book'), '');
-//        //register_setting( 'default', FullPeace_Media_To_Post::get_slug('set_cpt_audio') );
-//        //register_setting( 'default', FullPeace_Media_To_Post::get_slug('set_cpt_video') );
-//        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_audio') );
-//        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_video') );
-//        register_setting( 'default', FullPeace_Media_To_Post::get_slug('enable_cpt_book') );
+        $option_name = 'fpmtp_deferred_featured_images' ;
+        if ( get_option( $option_name ) !== false ) {
+            $aDeferredFeatured = (array)get_option( $option_name );
+            foreach($aDeferredFeatured as $attachment_ID => $audio_post_id) {
+                if($attachment_ID && $audio_post_id) {
+                    $attachment_post = get_post($attachment_ID);
+                    $already_has_thumb = has_post_thumbnail($audio_post_id);
+                    if (!$already_has_thumb) {
+                        $attached_image = get_post_meta($attachment_post->ID, '_thumbnail_id', true);
+                        if ($attached_image) {
+                            add_post_meta($audio_post_id, '_thumbnail_id', (int)$attached_image, true);
+                        }
+                    }
+                }
+            }
+            delete_option($option_name);
+        }
     }
 
 
