@@ -55,6 +55,10 @@ class FullPeace_Media_To_Post {
         add_shortcode( 'dhamma', array( 'FullPeace_Media_To_Post','shortcode_dhamma') );
         add_action( 'save_post',  'FullPeace_Media_To_Post_plugin_post_save' );
 
+        add_filter('the_excerpt_rss', array( 'FullPeace_Media_To_Post','featuredtoRSS'));
+        add_filter('the_content_feed', array( 'FullPeace_Media_To_Post','featuredtoRSS'));
+        add_action( "rss_item", array(  'FullPeace_Media_To_Post', "feed_addMeta" ), 5, 1 );
+        add_action( "rss2_item", array(  'FullPeace_Media_To_Post', "feed_addMeta" ), 5, 1 );
         // Remove this, instead encourage custom templates
         //add_filter( 'template_include', array( 'FullPeace_Media_To_Post', 'template_chooser' ) );
 
@@ -78,6 +82,55 @@ class FullPeace_Media_To_Post {
 		}  
 	  }
 	}
+
+    /**
+     * Enable podcasting.
+     *
+     * Source: http://wordpress.stackexchange.com/questions/85800/add-audio-attachment-link-to-rss
+     *
+     * @since 0.1.15
+     */
+    public static function featuredtoRSS($content) {
+        global $post;
+//
+//        if ( has_post_thumbnail( $post->ID ) ){
+//            $content = '' . get_the_post_thumbnail( $post->ID, 'topImage', array( 'style' =>  'margin:0 auto; border: 1px solid #555; display:block;' ) ) . '' . $content;
+//        }
+
+        $audios =& get_children( 'post_type=attachment&post_parent='.$post->ID.'&post_mime_type=audio' );
+        foreach ( $audios as $id => $audio ){
+            $content.='<a href="'.wp_get_attachment_url($id).'" target="_blank">'.$audio->post_title.'</a> ';
+        }
+
+        return $content;
+    }
+
+    /**
+     * Add stuff to RSS items
+     * @param $for_comments
+     * @since 0.1.15
+     */
+    public function feed_addMeta($for_comments) {
+        global $post;
+
+        if($post->post_type!='fpmtp_audio')
+            return;
+        if(!$for_comments) {
+            $audios =& get_children( 'post_type=attachment&post_parent='.$post->ID.'&post_mime_type=audio' );
+            if ($audios) {
+                foreach ($audios as $audio_id => $audio) {
+                    echo '<enclosure url="' . wp_get_attachment_url($audio_id) . '" length="' . @filesize( get_attached_file( $audio_id ) ) . '" type="'. get_post_mime_type( $audio->ID ).'" />' . "\n";
+                }
+
+                if ( has_post_thumbnail($post->ID) ) {
+                    $thumbnail_id = get_post_thumbnail_id( $post->ID );
+                    $thumb = wp_get_attachment_image_src($thumbnail_id);
+                    echo '<media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="'. $thumb[0] . '" width="' . $thumb[1] . '" height="' . $thumb[2] . '" />' . "\n";
+                }
+
+            }
+        }
+    }
 
     // Add a shortcode that executes our function
     public static function shortcode_dhamma( $atts )
@@ -649,7 +702,8 @@ OUTPUTRESULT;
         $new_post_content = '[audio src="'.$attachment_post->guid.'"]'.
             "\n\n".$attachment_post->post_content .
             $meta_length .
-            $meta_year;
+            $meta_year .
+        "\n\n".'<a href="'.$attachment_post->guid.'" download0"'.basename($attachment_post->guid).'">'.__('Download' , FPMTP__I18N_NAMESPACE).'</a>';
 
         // Create new custom post object only for images
         $audio_custom_post = array(
