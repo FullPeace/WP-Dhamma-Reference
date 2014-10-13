@@ -27,20 +27,20 @@ class FullPeace_Bios_MetaBox extends AdminPageFramework_MetaBox {
         /*
          * Adds setting fields into the meta box.
          */
-        $ordain_years = array('-' => 'Not ordained');
-        for ($x = date('Y'); $x > (date('Y')-120); $x--){
-            $ordain_years[$x] = $x . '';
-        }
-        $this->addSettingFields(
-            array( // Media File
-                'field_id'		=>	'year_ordained',
-                'section_id'	=>	'bio_details',
-                'title'			=>	__( 'Year ordained', FPMTP__I18N_NAMESPACE ),
-                'type'			=>	'select',
-                'label'			=> $ordain_years,
-                'default' 		=>	0,	// 0 means the first item
-            )
-        );
+//        $ordain_years = array('-' => 'Not ordained');
+//        for ($x = date('Y'); $x > (date('Y')-120); $x--){
+//            $ordain_years[$x] = $x . '';
+//        }
+//        $this->addSettingFields(
+//            array( // Media File
+//                'field_id'		=>	'year_ordained',
+//                'section_id'	=>	'bio_details',
+//                'title'			=>	__( 'Year ordained', FPMTP__I18N_NAMESPACE ),
+//                'type'			=>	'select',
+//                'label'			=> $ordain_years,
+//                'default' 		=>	0,	// 0 means the first item
+//            )
+//        );
         $this->addSettingFields(
             array( // Media File
                 'field_id'		=>	'community_position',

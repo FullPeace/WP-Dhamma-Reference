@@ -35,7 +35,7 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
                 'menu_position' 	=>	5,
                 'menu_icon' => 'dashicons-book-alt',
                 'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-                'taxonomies'		=>	array( 'category', 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy', 'fpmtp_languages' ),
+                'taxonomies'		=>	array( 'category', 'fpmtp_authors_taxonomy' , 'fpmtp_year_taxonomy', 'fpmtp_languages', 'post_tag' ),
                 'has_archive'		=>	true,
                 'show_in_menu'      =>  true,
                 'rewrite' => array( 'slug' => 'dhamma-books', 'with_front' => false ),
@@ -107,11 +107,11 @@ class FullPeace_Books_PostType  extends AdminPageFramework_PostType {
             );
         }
 
-        $this->setFooterInfoLeft( '<br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
+        $this->setFooterInfoLeft( '<em>The construction and maintenance of this page has been offered as an act of Dhamma Dana.</em><br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
         $this->setFooterInfoRight( '<br />Created for <a href="http://amaravati.org/" target="_blank" >Amaravati B.M.</a>' );
 
-        add_filter( 'the_content', array( $this, 'replyToPrintOptionValues' ) );
-        add_filter( 'the_excerpt', array( $this, 'replyToPrintOptionValues' ) );
+        //add_filter( 'the_content', array( $this, 'replyToPrintOptionValues' ) );
+        //add_filter( 'the_excerpt', array( $this, 'replyToPrintOptionValues' ) );
 
         // Disabled custom sorting method
         add_filter( 'request', array( $this, 'replyToSortCustomColumn' ) );

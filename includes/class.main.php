@@ -59,6 +59,10 @@ class FullPeace_Media_To_Post {
         add_filter('the_content_feed', array( 'FullPeace_Media_To_Post','featuredtoRSS'));
         add_action( "rss_item", array(  'FullPeace_Media_To_Post', "feed_addMeta" ), 5, 1 );
         add_action( "rss2_item", array(  'FullPeace_Media_To_Post', "feed_addMeta" ), 5, 1 );
+
+
+        add_filter( 'pre_get_posts', array(  'FullPeace_Media_To_Post', 'add_custom_types_to_tax' ) );
+
         // Remove this, instead encourage custom templates
         //add_filter( 'template_include', array( 'FullPeace_Media_To_Post', 'template_chooser' ) );
 
@@ -209,11 +213,13 @@ class FullPeace_Media_To_Post {
         $container_class = false;
         $thumb_class = false;
         $img_class = false;
+        $layout = false;
         extract( shortcode_atts( array(
             'container_id' => 'all-audio-series',
             'container_class' => 'x-iso-container x-iso-container-portfolio cols-4 isotope',
             'thumb_class' => 'entry-thumb',
-            'img_class' => 'attachment-entry-renew wp-post-image'
+            'img_class' => 'attachment-entry-renew wp-post-image',
+            'layout' => false
         ), $atts, 'audio_series' ) );
 
 	   $audio_series_query = get_transient('fpmtp_audio_series_query');
@@ -231,28 +237,29 @@ class FullPeace_Media_To_Post {
 //        $result .= '-->';
 
            foreach ( $audio_series_query as $series_cat ) {
-               if ( $series_cat[$thumbnail] ) {
-                   $result .= '<article style="opacity:1;float:left;" class="x-portfolio type-x-portfolio status-publish has-post-thumbnail hentry has-post-thumbnail">';
-                   $result .= '<div class="entry-featured">';
-                   $result .= '<a href="' .  $series_cat['term_link'] . '" class="' .  $thumb_class . '"><img src="' .  $series_cat[$thumbnail] . '" class="' .  $img_class . '"></a>';
-                   $result .= '<div class="entry-cover">
-        <div class="entry-cover-content">
-          <span>'.__('Audio', FPMTP__I18N_NAMESPACE ).'</span>
-          <h2 class="entry-title entry-title-portfolio">
-            <a href="'.$series_cat['term_link'].'" title="'.$series_cat['name'].'">'.((strlen($series_cat['name'])>53)?substr($series_cat['name'], 0, 50).'...':$series_cat['name']).'</a>
-          </h2>
-        </div>
-      </div>';
-                   //$result .= '<h3><a href="' .  $series_cat['term_link'] . '" class="title-overlay">' .  $series_cat['name'] . '</a></h3>';
-                   $result .= '</div>';
-                   $result .= '</article>';
+               if($layout && file_exists(get_stylesheet_directory() . '/fpmtp-' . $layout . '.php' ))
+               {
+                   get_template_part('fpmtp', $layout);
                }
-//               else{
-//
-//                   $result .= '<!-- cat ';
-//                   $result .=  print_r($series_cat, true);
-//                   $result .= '-->';
-//               }
+               else
+               {
+                   if ( $series_cat[$thumbnail] ) {
+                       $result .= '<article style="opacity:1;float:left;" class="x-portfolio type-x-portfolio status-publish has-post-thumbnail hentry has-post-thumbnail">';
+                       $result .= '<div class="entry-featured">';
+                       $result .= '<a href="' .  $series_cat['term_link'] . '" class="' .  $thumb_class . '"><img src="' .  $series_cat[$thumbnail] . '" class="' .  $img_class . '"></a>';
+                       $result .= '<div class="entry-cover">
+            <div class="entry-cover-content">
+              <span>'.__('Audio', FPMTP__I18N_NAMESPACE ).'</span>
+              <h2 class="entry-title entry-title-portfolio">
+                <a href="'.$series_cat['term_link'].'" title="'.$series_cat['name'].'">'.((strlen($series_cat['name'])>53)?substr($series_cat['name'], 0, 50).'...':$series_cat['name']).'</a>
+              </h2>
+            </div>
+          </div>';
+                       //$result .= '<h3><a href="' .  $series_cat['term_link'] . '" class="title-overlay">' .  $series_cat['name'] . '</a></h3>';
+                       $result .= '</div>';
+                       $result .= '</article>';
+                   }
+                }
            }
 
         $result .= '</div><!-- #' .  $container_id . ' -->';
@@ -319,6 +326,7 @@ class FullPeace_Media_To_Post {
     public static function  series_playlist_shortcode_cache($termSlug) {
 
         $audio_series_query = array();
+        $audio_series_ap_query = array();
 
         $result = '';
 
@@ -346,7 +354,9 @@ class FullPeace_Media_To_Post {
 
             $audio_trac = reset($attached_media);
             $audio_series_query[] = '[wpse_trac title="'.get_the_title().'" src="'.str_replace("https:","",$audio_trac->guid).'"]';
-
+			$audio_series_ap_query[] = '<div class= "apmusicplayer-playlistItem" data-type="local" data-mp3="'.
+										str_replace("https:","",$audio_trac->guid).
+										'" data-title="'.get_the_title().'"  data-artist="" ><a class="playlistNonSelected" href="#">'.get_the_title().'</a><a class="dlink" href="#" data-dlink="'.str_replace("https:","",$audio_trac->guid).'"><img src="media/data/dlink.png" alt = ""/></a></div>';
         endwhile;
 
 
@@ -355,7 +365,9 @@ class FullPeace_Media_To_Post {
 
         if(!empty($audio_series_query))
         {
-            $result = '[wpse_playlist type="audio" current="no" tracklist="yes" tracknumbers="no" images="yes" artist="yes"]' . "\n" . implode("\n", $audio_series_query)."\n".'[/wpse_playlist]';
+            $result = array( 'wp_player' => '[wpse_playlist type="audio" current="no" tracklist="yes" tracknumbers="no" images="yes" artist="yes"]' . "\n" . implode("\n", $audio_series_query)."\n".'[/wpse_playlist]',
+								'ap_player' => '<ul id="playlist-'.$termSlug.'">' . "\n" . implode("\n", $audio_series_ap_query)."\n" . '</ul>' 
+								);
         }
         set_transient( 'fpmtp_audio_series_query_'.$termSlug, $result );
 
@@ -527,6 +539,23 @@ OUTPUTRESULT;
     }
 
     public static function  bios_cache() {
+
+        $type = 'fpmtp_bios';
+        $args=array(
+            'post_type' => $type,
+            'post_status' => 'publish',
+            'posts_per_page' => -1
+        );
+        $bios_wp_query = null;
+        $bios_array = array();
+        $bios_wp_query = new WP_Query($args);
+        if( $bios_wp_query->have_posts() ) {
+            while ($bios_wp_query->have_posts()) : $bios_wp_query->the_post();
+                $bios_array[$bios_wp_query->post->post_name] = $bios_wp_query->post;
+            endwhile;
+        }
+        wp_reset_query();  // Restore global post data stomped by the_post().
+echo '<!-- '.var_export($bios_array, true).'  -->';
         $args = array(
             'type'          => 'fpmtp_audio',
             'orderby'       => 'date',
@@ -551,59 +580,63 @@ OUTPUTRESULT;
 
         foreach( $audio_categories as $category ) {
 
-            $page = get_page_by_title( $category->name, 'OBJECT', 'fpmtp_bios' );
+            if(isset($bios_array[$category->slug])) {
+                $q_page = $bios_array[$category->slug];
 
-            if(!is_wp_error($page)) {
-                $bio_thumbnail = null;
-                $bio_thumbnail = wp_get_attachment_image_src($page->ID);
+                if (!is_wp_error($q_page)) {
+                    $bio_thumbnail = null;
+                    $bio_thumbnail = wp_get_attachment_image_src($q_page->ID);
 
-                /* All the data pulled is saved into an array which we'll save later */
-                $speaker_link = get_term_link($category->slug, 'fpmtp_speakers');
-                if(is_wp_error($speaker_link)){
-                    $speaker_link = $speaker_link->get_error_message();
-                    //echo $speaker_link;
+                    /* All the data pulled is saved into an array which we'll save later */
+                    $speaker_link = get_term_link($category->slug, 'fpmtp_speakers');
+                    if (is_wp_error($speaker_link)) {
+                        $speaker_link = $speaker_link->get_error_message();
+                        //echo $speaker_link;
+                    }
+                    $bios_query[$category->slug] = array(
+                        'name' => $q_page->post_title,
+                        'excerpt' => $q_page->post_excerpt,
+                        'bio_link' => get_permalink($q_page->ID),
+                        'bio_thumbnail' => $bio_thumbnail[0],
+                        'speaker_link' => esc_attr($speaker_link),
+                        'speaker_talk_count' => $category->count,
+                        'author_link' => false,
+                        'author_book_count' => false,
+                    );
                 }
-                $bios_query[$category->slug] = array(
-                    'name' => get_the_title($page->ID),
-                    'excerpt' => $page->post_excerpt,
-                    'bio_link' => get_permalink($page->ID),
-                    'bio_thumbnail' => $bio_thumbnail[0],
-                    'speaker_link' => esc_attr($speaker_link),
-                    'speaker_talk_count' => $category->count,
-                    'author_link' => false,
-                    'author_book_count' => false,
-                );
             }
         }
 
         foreach( $books_categories as $category ) {
-            $page = get_page_by_title( $category->name, 'OBJECT', 'fpmtp_bios' );
+            if(isset($bios_array[$category->slug])) {
+                $q_page = $bios_array[$category->slug];
 
-            if(!is_wp_error($page)) {
-                $bio_thumbnail = null;
-                $bio_thumbnail = wp_get_attachment_image_src($page->ID);
+                if (!is_wp_error($q_page)) {
+                    $bio_thumbnail = null;
+                    $bio_thumbnail = wp_get_attachment_image_src($q_page->ID);
 
-                /* All the data pulled is saved into an array which we'll save later */
-                if (isset($bios_query[$category->slug]) && !empty($bios_query[$category->slug])) {
-                    $bios_query[$category->slug]['author_link'] = esc_attr(get_term_link($category->slug, 'fpmtp_authors_taxonomy'));
-                    $bios_query[$category->slug]['author_book_count'] = $category->count;
-                } else {
-                    $author_link = get_term_link($category->slug, 'fpmtp_authors_taxonomy');
-                    if(is_wp_error($author_link)){
-                        $author_link = $author_link->get_error_message();
-                        //echo $author_link;
+                    /* All the data pulled is saved into an array which we'll save later */
+                    if (isset($bios_query[$category->slug]) && !empty($bios_query[$category->slug])) {
+                        $bios_query[$category->slug]['author_link'] = esc_attr(get_term_link($category->slug, 'fpmtp_authors_taxonomy'));
+                        $bios_query[$category->slug]['author_book_count'] = $category->count;
+                    } else {
+                        $author_link = get_term_link($category->slug, 'fpmtp_authors_taxonomy');
+                        if (is_wp_error($author_link)) {
+                            $author_link = $author_link->get_error_message();
+                            //echo $author_link;
+                        }
+
+                        $bios_query[$category->slug] = array(
+                            'name' => $q_page->post_title,
+                            'excerpt' => $q_page->post_excerpt,
+                            'bio_link' => get_permalink($q_page->ID),
+                            'bio_thumbnail' => $bio_thumbnail[0],
+                            'speaker_link' => false,
+                            'speaker_talk_count' => false,
+                            'author_link' => esc_attr($author_link),
+                            'author_book_count' => $category->count,
+                        );
                     }
-
-                    $bios_query[$category->slug] = array(
-                        'name' => get_the_title($page->ID),
-                        'excerpt' => $page->post_excerpt,
-                        'bio_link' => get_permalink($page->ID),
-                        'bio_thumbnail' => $bio_thumbnail[0],
-                        'speaker_link' => false,
-                        'speaker_talk_count' => false,
-                        'author_link' => esc_attr($author_link),
-                        'author_book_count' => $category->count,
-                    );
                 }
             }
         }
@@ -699,16 +732,17 @@ OUTPUTRESULT;
         $meta_length = (isset($metadata['length_formatted'])) ? "\n\n".__('Length of recording', FPMTP__I18N_NAMESPACE ) .": ".$metadata['length_formatted'] : "";
         $meta_year = (isset($metadata['year'])) ? "\n".__('Year', FPMTP__I18N_NAMESPACE ) .": ".$metadata['year'] : "";
 
+        // No longer used
         $new_post_content = '[audio src="'.$attachment_post->guid.'"]'.
             "\n\n".$attachment_post->post_content .
             $meta_length .
             $meta_year .
-        "\n\n".'<a href="'.$attachment_post->guid.'" download0"'.basename($attachment_post->guid).'">'.__('Download' , FPMTP__I18N_NAMESPACE).'</a>';
+        "\n\n".'<a href="'.$attachment_post->guid.'" download="'.basename($attachment_post->guid).'">'.__('Download' , FPMTP__I18N_NAMESPACE).'</a>';
 
         // Create new custom post object only for images
         $audio_custom_post = array(
             'post_title'    => $attachment_post->post_title,
-            'post_content'  => $new_post_content ,
+            'post_content'  => $meta_comment ,
             'post_excerpt'  => $meta_comment ,
             'post_type'     => FullPeace_Media_To_Post::$slug . '_audio',
             'post_author'   => $current_user->ID
@@ -731,7 +765,20 @@ OUTPUTRESULT;
             wp_set_object_terms( $audio_post_id, array( $metadata['artist'] ), FullPeace_Media_To_Post::$slug . '_speakers', true );
         if(isset($metadata['album'] ))
             wp_set_object_terms( $audio_post_id, array( $metadata['album'] ), FullPeace_Media_To_Post::$slug . '_series', true );
+        if(isset($metadata['year'] ))
+            wp_set_object_terms( $audio_post_id, array( $metadata['year'] ), FullPeace_Media_To_Post::$slug . '_audio_year', true );
 
+
+        // Add metadata: 'enclosure' as follows:
+        // http://amaravati.org.gridhosted.co.uk/wp-content/uploads/2014/09/Cittaviveka-2006-Winter-Retreat-19-This-Is-it.mp3
+        // 18150683
+        // audio/mpeg
+        // a:1:{s:8:"duration";s:8:"01:13:21";}
+
+        // REQUIRES A Blubrry podcast with slug "audio"
+        $enclosure_key = 'enclosure';
+        $enclosure_powerpress = $attachment_post->guid . "\n" . @filesize( get_attached_file( $attachment_ID ) ) . "\naudio/mpeg\n" . @serialize( array( "duration" => (isset($metadata['length_formatted'])) ? $metadata['length_formatted'] : "") );
+        add_post_meta( $audio_post_id, $enclosure_key, $enclosure_powerpress );
 
         // MP3 featured image is not set at this point, defer to next page load
         $option_name = 'fpmtp_deferred_featured_images' ;
@@ -771,6 +818,17 @@ OUTPUTRESULT;
 				echo 'Error: ', $e->getMessage();
 			}
 		}
+    }
+
+    public static function add_custom_types_to_tax( $query ) {
+        if( is_category() || is_tag() && empty( $query->query_vars['suppress_filters'] ) ) {
+
+            // Get all your post types
+            $post_types = get_post_types();
+
+            $query->set( 'post_type', $post_types );
+            return $query;
+        }
     }
 
     /**
@@ -871,6 +929,58 @@ OUTPUTRESULT;
         }
 
         return apply_filters( 'repl_template_'.$template, $file);
+    }
+
+    public static function dhammaquote(){
+        $quotes = array(
+            'Thousands of candles can be lit from a single candle, and the life of the candle will not be shortened. Happiness never decreases by being shared.
+',
+            'Let your love flow outward through the universe, to its height, its depth, its broad extent, A limitless love, without hatred or enmity. Then as you stand or walk, sit or lie down,as long as you are awake, strive for this with a one-pointed mind;Your life will bring heaven to earth.
+',
+            'Who knows by tomorrow, one may still be living or dead. Thus reflecting, without procrastinating tomorrow or the day after,One should incessantly exert right away on this very day.
+',
+            'Do not pursue the past.Do not lose yourself in the future.The past no longer is.The future has not yet come.Looking deeply at life as it is.
+',
+            'In the very here and now, the practitioner dwells in stability and freedom.We must be diligent today.To wait until tomorrow is too late.Death comes unexpectedly.How can we bargain with it?
+',
+            'I teach one thing and one thing only:  that is, suffering and the end of suffering.
+',
+            'Silenced in body, silenced in speech, silenced in mind, without inner noise, blessed with silence is the sage! He is truly washed of all evil ...
+',
+            '"Nothing whatsoever should be clung to." To hear this point is to hear all points.
+',
+            'Do not try to become anything. Do not make yourself into anything. Do not be a meditator. Do not become enlightened. When you sit, let it be. What you walk, let it be. Grasp at nothing. Resist nothing.
+',
+            '"When sitting in meditation, say, “That’s not my business!” with every thought that comes by."
+',
+            '"The Dhamma has to be found by looking into your own heart and seeing that which is true and that which is not, that which is balanced and that which is not balanced."
+',
+            '"We practice to learn how to let go, not how to increase our holding on to things. Enlightenment appears when you stop wanting anything."
+',
+            '"You are your own teacher!!! Looking for teachers can’t solve your own doubts.
+',
+            'Investigate yourself to find the truth - inside, not outside. Knowing yourself is most important."
+',
+            'Form, feeling, perception, volition, consciousness … all things in this world are simply as they are. It’s we who pick fights with them. And if we hit them, they hit us back. If they’re left alone, they won’t bother anybody.
+',
+            'Only the drunkard gives them trouble.
+',
+            'Looking for peace is like looking for a turtle with a mustache: You won\'t be able to find it. But when your heart is ready, peace will come looking for you.
+',
+            'Watch the arising of feelings in the present. You don\'t have to follow them anywhere else. Tell yourself that whatever may be causing these feelings, you\'re going to focus exclusively on what is present.
+',
+            '"Make yourself as good as possible, and everything else will have to turn good in your wake."  If you don\'t abandon your own inner goodness for the sake of outer goodness, things will have to go well.
+',
+            'Results don\'t come from thinking. They come from the qualities we build into the mind.
+',
+            '"To study is to know the texts,
+',
+            'To practice is to know your defilements,To attain the goal is to know & let go."
+',
+            'Life is available only in the present. That is why we should walk in such a way that every step can bring us to the here and the now.'
+        );
+
+        return array_rand ($quotes);
     }
 }
 

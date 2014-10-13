@@ -113,12 +113,12 @@ class FullPeace_Media_To_Post_Public {
         }
 
         $bios_query=false;
-        //$bios_query = get_transient('fpmtp_bios_query');
+        $bios_query = get_transient('fpmtp_bios_query');
         if ( !$bios_query ) {
             $bios_query = FullPeace_Media_To_Post::bios_cache();
         }
 
-        //echo "<!-- ".var_export($bios_query,true)." -->";
+        //echo "<!-- bios: ".var_export($bios_query,true)." -->";
 
         if(isset($bios_query[$name]))
             return $bios_query[$name];
@@ -126,7 +126,7 @@ class FullPeace_Media_To_Post_Public {
             return false;
     }
 
-    public static function getPlaylist()
+    public static function getPlaylist($player = 'ap_player')
     {
         $term = get_term_by( 'slug', get_query_var( 'term' ), get_query_var( 'taxonomy' ) );
         $termSlug = $term->slug;
@@ -136,7 +136,15 @@ class FullPeace_Media_To_Post_Public {
         if ( !$audio_series_query ) {
             $audio_series_query = FullPeace_Media_To_Post::series_playlist_shortcode_cache($termSlug);
         }
-        return '<!-- '.$audio_series_query.' -->' . do_shortcode($audio_series_query);
+		
+		$player = in_array($player, array('wp_player','ap_player')) ? $player : 'ap_player';
+		
+		if($audio_series_query) {
+			$result = $audio_series_query[$player];
+			return $result;
+		}
+		return '';
+        //return '<!-- playlist $audio_series_query -->' . do_shortcode($audio_series_query);
     }
 //
 //    /**

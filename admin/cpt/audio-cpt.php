@@ -42,8 +42,10 @@ public function start() {
             'public'			=>	true,
             'menu_position' 	=>	4,
             'menu_icon' => 'dashicons-media-audio',
-            'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt' ), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	// 'custom-fields'
-            'taxonomies'		=>	array( 'category', 'fpmtp_speakers', 'fpmtp_series', 'fpmtp_languages' ),
+            'hierarchical' => false,
+            'capability_type' => 'post',
+            'supports'			=>	array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields'), // 'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),	//
+            'taxonomies'		=>	array( 'category', 'fpmtp_speakers', 'fpmtp_series', 'fpmtp_audio_languages', 'fpmtp_audio_year' ),
             'has_archive'		=>	true,
             'show_in_menu'      =>  true,
             'rewrite' => array( 'slug' => 'audio', 'with_front' => false ),
@@ -58,10 +60,10 @@ public function start() {
     $aPostTypeSettings = AdminPageFramework::getOption( 'FullPeace_Options_Page', 'fpmtp_settings_audio' );
     if($aPostTypeSettings['fpmtp_enable_audio_languages']) {
         $this->addTaxonomy(
-            'fpmtp_languages', // taxonomy slug
+            'fpmtp_audio_languages', // taxonomy slug
             array(            // argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments
                 'labels' => array(
-                    'name' => 'Languages',
+                    'name' => 'Audio Languages',
                     'add_new_item' => 'Add New Language',
                     'new_item_name' => "New Language"
                 ),
@@ -70,7 +72,7 @@ public function start() {
                 'hierarchical' => false,
                 'show_admin_column' => true,
                 'show_in_nav_menus' => true,
-                'rewrite' => array('slug' => 'languages', 'with_front' => false),
+                'rewrite' => array('slug' => 'audio-by-language', 'with_front' => false),
                 'show_table_filter' => true,    // framework specific key
                 'show_in_sidebar_menus' => true,    // framework specific key
             )
@@ -116,8 +118,26 @@ public function start() {
             )
         );
     }
+        $this->addTaxonomy(
+            'fpmtp_audio_year',
+            array(
+                'labels' => array(
+                    'name' => 'Year (Recording)',
+                    'add_new_item' => 'Add New Year',
+                    'new_item_name' => "New Year"
+                ),
+                'show_ui' => true,
+                'show_tagcloud' => true,
+                'hierarchical' => false,
+                'show_admin_column' => true,
+                'show_in_nav_menus' => true,
+                'rewrite' => array('slug' => 'audio-by-year', 'with_front' => false),
+                'show_table_filter' => true,    // framework specific key
+                'show_in_sidebar_menus' => true,    // framework specific key
+            )
+        );
 
-    $this->setFooterInfoLeft( '<br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
+    $this->setFooterInfoLeft( '<em>The construction and maintenance of this page has been offered as an act of <strong>Dhamma Dana</strong>.</em><br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
     $this->setFooterInfoRight( '<br />Created for <a href="http://amaravati.org/" target="_blank" >Amaravati B.M.</a>' );
 
     add_filter( 'the_content', array( $this, 'replyToPrintOptionValues' ) );
@@ -197,6 +217,7 @@ public function replyToSortCustomColumn( $aVars ){
  */
 public function replyToPrintOptionValues( $sContent ) {
 
+return $sContent;
     if ( ! isset( $GLOBALS['post']->ID ) || get_post_type() != 'fpmtp_audio' ) return $sContent;
 
     // 1. To retrieve the meta box data	- get_post_meta( $post->ID ) will return an array of all the meta field values.
@@ -211,16 +232,16 @@ public function replyToPrintOptionValues( $sContent ) {
     // to the first parameter of the constructor of the AdminPageFramework class.		
     $aSavedOptions = get_option( 'FullPeace_Media_To_Post' );
 
-    return $sContent;
-//	 . "<!--\n<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>  \n"
-//     . $this->oDebug->getArray( $aPostData )
-//     . "\n<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
-//     . $this->oDebug->getArray( $aSavedOptions )
-//    . "\n<h3>" . __( 'Post data', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
-//    . "\n<pre>" . var_export($GLOBALS['post'],true) . "</pre>\n"
-//    . "\n<h3>" . __( 'Attached media', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
-//    . "\n<pre>" . var_export( get_attached_media( 'audio' ),true) . "</pre>\n"
-//     . "\n-->";
+    return $sContent
+	 . "<!--\n<h3>" . __( 'Saved Meta Field Values', FPMTP__I18N_NAMESPACE ) . "</h3>  \n"
+     . $this->oDebug->getArray( $aPostData )
+     . "\n<h3>" . __( 'Saved Setting Options', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+     . $this->oDebug->getArray( $aSavedOptions )
+    . "\n<h3>" . __( 'Post data', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+    . "\n<pre>" . var_export($GLOBALS['post'],true) . "</pre>\n"
+    . "\n<h3>" . __( 'Attached media', FPMTP__I18N_NAMESPACE ) . "</h3>\n"
+    . "\n<pre>" . var_export( get_attached_media( 'audio' ),true) . "</pre>\n"
+     . "\n-->";
 
 }
 

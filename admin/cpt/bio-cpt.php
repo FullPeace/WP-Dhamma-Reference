@@ -99,7 +99,7 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
             );
         }
 
-        $this->setFooterInfoLeft( '<br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
+        $this->setFooterInfoLeft( '<em>The construction and maintenance of this page has been offered as an act of <strong>Dhamma Dana</strong>.</em><br />For assistance, please email <a href="mailto:developer@fullpeace.org">the developer</a>.' );
         $this->setFooterInfoRight( '<br />Created for <a href="http://amaravati.org/" target="_blank" >Amaravati B.M.</a>' );
 
         //add_filter( 'the_content', array( $this, 'replyToPrintOptionValues' ) );
@@ -117,7 +117,7 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
                 'cb'			    => '<input type="checkbox" />',	// Checkbox for bulk actions.
                 'title'			    => __( 'Title', FPMTP__I18N_NAMESPACE ),		// Post title. Includes "edit", "quick edit", "trash" and "view" links. If $mode (set from $_REQUEST['mode']) is 'excerpt', a post excerpt is included between the title and links.
                 'date'			    => __( 'Date', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post.
-                'ordainedcolumn'    => __( 'Ordained', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post.
+               // 'ordainedcolumn'    => __( 'Ordained', FPMTP__I18N_NAMESPACE ), 	// The date and publish status of the post.
             )
         );
 
@@ -125,7 +125,7 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
 
     public function sortable_columns_fpmtp_bios( $aSortableHeaderColumns ) { // sortable_columns_{post type slug}
         return $aSortableHeaderColumns + array(
-            'ordainedcolumn' => 'ordainedcolumn',
+            //'ordainedcolumn' => 'ordainedcolumn',
         );
     }
 

@@ -15,15 +15,17 @@ class FullPeace_Bios_Widget extends WP_Widget {
 	 * @todo 
 	 **/
     function widget($args, $instance) {
-        if(!is_tax( 'fpmtp_authors_taxonomy' ) && !is_tax( 'fpmtp_speakers' ))
+        if(!is_tax( array('fpmtp_authors_taxonomy' , 'fpmtp_speakers' ) ) )
 			return;
 		extract( $args );
+        global $post;
+        //echo '<!-- '.$post->post_name.' -->';
         $title 		= apply_filters('widget_title', $instance['title']);
 		// Removed in favor of transient array
 		//$page = get_page_by_title( single_term_title("", false), 'OBJECT', 'fpmtp_bios' );
         $term_title = get_queried_object()->slug;//single_term_title("", false);
         if(!is_wp_error($term_title)) {
-            echo "<!-- $term_title -->";
+            //echo "<!-- tt: $term_title -->";
             $bio = FullPeace_Media_To_Post_Public::getBio($term_title);
             //echo "<!-- ".var_export($bio,true)." -->";
         }
@@ -35,34 +37,48 @@ class FullPeace_Bios_Widget extends WP_Widget {
 
 
         if(!empty($bio) && !is_wp_error($bio)) {
-            ?>
-            <!-- <?php echo single_term_title("", false); ?> -->
-            <?php echo $before_widget; ?>
-            <?php if ($title)
-                echo $before_title . $title . $after_title; ?>
+
+            if($layout && file_exists(get_stylesheet_directory() . '/fpmtp-' . $layout . '.php' ))
+            {
+                get_template_part('fpmtp', $layout);
+            }else {
+                ?>
+                <!-- <?php echo single_term_title("", false); ?> -->
+                <?php echo $before_widget; ?>
+                <?php if ($title)
+                    echo $before_title . $title . $after_title; ?>
+                <?php
+                echo $bio['bio_thumbnail'];
+                ?>
+                <h4 class="mtn"><?php echo $bio['name'] ?></h4>
+                <?php if ($bio['bio_thumbnail']) : ?>
+                    <img src="<?php echo $bio['bio_thumbnail']; ?>"/>
+                <?php endif; ?>
+                <?php if ($bio['excerpt']) : ?>
+                    <p><?php echo $bio['excerpt']; ?></p>
+                <?php endif; ?>
+                <ul class="bio-links">
+                    <li>
+                        <a href="<?php echo $bio['bio_link']; ?>"
+                           title="<?php echo __('More about', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('About', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
+                    </li>
+                    <?php if ($bio['author_link']) : ?>
+                        <li>
+                            <a href="<?php $bio['author_link']; ?>"
+                               title="<?php echo __('Books by', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('Books', FPMTP__I18N_NAMESPACE); ?></a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($bio['speaker_link']) : ?>
+                        <li>
+                            <a href="<?php $bio['speaker_link']; ?>"
+                               title="<?php echo __('Audio with', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('Audio', FPMTP__I18N_NAMESPACE); ?></a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+                <?php /*<p><?php echo var_export($page,true); ?></p>*/ ?>
+                <?php echo $after_widget; ?>
             <?php
-            echo $bio['bio_thumbnail'];
-            ?>
-            <h3><?php echo $bio['name'] ?></h3>
-            <p><?php echo $bio['excerpt']; ?></p>
-            <ul class="bio-links">
-                <li>
-                    <a href="<?php echo $bio['bio_link']; ?>" title="<?php echo __('More about', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('About', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?></a>
-                </li>
-                <?php if ($bio['author_link']) : ?>
-                    <li>
-                        <a href="<?php $bio['author_link']; ?>" title="<?php echo __('Books by', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('Books', FPMTP__I18N_NAMESPACE); ?></a>
-                    </li>
-                <?php endif; ?>
-                <?php if ($bio['speaker_link']) : ?>
-                    <li>
-                        <a href="<?php $bio['speaker_link']; ?>" title="<?php echo __('Audio with', FPMTP__I18N_NAMESPACE); ?> <?php echo $bio['name']; ?>"><?php echo __('Audio', FPMTP__I18N_NAMESPACE); ?></a>
-                    </li>
-                <?php endif; ?>
-            </ul>
-            <?php /*<p><?php echo var_export($page,true); ?></p>*/ ?>
-            <?php echo $after_widget; ?>
-        <?php
+            }
         }elseif(is_wp_error($bio))
         {
             $error_string = $bio->get_error_message();

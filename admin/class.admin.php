@@ -32,6 +32,7 @@ class FullPeace_Media_To_Post_Admin {
         add_action('admin_init', array('FullPeace_Media_To_Post_Admin', 'admin_init'));
         add_action('admin_menu', array('FullPeace_Media_To_Post_Admin', 'admin_menu'), 5);
         add_action('admin_notices', array('FullPeace_Media_To_Post_Admin', 'display_notice'));
+		add_filter('upload_dir', array( 'FullPeace_Media_To_Post_Admin', 'fp_custom_upload_dir' ) );
         //add_filter('get_sample_permalink_html', array('FullPeace_Media_To_Post_Admin', 'disable_editing_url_for_audio_series'), '',4);
 
         //add_action( 'create_term', array( 'FullPeace_Media_To_Post_Admin', 'act_on_create_term' ), 1, 3 );
@@ -49,19 +50,106 @@ class FullPeace_Media_To_Post_Admin {
             foreach($aDeferredFeatured as $attachment_ID => $audio_post_id) {
                 if($attachment_ID && $audio_post_id) {
                     $attachment_post = get_post($attachment_ID);
-                    $already_has_thumb = has_post_thumbnail($audio_post_id);
+                    $already_has_thumb = ('' != get_the_post_thumbnail($audio_post_id)) || has_post_thumbnail($audio_post_id); // Fallback as recommended http://codex.wordpress.org/Function_Reference/has_post_thumbnail
                     if (!$already_has_thumb) {
                         $attached_image = get_post_meta($attachment_post->ID, '_thumbnail_id', true);
                         if ($attached_image) {
                             add_post_meta($audio_post_id, '_thumbnail_id', (int)$attached_image, true);
                         }
+                    } else {
+                        // Fallback to image attachments in same series
+                        //$audio_post = get_post($audio_post_id);
+                        $term_list = wp_get_post_terms($audio_post_id, 'fpmtp_series', array("fields" => "names"));
+
+                        $args = array(
+                            'posts_per_page' => 1,
+                            'post_type' => 'fpmtp_audio',
+                            'fpmtp_series' => array_values($term_list)[0],
+                            'no_found_rows' => true,
+                            'meta_query' => array(array('key' => '_thumbnail_id')) ,
+                            'update_post_meta_cache' => false,
+                            'update_post_term_cache' => false
+                        );
+                        $the_query = new WP_Query( $args );
+                        if ( $the_query->have_posts() ) {
+                            while ( $the_query->have_posts() ) {
+                                $the_query->the_post();
+                                if (has_post_thumbnail()) {
+                                    $attached_image = get_post_meta(get_the_ID(), '_thumbnail_id', true);
+                                    if ($attached_image) {
+                                        add_post_meta($audio_post_id, '_thumbnail_id', (int)$attached_image, true);
+                                    }
+                                }
+                            }
+                        }
+                        wp_reset_postdata();
                     }
                 }
             }
             delete_option($option_name);
         }
     }
-
+	
+	// Upload location modification
+	 
+	public static function fp_pre_upload($file) {
+	  add_filter('upload_dir', 'fp_custom_upload_dir');
+	  return $file;
+	}
+	 
+	public static function fp_post_upload($fileinfo) {
+	  remove_filter('upload_dir', 'fp_custom_upload_dir');
+	  return $fileinfo;
+	}
+	 
+	public static function fp_custom_upload_dir($path) {
+		$ext = strtolower( substr( strrchr( $_POST['name'], '.' ), 1 ) );
+	  if (!empty($path['error'])) {// || !in_array( $ext , array('mp3','mp4','ogg','pdf','epub','mobi') ) ) {
+		return $path;
+	  } //error or not on we map, so bail unchanged.
+	 
+	  /*global $post, $post_id;
+	  $post_id = (!empty($post_id) ? $post_id : (!empty($_REQUEST['post_id']) ? $_REQUEST['post_id'] : ''));
+	  if (empty($post) || (!empty($post) && is_numeric($post_id) && $post_id != $post->ID)) {
+		$post = get_post($post_id);
+	  }*/
+	 
+	  $time = (!empty($_SERVER['REQUEST_TIME'])) ? $_SERVER['REQUEST_TIME'] : (time() + (get_option('gmt_offset') * 3600)); // Fallback of now
+	  /*$post_type = 'post';
+	  $post_name = '';
+	  if (!empty($post)) {
+		// Grab the posted date for use later
+		$time = ($post->post_date == '0000-00-00 00:00:00') ? $time : strtotime($post->post_date);
+		$post_type = $post->post_type;
+		$post_name = $post->post_name;
+	  }*/
+	 
+	  $date = explode(" ", date('Y m d H i s', $time));
+	 
+	 $suffix = '/' . $date[2];
+	 /*
+	 $suffix = $date[0] . '/' . $date[1] . '/' . $date[2];
+	 if(in_array( $ext , array('mp3','mp4','ogg') ) ) {
+		$suffix = 'audio/' . $date[0] . '/' . $date[1] . '/' . $date[2];
+	 }
+	 elseif(in_array( $ext , array('pdf','epub','mobi') ) ) {
+		$suffix = 'ebooks/' . (!empty($post_name) ? $post_name : $date[0]);
+	 }
+	 else {
+		$suffix = '/' . (!empty($post_name) ? $post_name : $date[0]);
+	 }*/
+	 
+	  $path = array(
+		'path' => $path['path'] . $suffix, // Day on end
+		'url' => $path['url'] . $suffix,
+		'subdir' => $path['subdir'] . $suffix,
+		'basedir' =>  $path['basedir'],
+		'baseurl' =>  $path['baseurl'],
+		'error' => false,
+	  );
+	 
+	  return $path;
+	}
 
     public static function add_book_mime_types($mime_types){
 

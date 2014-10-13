@@ -79,6 +79,7 @@ if($aEnablePostTypes['fpmtp_enable_bios']) {
 }
 
 require_once( FPMTP__PLUGIN_DIR . 'public/class.bioswidget.php' );
+require_once( FPMTP__PLUGIN_DIR . 'public/class.taxonomieswidget.php' );
 
 if ( is_admin() ) {
     require_once( FPMTP__PLUGIN_DIR . 'admin/class.optionspage.php' );
