@@ -55,10 +55,10 @@ class FullPeace_Media_To_Post {
         add_shortcode( 'dhamma', array( 'FullPeace_Media_To_Post','shortcode_dhamma') );
         add_action( 'save_post',  'FullPeace_Media_To_Post_plugin_post_save' );
 
-        add_filter('the_excerpt_rss', array( 'FullPeace_Media_To_Post','featuredtoRSS'));
-        add_filter('the_content_feed', array( 'FullPeace_Media_To_Post','featuredtoRSS'));
-        add_action( "rss_item", array(  'FullPeace_Media_To_Post', "feed_addMeta" ), 5, 1 );
-        add_action( "rss2_item", array(  'FullPeace_Media_To_Post', "feed_addMeta" ), 5, 1 );
+        //add_filter('the_excerpt_rss', array( 'FullPeace_Media_To_Post','featuredtoRSS'));
+        //add_filter('the_content_feed', array( 'FullPeace_Media_To_Post','featuredtoRSS'));
+        //add_action( "rss_item", array(  'FullPeace_Media_To_Post', "feed_addMeta" ), 5, 1 );
+        //add_action( "rss2_item", array(  'FullPeace_Media_To_Post', "feed_addMeta" ), 5, 1 );
 
 
         add_filter( 'pre_get_posts', array(  'FullPeace_Media_To_Post', 'add_custom_types_to_tax' ) );
@@ -78,7 +78,7 @@ class FullPeace_Media_To_Post {
 	public static function hide_add_buttons() {
 	  global $pagenow;
 	  if(is_admin()){
-		if( ($pagenow == 'edit.php' || $pagenow == 'post.php') && $_GET['post_type'] == 'fpmtp_audio'){
+		if( (/*$pagenow == 'edit.php' || */$pagenow == 'post.php') && $_GET['post_type'] == 'fpmtp_audio'){
 			echo '<style>.add-new-h2{display: none;}</style>';
 		}  
 		if( ($pagenow == 'post-new.php' || $pagenow == 'post.php') && $_GET['post_type'] == 'fpmtp_books'){
@@ -731,6 +731,7 @@ echo '<!-- '.var_export($bios_array, true).'  -->';
         $meta_comment = (isset($metadata['comment'])) ? $metadata['comment'] : "";
         $meta_length = (isset($metadata['length_formatted'])) ? "\n\n".__('Length of recording', FPMTP__I18N_NAMESPACE ) .": ".$metadata['length_formatted'] : "";
         $meta_year = (isset($metadata['year'])) ? "\n".__('Year', FPMTP__I18N_NAMESPACE ) .": ".$metadata['year'] : "";
+        $meta_track = (isset($metadata['track_number'])) ? $metadata['track_number'] : "99999999";
 
         // No longer used
         $new_post_content = '[audio src="'.$attachment_post->guid.'"]'.
@@ -767,6 +768,12 @@ echo '<!-- '.var_export($bios_array, true).'  -->';
             wp_set_object_terms( $audio_post_id, array( $metadata['album'] ), FullPeace_Media_To_Post::$slug . '_series', true );
         if(isset($metadata['year'] ))
             wp_set_object_terms( $audio_post_id, array( $metadata['year'] ), FullPeace_Media_To_Post::$slug . '_audio_year', true );
+
+		// Add year as meta for sorting
+        add_post_meta( $audio_post_id, '_year', $meta_year);
+
+        // Add track
+        add_post_meta( $audio_post_id, '_track_number', $meta_track);
 
 
         // Add metadata: 'enclosure' as follows:

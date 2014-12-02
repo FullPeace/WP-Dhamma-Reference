@@ -206,7 +206,9 @@ class FullPeace_Media_To_Post_Admin {
         add_submenu_page(
             'edit.php?post_type=fpmtp_audio',
             'upload_media',
-            'Upload Audio',
+            "<span class='upload_audio_submenu_link'>" 
+                        . __( 'Upload New', FPMTP__I18N_NAMESPACE ) 
+                    . "</span>",
             'edit_posts',
             'media-new.php');
 

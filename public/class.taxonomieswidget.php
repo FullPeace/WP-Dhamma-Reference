@@ -54,6 +54,14 @@ class FullPeace_Taxonomies_Widget extends WP_Widget {
             return;
         }
 
+        if( is_singular( 'fpmtp_bios' ) || is_post_type_archive( 'fpmtp_bios' ) ){
+            echo $before_widget;
+            if ($title)
+                echo $before_title . $title . $after_title;
+            echo do_shortcode('[searchandfilter fields="fpmtp_speakers,fpmtp_authors_taxonomy" all_items_labels="Talks by Speaker,Books by Author" empty_search_url="/biographies" show_count="1,1" submit_label="Search"]');
+            echo $after_widget;
+            return;
+        }
 
         $tax_translation = array(
             'fpmtp_authors_taxonomy' => __('Any Book Author', FPMTP__I18N_NAMESPACE),
