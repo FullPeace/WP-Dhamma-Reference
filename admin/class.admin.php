@@ -60,11 +60,12 @@ class FullPeace_Media_To_Post_Admin {
                         // Fallback to image attachments in same series
                         //$audio_post = get_post($audio_post_id);
                         $term_list = wp_get_post_terms($audio_post_id, 'fpmtp_series', array("fields" => "names"));
+						$tval = array_values($term_list);
 
                         $args = array(
                             'posts_per_page' => 1,
                             'post_type' => 'fpmtp_audio',
-                            'fpmtp_series' => array_values($term_list)[0],
+                            'fpmtp_series' => $tval[0],
                             'no_found_rows' => true,
                             'meta_query' => array(array('key' => '_thumbnail_id')) ,
                             'update_post_meta_cache' => false,

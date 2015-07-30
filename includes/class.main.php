@@ -78,10 +78,10 @@ class FullPeace_Media_To_Post {
 	public static function hide_add_buttons() {
 	  global $pagenow;
 	  if(is_admin()){
-		if( (/*$pagenow == 'edit.php' || */$pagenow == 'post.php') && $_GET['post_type'] == 'fpmtp_audio'){
+		if( (/*$pagenow == 'edit.php' || */$pagenow == 'post.php') && get_query_var('post_type') == 'fpmtp_audio'){
 			echo '<style>.add-new-h2{display: none;}</style>';
 		}  
-		if( ($pagenow == 'post-new.php' || $pagenow == 'post.php') && $_GET['post_type'] == 'fpmtp_books'){
+		if( ($pagenow == 'post-new.php' || $pagenow == 'post.php') && get_query_var('post_type') == 'fpmtp_books'){
 			remove_action( 'media_buttons', 'media_buttons' );
 		}  
 	  }
@@ -784,7 +784,7 @@ echo '<!-- '.var_export($bios_array, true).'  -->';
 
         // REQUIRES A Blubrry podcast with slug "audio"
         $enclosure_key = 'enclosure';
-        $enclosure_powerpress = $attachment_post->guid . "\n" . @filesize( get_attached_file( $attachment_ID ) ) . "\naudio/mpeg\n" . @serialize( array( "duration" => (isset($metadata['length_formatted'])) ? $metadata['length_formatted'] : "") );
+        $enclosure_powerpress = $attachment_post->guid . "\n" . @filesize( get_attached_file( $attachment_ID ) ) . "\naudio/mpeg\n" . @serialize( array( "duration" => (isset($metadata['length_formatted'])) ? $metadata['length_formatted'] : "", "author" => (isset($metadata['artist'])?$metadata['artist']:"")) );
         add_post_meta( $audio_post_id, $enclosure_key, $enclosure_powerpress );
 
         // MP3 featured image is not set at this point, defer to next page load

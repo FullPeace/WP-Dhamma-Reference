@@ -77,7 +77,7 @@ class FullPeace_Bio_PostType  extends AdminPageFramework_PostType {
                 )
             );
         }
-        if($aPostTypeSettings['fpmtp_enable_bios_locations'] ) {
+        if( array_key_exists ( 'fpmtp_enable_bios_locations', $aPostTypeSettings ) && $aPostTypeSettings['fpmtp_enable_bios_locations']  ) {
             $this->addTaxonomy(
                 'fpmtp_locations', // taxonomy slug
                 array(            // argument - for the argument array keys, refer to : http://codex.wordpress.org/Function_Reference/register_taxonomy#Arguments

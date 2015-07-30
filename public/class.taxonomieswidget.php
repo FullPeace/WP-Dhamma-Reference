@@ -30,7 +30,7 @@ class FullPeace_Taxonomies_Widget extends WP_Widget {
             echo $before_widget;
             if ($title)
                 echo $before_title . $title . $after_title;
-            echo do_shortcode('[searchandfilter fields="search,fpmtp_authors_taxonomy,fpmtp_year_taxonomy,fpmtp_languages,fpmtp_speakers,fpmtp_series,fpmtp_audio_year,fpmtp_audio_languages" all_items_labels="Search,All Authors,Any Year (Books),Any Language (Books), All Speakers (Audio),All Series (Audio),Any Year (Audio),Any Language (Audio)" submit_label="Search"]');
+            echo do_shortcode('[searchandfilter fields="search,fpmtp_authors_taxonomy,fpmtp_year_taxonomy,fpmtp_languages,fpmtp_speakers,fpmtp_series,fpmtp_audio_year,fpmtp_audio_languages" all_items_labels="Search,All Authors,Any Year (Books),Any Language (Books), All Speakers (Audio),All Series (Audio),Any Year (Audio),Any Language (Audio)" hide_empty="1" submit_label="Search"]');
             echo $after_widget;
             return;
         }
@@ -40,7 +40,7 @@ class FullPeace_Taxonomies_Widget extends WP_Widget {
             echo $before_widget;
             if ($title)
                 echo $before_title . $title . $after_title;
-            echo do_shortcode('[searchandfilter fields="fpmtp_authors_taxonomy,fpmtp_year_taxonomy,fpmtp_languages" all_items_labels="All Authors,Any Year,Any Language" empty_search_url="/dhamma-books" show_count="1,1,1" submit_label="Search"]');
+            echo do_shortcode('[searchandfilter fields="fpmtp_authors_taxonomy,fpmtp_year_taxonomy,fpmtp_languages" all_items_labels="All Authors,Any Year,Any Language" empty_search_url="/dhamma-books" show_count="1,1,1" hide_empty="1" submit_label="Search"]');
             echo $after_widget;
             return;
         }
@@ -49,7 +49,7 @@ class FullPeace_Taxonomies_Widget extends WP_Widget {
             echo $before_widget;
             if ($title)
                 echo $before_title . $title . $after_title;
-            echo do_shortcode('[searchandfilter fields="fpmtp_speakers,fpmtp_series,fpmtp_audio_year,fpmtp_audio_languages" all_items_labels="All Speakers,All Series,Any Year,Any Language" empty_search_url="/audio" show_count="1,1,1,1" submit_label="Search"]');
+            echo do_shortcode('[searchandfilter fields="fpmtp_speakers,fpmtp_series,fpmtp_audio_year,fpmtp_audio_languages" all_items_labels="All Speakers,All Series,Any Year,Any Language" empty_search_url="/audio" show_count="1,1,1,1" hide_empty="1" submit_label="Search"]');
             echo $after_widget;
             return;
         }
@@ -58,7 +58,7 @@ class FullPeace_Taxonomies_Widget extends WP_Widget {
             echo $before_widget;
             if ($title)
                 echo $before_title . $title . $after_title;
-            echo do_shortcode('[searchandfilter fields="fpmtp_speakers,fpmtp_authors_taxonomy" all_items_labels="Talks by Speaker,Books by Author" empty_search_url="/biographies" show_count="1,1" submit_label="Search"]');
+            echo do_shortcode('[searchandfilter fields="fpmtp_speakers,fpmtp_authors_taxonomy" all_items_labels="Talks by Speaker,Books by Author" empty_search_url="/biographies" show_count="1,1" hide_empty="1" submit_label="Search"]');
             echo $after_widget;
             return;
         }
