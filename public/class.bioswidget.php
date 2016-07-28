@@ -6,7 +6,7 @@ class FullPeace_Bios_Widget extends WP_Widget {
  
  
     /** constructor  */
-    function FullPeace_Bios_Widget() {
+    function __construct() {
         parent::WP_Widget(false, $name = 'Bios Widget');	
     }
  

@@ -6,7 +6,7 @@ class FullPeace_Taxonomies_Widget extends WP_Widget {
  
  
     /** constructor  */
-    function FullPeace_Taxonomies_Widget() {
+    function __construct() {
         parent::WP_Widget(false, $name = 'Taxonomy Filter Widget');
     }
  
